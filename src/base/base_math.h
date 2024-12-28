@@ -58,8 +58,7 @@ Vec3F32 vec3f32_rotate_z(Vec3F32 vector, f32 angle);
 typedef struct Triangle2F32 Triangle2F32;
 struct Triangle2F32 {
   Vec2F32 points[3];
-  Vec2F32 normal_start; // Center point
-  Vec2F32 normal_end;   // Tip of normal Vector
+  u32 colour;
 };
 
 //- tijani: Faces are the surfaces formed by connecting those points.
@@ -68,6 +67,7 @@ struct Face3S32 {
   s32 a;
   s32 b;
   s32 c;
+  u32 colour;
 };
 
 #endif // BASE_MATH_H
