@@ -4,32 +4,24 @@
 #define RENDER_CORE_H
 
 // tijani: Render Modes
-typedef enum {
-  Render_FillWireframes,   // Fill triangles with wireframe
-  Render_FillColour,       // Fill triangles with colour
-  Render_WireFramesVertex, // Wireframe with vertex of each triangle vertex
-  Render_WireFrames,       // Wireframe only
 
-  Render_Count
-} RenderMode;
+#define RENDER_DEFAULT   (1 << 0)
+#define RENDER_WIREFRAME (1 << 1)
+#define RENDER_VERTEX    (1 << 2)
+#define RENDER_FILL      (1 << 3)
 
 // tijani: Culling Modes
-typedef enum {
-  Cull_None,     // Disable all types of culling
-  Cull_BackFace, // Enable Back-Face Culling
 
-  Cull_Count
-} CullingMode;
+#define CULL_NONE  (1 << 0)
+#define CULL_BACK  (1 << 1)
+#define CULL_FRONT (1 << 2)
 
 // tijani: Render State
 typedef struct RenderState RenderState;
 struct RenderState {
-  b32 is_wireframe_vertex;
-  b32 is_wireframes;
-  b32 is_fill_colour;
-  b32 is_fill_wireframes;
-  RenderMode render_mode;
-  CullingMode culling_mode;
+  u32 cull_mode;
+  u32 render_mode;
+  b32 debug_overlay;
 };
 
 #endif // RENDER_CORE_H

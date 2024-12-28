@@ -31,34 +31,10 @@
 //////////////////////////////
 // Globals
 // @Revise: is there a better way to do this?
-//HDC device_context;
+HDC device_context;
 global OS_Handle window_handle = {0};
 global Triangle2F32 *g_triangles_to_render = NULL;
-global RenderState *g_render_state = {.is_wireframe_vertex = false,
-                                      .is_wireframes = true,
-                                      .is_fill_colour = false,
-                                      .is_fill_wireframes = false,
-                                      .render_mode = Render_FillWireframes,
-                                      .culling_mode = Cull_BackFace}
-
-// NOTE(tijani): TEMP, quick and dirty visualization debug code. make better and put in appropriate place
-Vec3F32
-get_triangle_center(Vec3F32 a, Vec3F32 b, Vec3F32 c) {
-  Vec3F32 center = {.x = (a.x + b.x + c.x) / 3.0f, .y = (a.y + b.y + c.y) / 3.0f, .z = (a.z + b.z + c.z) / 3.0f};
-  return center;
-}
-
-internal Vec3F32 normalize_vector(Vec3F32 v) {
-  f32 length = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
-  if (length != 0.0f) {
-    v.x /= length;
-    v.y /= length;
-    v.z /= length;
-  }
-  return v;
-}
-
-////////////////////////////////////////////////////////////////////
+global RenderState g_render_state = {.cull_mode = CULL_BACK, .render_mode = RENDER_DEFAULT, .debug_overlay = 0};
 
 internal b32 frame() {
   b32 quit = 0;
@@ -73,6 +49,7 @@ internal b32 frame() {
         break;
       }
 
+        // process keypress
       case (OS_EventKind_Press): {
         switch (event->key) {
           case (OS_Key_A): {
@@ -85,11 +62,24 @@ internal b32 frame() {
             break;
           }
 
-					// NOTE(tijani): Toggle render modes here
-          case (OS_Key_1): {
-            if (g_render_state.is_wireframe_vertex) {
-              g_render_state = Render_WireFramesVertex;
-            }
+          // render modes
+          case (OS_Key_W): {
+            g_render_state.render_mode ^= RENDER_WIREFRAME;
+            break;
+          }
+
+          case (OS_Key_V): {
+            g_render_state.render_mode ^= RENDER_VERTEX;
+            break;
+          }
+
+          case (OS_Key_F): {
+            g_render_state.render_mode ^= RENDER_FILL;
+            break;
+          }
+
+          case (OS_Key_C): {
+            g_render_state.cull_mode ^= CULL_BACK;
             break;
           }
 
@@ -141,37 +131,30 @@ internal b32 frame() {
       }
 
       // check backface culling
-      {
-        // @NOTE: triangles are clockwise.
-        // find vectors (b - a) and (c -a)
-        Vec3F32 a = transformed_vertices[0];
-        Vec3F32 b = transformed_vertices[1];
-        Vec3F32 c = transformed_vertices[2];
+			if (g_render_state.cull_mode & CULL_BACK) {
+				// @NOTE: triangles are clockwise.
+				// find vectors (b - a) and (c -a)
+				Vec3F32 a = transformed_vertices[0]; /*   A   */
+				Vec3F32 b = transformed_vertices[1]; /*  / \  */
+				Vec3F32 c = transformed_vertices[2]; /* C---B */
 
-        Vec3F32 ab = vec3_sub(b, a);
-        Vec3F32 ac = vec3_sub(c, a);
+				Vec3F32 ab = vec3_sub(b, a);
+				Vec3F32 ac = vec3_sub(c, a);
 
-        // Compute the face normal using cross product to find perpendicular.
-        Vec3F32 normal = vec3_cross(ab, ac);
+				// Compute the face normal using cross product to find perpendicular.
+				Vec3F32 normal = vec3_cross(ab, ac);
 
-        // Find vector between point in the triangle and the camera origin
-        Vec3F32 camera_ray = vec3_sub(camera_position, a);
+				// Find vector between point in the triangle and the camera origin
+				Vec3F32 camera_ray = vec3_sub(camera_position, a);
 
-        // if face normal (dot_product) is aligned with camera ray, draw if not cull (dont draw).
-        f32 dot_normal_camera = vec3_dot(normal, camera_ray);
+				// if face normal (dot_product) is aligned with camera ray, draw if not cull (dont draw).
+				f32 dot_normal_camera = vec3_dot(normal, camera_ray);
 
-        if (dot_normal_camera < 0) {
-          continue; // dont render if looking away  from the camera, remember we are a right handed coordinate system.
-        }
-
-        // NOTE(tijani): Quick and dirty visual debugging code, calculate normal vector visualization points
-        //        const f32 NORMAL_LINE_LENGTH = 4.0f;
-        //        Vec3F32 face_center =
-        //            get_triangle_center(transformed_vertices[0], transformed_vertices[1], transformed_vertices[2]);
-
-        //       Vec3F32 normal_end = {.x = face_center.x + normal.x * NORMAL_LINE_LENGTH,
-        //                             .y = face_center.y + normal.y * NORMAL_LINE_LENGTH,
-        //                             .z = face_center.z + normal.z * NORMAL_LINE_LENGTH};
+				// Dont render if looking away  from the camera, remember we are a right handed coordinate system.
+				if (dot_normal_camera < 0) {
+					continue;
+				}
+			}
 
         Triangle2F32 projected_triangle;
 
@@ -186,31 +169,17 @@ internal b32 frame() {
           projected_triangle.points[k] = projected_point;
         }
 
-        // NOTE(tijani): Quick and dirty visual debugging code, make more mature.
-        // Project normal visualization points
-        //       Vec2F32 center_2d = perspective_projection(face_center);
-        //       Vec2F32 normal_end_2d = perspective_projection(normal_end);
-
-        //       // Transform normal points to screen space
-        //       center_2d.x += (buffer.width / 2);
-        //       center_2d.y += (buffer.height / 2);
-        //       normal_end_2d.x += (buffer.width / 2);
-        //       normal_end_2d.y += (buffer.height / 2);
-
-        //       projected_triangle.normal_start = center_2d;
-        //       projected_triangle.normal_end = normal_end_2d;
-
         // save projected triangle in array of triangles to be rendered
         array_push(g_triangles_to_render, projected_triangle);
       }
-    }
+
   }
 
   // now draw
   {
     r_clear_colour_buffer(&buffer, 0xFF000000);
     r_draw_grid(&buffer, 0xFF444444);
-    // r_draw_filled_triangle(&buffer, 300, 100, 50, 400, 500, 700, 0xFF392876);
+    r_draw_filled_triangle(&buffer, 300, 100, 50, 400, 500, 700, 0xFF392876);
 
     // Loop through all projected points and render
     int triangle_count = array_length(g_triangles_to_render);
@@ -218,29 +187,24 @@ internal b32 frame() {
     for (u32 i = 0; i < triangle_count; ++i) {
       Triangle2F32 triangle = g_triangles_to_render[i];
 
-      if (g_render_mode == Render_WireFramesVertex) {
-        // Draw vertex points
-        r_draw_rect(&buffer, triangle.points[0].x, triangle.points[0].y, 3, 3, 0xFFFF0000);
-        r_draw_rect(&buffer, triangle.points[1].x, triangle.points[1].y, 3, 3, 0xFFFF0000);
-        r_draw_rect(&buffer, triangle.points[2].x, triangle.points[2].y, 3, 3, 0xFFFF0000);
+      // Draw vertex points
+      if (g_render_state.render_mode & RENDER_VERTEX) {
+        r_draw_rect(&buffer, triangle.points[0].x, triangle.points[0].y, 3, 3, 0xFFFE7104);
+        r_draw_rect(&buffer, triangle.points[1].x, triangle.points[1].y, 3, 3, 0xFFFE7104);
+        r_draw_rect(&buffer, triangle.points[2].x, triangle.points[2].y, 3, 3, 0xFFFE7104);
       }
 
-      // Draw unfilled triangle
-      r_draw_filled_triangle(&buffer, triangle.points[0].x, triangle.points[0].y, triangle.points[1].x,
-                             triangle.points[1].y, triangle.points[2].x, triangle.points[2].y, 0xFFFFFF);
+      // Draw filled triangle
+      if (g_render_state.render_mode == RENDER_DEFAULT || g_render_state.render_mode & RENDER_FILL) {
+        r_draw_filled_triangle(&buffer, triangle.points[0].x, triangle.points[0].y, triangle.points[1].x,
+                               triangle.points[1].y, triangle.points[2].x, triangle.points[2].y, 0xFF616161);
+      }
 
-      r_draw_triangle(&buffer, triangle.points[0].x, triangle.points[0].y, triangle.points[1].x, triangle.points[1].y,
-                      triangle.points[2].x, triangle.points[2].y, 0xFF000000);
-
-      // NOTE(tijani): Visual debugging code.
-      // draw normal vector
-      // r_draw_line_dda(&buffer, triangle.normal_start.x, triangle.normal_start.y, triangle.normal_end.x,
-      //                triangle.normal_end.y, 0xFFFF0000);
-      // r_draw_line_dda(&buffer, triangle.normal_start.x, triangle.normal_start.y, triangle.normal_end.x,
-      // triangle.normal_end.y, 0xFFFF0000);
-
-      // Draw normal vector base point
-      r_draw_rect(&buffer, triangle.normal_start.x - 1, triangle.normal_start.y - 1, 2, 2, 0xFFFFFFFF);
+      // Draw wireframe
+      if (g_render_state.render_mode & RENDER_WIREFRAME) {
+        r_draw_triangle(&buffer, triangle.points[0].x, triangle.points[0].y, triangle.points[1].x, triangle.points[1].y,
+                        triangle.points[2].x, triangle.points[2].y, 0xFFFFFFF);
+      }
     }
     // free the triangle
     array_free(g_triangles_to_render);
