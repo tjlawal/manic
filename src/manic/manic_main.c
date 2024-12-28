@@ -169,17 +169,34 @@ internal b32 frame() {
         projected_points[k].y += (buffer.height / 2);
       }
 
+      // Calculate average depth for each face based on the vertices z value after transformation
+      f32 l_average_depth = (transformed_vertices[0].z + transformed_vertices[1].z + transformed_vertices[2].z) / 3;
+
       Triangle2F32 projected_triangle = {.points =
                                              {
                                                  {projected_points[0].x, projected_points[0].y},
                                                  {projected_points[1].x, projected_points[1].y},
                                                  {projected_points[2].x, projected_points[2].y},
                                              },
-                                         .colour = current_mesh_face.colour};
+                                         .colour = current_mesh_face.colour,
+                                         .average_depth = l_average_depth};
       // projected_triangle.points[k] = projected_point;
 
       // save projected triangle in array of triangles to be rendered
       array_push(g_triangles_to_render, projected_triangle);
+    }
+
+    // Sort the triangles to render by their average depth
+    // NOTE(tijani): Bubble sort
+    s32 num_triangles = array_length(g_triangles_to_render);
+    for (s32 i = 0; i < num_triangles; ++i) {
+      for (s32 j = i; j < num_triangles; ++j) {
+        if (g_triangles_to_render[i].average_depth < g_triangles_to_render[j].average_depth) {
+          Triangle2F32 temp = g_triangles_to_render[i];
+          g_triangles_to_render[i] = g_triangles_to_render[j];
+          g_triangles_to_render[j] = temp;
+        }
+      }
     }
   }
 
