@@ -59,6 +59,7 @@ typedef struct Triangle2F32 Triangle2F32;
 struct Triangle2F32 {
   Vec2F32 points[3];
   u32 colour;
+  f32 average_depth;
 };
 
 //- tijani: Faces are the surfaces formed by connecting those points.
