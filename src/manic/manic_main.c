@@ -117,7 +117,8 @@ internal b32 frame() {
 
       Vec3F32 transformed_vertices[3];
 
-      // Loop through all the vertices of the current face and apply transformation
+      // Loop through all the vertices of the current face and apply
+      // transformation
       for (s32 j = 0; j < 3; ++j) {
         Vec3F32 transformed_vertex = face_vertices[j];
 
@@ -131,48 +132,55 @@ internal b32 frame() {
       }
 
       // check backface culling
-			if (g_render_state.cull_mode & CULL_BACK) {
-				// @NOTE: triangles are clockwise.
-				// find vectors (b - a) and (c -a)
-				Vec3F32 a = transformed_vertices[0]; /*   A   */
-				Vec3F32 b = transformed_vertices[1]; /*  / \  */
-				Vec3F32 c = transformed_vertices[2]; /* C---B */
+      if (g_render_state.cull_mode & CULL_BACK) {
+        // @NOTE: triangles are clockwise.
+        // find vectors (b - a) and (c -a)
+        Vec3F32 a = transformed_vertices[0]; /*   A   */
+        Vec3F32 b = transformed_vertices[1]; /*  / \  */
+        Vec3F32 c = transformed_vertices[2]; /* C---B */
 
-				Vec3F32 ab = vec3_sub(b, a);
-				Vec3F32 ac = vec3_sub(c, a);
+        Vec3F32 ab = vec3_sub(b, a);
+        Vec3F32 ac = vec3_sub(c, a);
 
-				// Compute the face normal using cross product to find perpendicular.
-				Vec3F32 normal = vec3_cross(ab, ac);
+        // Compute the face normal using cross product to find perpendicular.
+        Vec3F32 normal = vec3_cross(ab, ac);
 
-				// Find vector between point in the triangle and the camera origin
-				Vec3F32 camera_ray = vec3_sub(camera_position, a);
+        // Find vector between point in the triangle and the camera origin
+        Vec3F32 camera_ray = vec3_sub(camera_position, a);
 
-				// if face normal (dot_product) is aligned with camera ray, draw if not cull (dont draw).
-				f32 dot_normal_camera = vec3_dot(normal, camera_ray);
+        // if face normal (dot_product) is aligned with camera ray, draw if not
+        // cull (dont draw).
+        f32 dot_normal_camera = vec3_dot(normal, camera_ray);
 
-				// Dont render if looking away  from the camera, remember we are a right handed coordinate system.
-				if (dot_normal_camera < 0) {
-					continue;
-				}
-			}
-
-        Triangle2F32 projected_triangle;
-
-        // Loop through all the vectices and perform projection
-        for (s32 k = 0; k < 3; ++k) {
-          Vec2F32 projected_point = perspective_projection(transformed_vertices[k]);
-
-          // Scale and translate projected points to the middle of the screen
-          projected_point.x += (buffer.width / 2);
-          projected_point.y += (buffer.height / 2);
-
-          projected_triangle.points[k] = projected_point;
+        // Dont render if looking away  from the camera, remember we are a right
+        // handed coordinate system.
+        if (dot_normal_camera < 0) {
+          continue;
         }
-
-        // save projected triangle in array of triangles to be rendered
-        array_push(g_triangles_to_render, projected_triangle);
       }
 
+      Vec2F32 projected_points[3];
+      // Loop through all the vectices and perform projection
+      for (s32 k = 0; k < 3; ++k) {
+        projected_points[k] = perspective_projection(transformed_vertices[k]);
+
+        // Scale and translate projected points to the middle of the screen
+        projected_points[k].x += (buffer.width / 2);
+        projected_points[k].y += (buffer.height / 2);
+      }
+
+      Triangle2F32 projected_triangle = {.points =
+                                             {
+                                                 {projected_points[0].x, projected_points[0].y},
+                                                 {projected_points[1].x, projected_points[1].y},
+                                                 {projected_points[2].x, projected_points[2].y},
+                                             },
+                                         .colour = current_mesh_face.colour};
+      // projected_triangle.points[k] = projected_point;
+
+      // save projected triangle in array of triangles to be rendered
+      array_push(g_triangles_to_render, projected_triangle);
+    }
   }
 
   // now draw
@@ -197,7 +205,7 @@ internal b32 frame() {
       // Draw filled triangle
       if (g_render_state.render_mode == RENDER_DEFAULT || g_render_state.render_mode & RENDER_FILL) {
         r_draw_filled_triangle(&buffer, triangle.points[0].x, triangle.points[0].y, triangle.points[1].x,
-                               triangle.points[1].y, triangle.points[2].x, triangle.points[2].y, 0xFF616161);
+                               triangle.points[1].y, triangle.points[2].x, triangle.points[2].y, triangle.colour);
       }
 
       // Draw wireframe
@@ -224,7 +232,8 @@ void entry_point() {
   window_handle = os_window_open(V2S32(1250, 900), 0, str8_lit(BUILD_TITLE));
   os_window_first_paint(window_handle);
   device_context = os_get_device_context(window_handle);
-  load_obj_file_data_from_file("data/meshes/f22.obj");
+  // load_obj_file_data_from_file("data/meshes/f22.obj");
+  load_cube_mesh_data();
 
   // equip renderer
   for (; !update();) {
