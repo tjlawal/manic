@@ -5,7 +5,8 @@
 
 // Globals
 // @revise: this is sus. could there be a better way?
-Mesh g_mesh = {.vertices = NULL, .faces = NULL, .rotation = {0, 0, 0}};
+Mesh g_mesh = {
+    .vertices = NULL, .faces = NULL, .rotation = {0, 0, 0}, .scale = {1.0, 1.0, 1.0}, .translate = {0, 0, 0}};
 
 // clang-format off
 Vec3F32 cube_vertices[CUBE_VERTICES] = {

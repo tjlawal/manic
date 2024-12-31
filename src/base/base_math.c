@@ -83,3 +83,55 @@ Vec3F32 vec3f32_rotate_z(Vec3F32 vector, f32 new_angle) {
                             .z = vector.z};
   return rotated_vector;
 }
+
+Vec3F32 vec3f32_from_vec4f32(Vec4F32 v) {
+  Vec3F32 result = {v.x, v.y, v.z};
+  return result;
+}
+
+// tijani: Vec4F32
+Vec4F32 vec4f32_from_vec3f32(Vec3F32 v) {
+  Vec4F32 result = {v.x, v.y, v.z, 1.0};
+  return result;
+}
+
+// tijani: Mat 4x4
+
+Mat4F32 mat4f32_identity(void) {
+  // | 1 0 0 0 |
+  // | 0 1 0 0 |
+  // | 0 0 1 0 |
+  // | 0 0 0 1 |
+
+	Mat4F32 m = {{
+		{1, 0, 0, 0}, 
+		{0, 1, 0, 0}, 
+		{0, 0, 1, 0}, 
+		{0, 0, 0, 1}
+	}};
+  return m;
+}
+
+Mat4F32 mat4f32_make_scale(f32 x, f32 y, f32 z) {
+  // |  x 0 0 0 |
+  // |  0 y 0 0 |
+  // |  0 0 z 0 |
+  // |  0 0 0 1 |
+
+  Mat4F32 m = mat4f32_identity();
+  m.m[0][0] = x;
+  m.m[1][1] = y;
+  m.m[2][2] = z;
+  return m;
+}
+
+Vec4F32 mat4f32_mul_vec4(Mat4F32 m, Vec4F32 v) {
+  Vec4F32 result;
+
+  result.x = m.m[0][0] * v.x + m.m[0][1] * v.y + m.m[0][2] * v.z + m.m[0][3] * v.w;
+  result.y = m.m[1][0] * v.x + m.m[1][1] * v.y + m.m[1][2] * v.z + m.m[1][3] * v.w;
+  result.z = m.m[2][0] * v.x + m.m[2][1] * v.y + m.m[2][2] * v.z + m.m[2][3] * v.w;
+  result.w = m.m[3][0] * v.x + m.m[3][1] * v.y + m.m[3][2] * v.z + m.m[3][3] * v.w;
+
+  return result;
+}

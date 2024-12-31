@@ -8,6 +8,8 @@ struct Mesh {
   Vec3F32 *vertices; // dynamic array of vertices
   Face3S32 *faces;   // dynamic array of faces
   Vec3F32 rotation;  // rotation with x, y, and z values
+  Vec3F32 scale;     // scale with x, y, and z values
+  Vec3F32 translate; // translate with x, y, and z values
 };
 
 void load_cube_mesh_data(void);
