@@ -91,5 +91,6 @@ struct Face3S32 {
 
 Mat4F32 mat4f32_identity(void);
 Mat4F32 mat4f32_make_scale(f32 x, f32 y, f32 z);
+Mat4F32 mat4f32_translate(f32 tx, f32 ty, f32 tz);
 Vec4F32 mat4f32_mul_vec4(Mat4F32 m, Vec4F32 v);
 #endif // BASE_MATH_H
