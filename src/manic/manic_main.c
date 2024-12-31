@@ -104,13 +104,19 @@ internal b32 frame() {
     g_mesh.rotation.x += 0.01;
     g_mesh.rotation.y += 0.01;
     g_mesh.rotation.z += 0.0;
-    g_mesh.scale.x += 0.002;
-    g_mesh.scale.y += 0.002;
-    g_mesh.scale.z += 0.002;
+    //g_mesh.scale.x += 0.002;
+    //g_mesh.scale.y += 0.002;
+    //g_mesh.scale.z += 0 .002;
+
+    g_mesh.translate.x += 0.01;
+    g_mesh.translate.y -= 0.01;
+    g_mesh.translate.z = 5.0 ;
 
     // Create scale matrix to multiply mesh vertices
     Mat4F32 scale_matrix = mat4f32_make_scale(g_mesh.scale.x, g_mesh.scale.y, g_mesh.scale.z);
 
+    // Create translation matrix
+    Mat4F32 translation_matrix = mat4f32_translate(g_mesh.translate.x, g_mesh.translate.y, g_mesh.translate.z);
     // Loop through all the triangle faces of the mesh
     s32 faces_count = array_length(g_mesh.faces); // @revise the array_length, could do better using arenas?
     for (s32 i = 0; i < faces_count; ++i) {
@@ -131,8 +137,10 @@ internal b32 frame() {
         // Scale vertex with matrix
         transformed_vertex = mat4f32_mul_vec4(scale_matrix, transformed_vertex);
 
+        // Translate vertex
+        transformed_vertex = mat4f32_mul_vec4(translation_matrix, transformed_vertex);
+
         // Translate the vertex away from the camera
-        transformed_vertex.z += 5;
         transformed_vertices[j] = transformed_vertex;
       }
 
@@ -209,7 +217,7 @@ internal b32 frame() {
   {
     r_clear_colour_buffer(&buffer, 0xFF000000);
     r_draw_grid(&buffer, 0xFF444444);
-    //r_draw_filled_triangle(&buffer, 300, 100, 50, 400, 500, 700, 0xFF392876);
+    // r_draw_filled_triangle(&buffer, 300, 100, 50, 400, 500, 700, 0xFF392876);
 
     // Loop through all projected points and render
     int triangle_count = array_length(g_triangles_to_render);

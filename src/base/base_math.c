@@ -103,12 +103,7 @@ Mat4F32 mat4f32_identity(void) {
   // | 0 0 1 0 |
   // | 0 0 0 1 |
 
-	Mat4F32 m = {{
-		{1, 0, 0, 0}, 
-		{0, 1, 0, 0}, 
-		{0, 0, 1, 0}, 
-		{0, 0, 0, 1}
-	}};
+  Mat4F32 m = {{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}}};
   return m;
 }
 
@@ -122,6 +117,20 @@ Mat4F32 mat4f32_make_scale(f32 x, f32 y, f32 z) {
   m.m[0][0] = x;
   m.m[1][1] = y;
   m.m[2][2] = z;
+  return m;
+}
+
+Mat4F32 mat4f32_translate(f32 tx, f32 ty, f32 tz) {
+  // |1 0 0 tx|			|x|					|x + tx|
+  // |0 1 0 ty|   	|y|					|y + ty|
+  // |0 0 1 tz|	 *	|z|    =		|z + tz|
+  // |0 0 0 1 |			|1|					|	 1	 |
+  Mat4F32 m = mat4f32_identity();
+
+  m.m[0][3] = tx;
+  m.m[1][3] = ty;
+  m.m[2][3] = tz;
+
   return m;
 }
 
