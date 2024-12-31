@@ -104,6 +104,12 @@ internal b32 frame() {
     g_mesh.rotation.x += 0.01;
     g_mesh.rotation.y += 0.01;
     g_mesh.rotation.z += 0.0;
+    g_mesh.scale.x += 0.002;
+    g_mesh.scale.y += 0.002;
+    g_mesh.scale.z += 0.002;
+
+    // Create scale matrix to multiply mesh vertices
+    Mat4F32 scale_matrix = mat4f32_make_scale(g_mesh.scale.x, g_mesh.scale.y, g_mesh.scale.z);
 
     // Loop through all the triangle faces of the mesh
     s32 faces_count = array_length(g_mesh.faces); // @revise the array_length, could do better using arenas?
@@ -115,16 +121,15 @@ internal b32 frame() {
       face_vertices[1] = g_mesh.vertices[current_mesh_face.b - 1];
       face_vertices[2] = g_mesh.vertices[current_mesh_face.c - 1];
 
-      Vec3F32 transformed_vertices[3];
+      Vec4F32 transformed_vertices[3];
 
       // Loop through all the vertices of the current face and apply
       // transformation
       for (s32 j = 0; j < 3; ++j) {
-        Vec3F32 transformed_vertex = face_vertices[j];
+        Vec4F32 transformed_vertex = vec4f32_from_vec3f32(face_vertices[j]);
 
-        transformed_vertex = vec3f32_rotate_x(transformed_vertex, g_mesh.rotation.x);
-        transformed_vertex = vec3f32_rotate_y(transformed_vertex, g_mesh.rotation.y);
-        transformed_vertex = vec3f32_rotate_z(transformed_vertex, g_mesh.rotation.z);
+        // Scale vertex with matrix
+        transformed_vertex = mat4f32_mul_vec4(scale_matrix, transformed_vertex);
 
         // Translate the vertex away from the camera
         transformed_vertex.z += 5;
@@ -135,9 +140,9 @@ internal b32 frame() {
       if (g_render_state.cull_mode & CULL_BACK) {
         // @NOTE: triangles are clockwise.
         // find vectors (b - a) and (c -a)
-        Vec3F32 a = transformed_vertices[0]; /*   A   */
-        Vec3F32 b = transformed_vertices[1]; /*  / \  */
-        Vec3F32 c = transformed_vertices[2]; /* C---B */
+        Vec3F32 a = vec3f32_from_vec4f32(transformed_vertices[0]); /*   A   */
+        Vec3F32 b = vec3f32_from_vec4f32(transformed_vertices[1]); /*  / \  */
+        Vec3F32 c = vec3f32_from_vec4f32(transformed_vertices[2]); /* C---B */
 
         Vec3F32 ab = vec3_sub(b, a);
         Vec3F32 ac = vec3_sub(c, a);
@@ -162,7 +167,7 @@ internal b32 frame() {
       Vec2F32 projected_points[3];
       // Loop through all the vectices and perform projection
       for (s32 k = 0; k < 3; ++k) {
-        projected_points[k] = perspective_projection(transformed_vertices[k]);
+        projected_points[k] = perspective_projection(vec3f32_from_vec4f32(transformed_vertices[k]));
 
         // Scale and translate projected points to the middle of the screen
         projected_points[k].x += (buffer.width / 2);
@@ -204,7 +209,7 @@ internal b32 frame() {
   {
     r_clear_colour_buffer(&buffer, 0xFF000000);
     r_draw_grid(&buffer, 0xFF444444);
-    r_draw_filled_triangle(&buffer, 300, 100, 50, 400, 500, 700, 0xFF392876);
+    //r_draw_filled_triangle(&buffer, 300, 100, 50, 400, 500, 700, 0xFF392876);
 
     // Loop through all projected points and render
     int triangle_count = array_length(g_triangles_to_render);

@@ -29,6 +29,19 @@ struct Vec3F32 {
   f32 z;
 };
 
+typedef struct Vec4F32 Vec4F32;
+struct Vec4F32 {
+  f32 x;
+  f32 y;
+  f32 z;
+  f32 w;
+};
+
+typedef struct Mat4F32 Mat4F32;
+struct Mat4F32 {
+  f32 m[4][4];
+};
+
 // 2D Vector operations
 f32 vec2_length(Vec2F32 vector);
 Vec2F32 vec2_add(Vec2F32 a, Vec2F32 b);
@@ -54,6 +67,11 @@ internal f32 vec3_dot(Vec3F32 a, Vec3F32 b);
 Vec3F32 vec3f32_rotate_x(Vec3F32 vector, f32 angle);
 Vec3F32 vec3f32_rotate_y(Vec3F32 vector, f32 angle);
 Vec3F32 vec3f32_rotate_z(Vec3F32 vector, f32 angle);
+Vec3F32 vec3f32_from_vec4f32(Vec4F32 v);
+
+// Vec4
+
+Vec4F32 vec4f32_from_vec3f32(Vec3F32 v);
 
 typedef struct Triangle2F32 Triangle2F32;
 struct Triangle2F32 {
@@ -71,4 +89,7 @@ struct Face3S32 {
   u32 colour;
 };
 
+Mat4F32 mat4f32_identity(void);
+Mat4F32 mat4f32_make_scale(f32 x, f32 y, f32 z);
+Vec4F32 mat4f32_mul_vec4(Mat4F32 m, Vec4F32 v);
 #endif // BASE_MATH_H
