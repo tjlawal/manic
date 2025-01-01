@@ -210,3 +210,16 @@ Vec4F32 mat4f32_mul_vec4(Mat4F32 m, Vec4F32 v) {
 
   return result;
 }
+
+internal Mat4F32 mat4f32_mul_mat4f32(Mat4F32 a, Mat4F32 b) {
+  Mat4F32 result;
+
+  for (s32 rows = 0; rows < 4; ++rows) {
+    for (s32 cols = 0; cols < 4; ++cols) {
+      result.m[rows][cols] = a.m[rows][0] * b.m[0][cols] + a.m[rows][1] * b.m[1][cols] + a.m[rows][2] * b.m[2][cols] +
+                             a.m[rows][3] * b.m[3][cols];
+    }
+  }
+
+  return result;
+}

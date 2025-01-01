@@ -62,6 +62,7 @@ internal Vec3F32 vec3_sub(Vec3F32 a, Vec3F32 b);
 internal Vec3F32 vec3_mul(Vec3F32 vector, f32 factor);
 internal Vec3F32 vec3_div(Vec3F32 vector, f32 factor);
 internal void vec3_normalize(Vec3F32 *v);
+
 internal Vec3F32 vec3_cross(Vec3F32 a, Vec3F32 b);
 internal f32 vec3_dot(Vec3F32 a, Vec3F32 b);
 
@@ -97,4 +98,5 @@ Mat4F32 mat4f32_rotate_x(f32 x);
 Mat4F32 mat4f32_rotate_y(f32 y);
 Mat4F32 mat4f32_rotate_z(f32 z);
 Vec4F32 mat4f32_mul_vec4(Mat4F32 m, Vec4F32 v);
+internal Mat4F32 mat4f32_mul_mat4f32(Mat4F32 a, Mat4F32 b);
 #endif // BASE_MATH_H

@@ -140,17 +140,21 @@ internal b32 frame() {
       for (s32 j = 0; j < 3; ++j) {
         Vec4F32 transformed_vertex = vec4f32_from_vec3f32(face_vertices[j]);
 
-        // Scale the original vertex using a matrix
-        transformed_vertex = mat4f32_mul_vec4(scale_matrix, transformed_vertex);
+        // World Matrix
+        Mat4F32 world_matrix = mat4f32_identity();
 
-        // Rotate
-        transformed_vertex = mat4f32_mul_vec4(rotate_matrix_x, transformed_vertex);
-        transformed_vertex = mat4f32_mul_vec4(rotate_matrix_y, transformed_vertex);
-        transformed_vertex = mat4f32_mul_vec4(rotate_matrix_z, transformed_vertex);
+        // Multiply all matrices and load the world matrix
+				// NOTE(tijani): Order matters here. First scale, then rotate, then translate.
+				// not respecting the orders of matrix transformations would result in things 
+				// ending up in weird places.
+        world_matrix = mat4f32_mul_mat4f32(scale_matrix, world_matrix);
+        world_matrix = mat4f32_mul_mat4f32(rotate_matrix_x, world_matrix);
+        world_matrix = mat4f32_mul_mat4f32(rotate_matrix_y, world_matrix);
+        world_matrix = mat4f32_mul_mat4f32(rotate_matrix_z, world_matrix);
+        world_matrix = mat4f32_mul_mat4f32(translation_matrix, world_matrix);
 
-        // Translate
-        transformed_vertex = mat4f32_mul_vec4(translation_matrix, transformed_vertex);
-
+        // Multiply world matriy by original vector
+        transformed_vertex = mat4f32_mul_vec4(world_matrix, transformed_vertex);
         // Save transformed vertex in the array of transformed vectices
         transformed_vertices[j] = transformed_vertex;
       }
@@ -283,6 +287,4 @@ void entry_point() {
   for (; !update();) {
     Sleep(1); // DON'T MELT DOWN THE CPU, DUFUS.
   }
-
-  os_release_device_context(window_handle, device_context);
 }
