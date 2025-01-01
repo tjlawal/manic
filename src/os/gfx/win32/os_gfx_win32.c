@@ -53,7 +53,8 @@ internal OS_Handle os_window_open(Vec2S32 window_size, OS_WindowFlags flags, str
     // Arena *arena = arena_alloc();
     // Temp scratch = temp_begin(arena);
     // string16 title16 = str16_from_8(scratch.arena, title);
-    hwnd = CreateWindowExW(WS_EX_APPWINDOW, L"graphical-window", (WCHAR *)L"Test will remove",
+    // TODO(tijani): Replace with str16 as its supposed to be.
+    hwnd = CreateWindowExW(WS_EX_APPWINDOW, L"graphical-window", (WCHAR *)L"Manic Engine",
                            WS_OVERLAPPEDWINDOW | WS_SIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, (int)window_size.x,
                            (int)window_size.y, 0, 0, os_w32_gfx_state->hInstance, 0);
 

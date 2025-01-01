@@ -54,6 +54,14 @@ Vec3F32 vec3_div(Vec3F32 vector, f32 factor) {
   return result;
 }
 
+internal void vec3_normalize(Vec3F32 *v) {
+  f32 length = sqrt(v->x * v->x + v->y * v->y + v->z * v->z);
+
+  v->x /= length;
+  v->y /= length;
+  v->z /= length;
+}
+
 Vec3F32 vec3_cross(Vec3F32 a, Vec3F32 b) {
   Vec3F32 result = {.x = (a.y * b.z) - (a.z * b.y), .y = (a.z * b.x) - (a.x * b.z), .z = (a.x * b.y) - (a.y * b.x)};
   return result;
@@ -84,14 +92,15 @@ Vec3F32 vec3f32_rotate_z(Vec3F32 vector, f32 new_angle) {
   return rotated_vector;
 }
 
-Vec3F32 vec3f32_from_vec4f32(Vec4F32 v) {
-  Vec3F32 result = {v.x, v.y, v.z};
+// tijani: Vec4F32
+
+Vec4F32 vec4f32_from_vec3f32(Vec3F32 v) {
+  Vec4F32 result = {v.x, v.y, v.z, 1.0};
   return result;
 }
 
-// tijani: Vec4F32
-Vec4F32 vec4f32_from_vec3f32(Vec3F32 v) {
-  Vec4F32 result = {v.x, v.y, v.z, 1.0};
+Vec3F32 vec3f32_from_vec4f32(Vec4F32 v) {
+  Vec3F32 result = {v.x, v.y, v.z};
   return result;
 }
 
@@ -107,7 +116,7 @@ Mat4F32 mat4f32_identity(void) {
   return m;
 }
 
-Mat4F32 mat4f32_make_scale(f32 x, f32 y, f32 z) {
+Mat4F32 mat4f32_scale(f32 x, f32 y, f32 z) {
   // |  x 0 0 0 |
   // |  0 y 0 0 |
   // |  0 0 z 0 |
@@ -130,6 +139,63 @@ Mat4F32 mat4f32_translate(f32 tx, f32 ty, f32 tz) {
   m.m[0][3] = tx;
   m.m[1][3] = ty;
   m.m[2][3] = tz;
+
+  return m;
+}
+
+Mat4F32 mat4f32_rotate_x(f32 angle) {
+  // |1		0				0			0|		|x|
+  // |0  cos(x)	-sin(x)	0|		|y|
+  // |0  sin(x)	 cos(x)	0|	*	|z|
+  // |0		0	  		0	  	1|		|1|
+
+  f32 l_cos = cos(angle);
+  f32 l_sin = sin(angle);
+
+  Mat4F32 m = mat4f32_identity();
+
+  m.m[1][1] = l_cos;
+  m.m[1][2] = -l_sin;
+  m.m[2][1] = l_sin;
+  m.m[2][2] = l_cos;
+
+  return m;
+}
+
+Mat4F32 mat4f32_rotate_y(f32 angle) {
+  // |cos(y)	0		sin(y)	0|			|x|
+  // |  0   	1		 0			0|			|y|
+  // |-sin(y)	0		cos(y)	0|	 * 	|z|
+  // |  0			0	   0			1|			|1|
+
+  f32 l_cos = cos(angle);
+  f32 l_sin = sin(angle);
+
+  Mat4F32 m = mat4f32_identity();
+
+  m.m[0][0] = l_cos;
+  m.m[0][2] = l_sin;
+  m.m[2][0] = -l_sin;
+  m.m[2][2] = l_cos;
+
+  return m;
+}
+
+Mat4F32 mat4f32_rotate_z(f32 angle) {
+  // |cos(x) -sin(x)	0	 0|			|x|
+  // |sin(x)  cos(x)	0	 0|			|y|
+  // | 0			 0			1	 0|  *  |z|
+  // | 0			 0			0	 1|			|1|
+
+  f32 l_cos = cos(angle);
+  f32 l_sin = sin(angle);
+
+  Mat4F32 m = mat4f32_identity();
+
+  m.m[0][0] = l_cos;
+  m.m[0][1] = -l_sin;
+  m.m[1][0] = l_sin;
+  m.m[1][1] = l_cos;
 
   return m;
 }
