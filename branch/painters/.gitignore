@@ -1,0 +1,6 @@
+run_tree/*.exe
+run_tree/*.pdb
+run_tree/*.obj
+run_tree/*.res
+run_tree/*.rdi
+*~
