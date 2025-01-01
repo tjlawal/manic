@@ -40,7 +40,7 @@ internal b32 frame() {
   b32 quit = 0;
   Temp scratch = scratch_begin(0, 0);
 
-  // do event stuff
+  // tijani: do event stuff
   OS_EventList events = os_get_events(scratch.arena, 0);
   for (OS_Event *event = events.first; event != 0; event = event->next) {
     switch (event->event_kind) {
@@ -54,7 +54,7 @@ internal b32 frame() {
         switch (event->key) {
           case (OS_Key_A): {
             // TODO(tijani): handle the exception thrown here on the os layer
-            *(int *)0 = 0;
+            //*(int *)0 = 0;
             break;
           }
           case (OS_Key_Q): {
@@ -93,7 +93,7 @@ internal b32 frame() {
     }
   }
 
-  // setup buffer
+  // NOTE(tijani): Setup back-buffer
   Vec2S32 dimensions = os_window_dimension(window_handle);
   RenderBackBuffer buffer = {0};
   r_resize_buffer(scratch.arena, &buffer, dimensions.x, dimensions.y);
@@ -101,22 +101,29 @@ internal b32 frame() {
   // prepare triangle to render
   {
     g_triangles_to_render = NULL;
-    g_mesh.rotation.x += 0.01;
-    g_mesh.rotation.y += 0.01;
-    g_mesh.rotation.z += 0.0;
-    //g_mesh.scale.x += 0.002;
-    //g_mesh.scale.y += 0.002;
-    //g_mesh.scale.z += 0 .002;
+    // g_mesh.rotate.x += 0.01;
+    // g_mesh.rotate.y += 0.01;
+    // g_mesh.rotate.z += 0.01;
+
+    g_mesh.scale.x += 0.002;
+    g_mesh.scale.y += 0.002;
+    // g_mesh.scale.z += 0.002;
 
     g_mesh.translate.x += 0.01;
-    g_mesh.translate.y -= 0.01;
-    g_mesh.translate.z = 5.0 ;
+    // g_mesh.translate.y += 0.01;
+    g_mesh.translate.z = 5.0;
 
     // Create scale matrix to multiply mesh vertices
-    Mat4F32 scale_matrix = mat4f32_make_scale(g_mesh.scale.x, g_mesh.scale.y, g_mesh.scale.z);
+    Mat4F32 scale_matrix = mat4f32_scale(g_mesh.scale.x, g_mesh.scale.y, g_mesh.scale.z);
 
     // Create translation matrix
     Mat4F32 translation_matrix = mat4f32_translate(g_mesh.translate.x, g_mesh.translate.y, g_mesh.translate.z);
+
+    // Rotation Matrix
+    Mat4F32 rotate_matrix_x = mat4f32_rotate_x(g_mesh.rotate.x);
+    Mat4F32 rotate_matrix_y = mat4f32_rotate_y(g_mesh.rotate.y);
+    Mat4F32 rotate_matrix_z = mat4f32_rotate_z(g_mesh.rotate.z);
+
     // Loop through all the triangle faces of the mesh
     s32 faces_count = array_length(g_mesh.faces); // @revise the array_length, could do better using arenas?
     for (s32 i = 0; i < faces_count; ++i) {
@@ -129,34 +136,41 @@ internal b32 frame() {
 
       Vec4F32 transformed_vertices[3];
 
-      // Loop through all the vertices of the current face and apply
-      // transformation
+      // Loop through all the vertices of the current face and apply transformation
       for (s32 j = 0; j < 3; ++j) {
         Vec4F32 transformed_vertex = vec4f32_from_vec3f32(face_vertices[j]);
 
-        // Scale vertex with matrix
+        // Scale the original vertex using a matrix
         transformed_vertex = mat4f32_mul_vec4(scale_matrix, transformed_vertex);
 
-        // Translate vertex
+        // Rotate
+        transformed_vertex = mat4f32_mul_vec4(rotate_matrix_x, transformed_vertex);
+        transformed_vertex = mat4f32_mul_vec4(rotate_matrix_y, transformed_vertex);
+        transformed_vertex = mat4f32_mul_vec4(rotate_matrix_z, transformed_vertex);
+
+        // Translate
         transformed_vertex = mat4f32_mul_vec4(translation_matrix, transformed_vertex);
 
-        // Translate the vertex away from the camera
+        // Save transformed vertex in the array of transformed vectices
         transformed_vertices[j] = transformed_vertex;
       }
 
       // check backface culling
       if (g_render_state.cull_mode & CULL_BACK) {
         // @NOTE: triangles are clockwise.
-        // find vectors (b - a) and (c -a)
         Vec3F32 a = vec3f32_from_vec4f32(transformed_vertices[0]); /*   A   */
         Vec3F32 b = vec3f32_from_vec4f32(transformed_vertices[1]); /*  / \  */
         Vec3F32 c = vec3f32_from_vec4f32(transformed_vertices[2]); /* C---B */
 
+        // find vectors (b - a) and (c -a)
         Vec3F32 ab = vec3_sub(b, a);
         Vec3F32 ac = vec3_sub(c, a);
+        vec3_normalize(&ab);
+        vec3_normalize(&ac);
 
         // Compute the face normal using cross product to find perpendicular.
         Vec3F32 normal = vec3_cross(ab, ac);
+        vec3_normalize(&normal);
 
         // Find vector between point in the triangle and the camera origin
         Vec3F32 camera_ray = vec3_sub(camera_position, a);
@@ -183,7 +197,7 @@ internal b32 frame() {
       }
 
       // Calculate average depth for each face based on the vertices z value after transformation
-      f32 l_average_depth = (transformed_vertices[0].z + transformed_vertices[1].z + transformed_vertices[2].z) / 3;
+      f32 l_average_depth = (transformed_vertices[0].z + transformed_vertices[1].z + transformed_vertices[2].z) / 3.0;
 
       Triangle2F32 projected_triangle = {.points =
                                              {
@@ -193,31 +207,31 @@ internal b32 frame() {
                                              },
                                          .colour = current_mesh_face.colour,
                                          .average_depth = l_average_depth};
-      // projected_triangle.points[k] = projected_point;
 
       // save projected triangle in array of triangles to be rendered
       array_push(g_triangles_to_render, projected_triangle);
     }
 
-    // Sort the triangles to render by their average depth
     // NOTE(tijani): Bubble sort
-    s32 num_triangles = array_length(g_triangles_to_render);
-    for (s32 i = 0; i < num_triangles; ++i) {
-      for (s32 j = i; j < num_triangles; ++j) {
-        if (g_triangles_to_render[i].average_depth < g_triangles_to_render[j].average_depth) {
-          Triangle2F32 temp = g_triangles_to_render[i];
-          g_triangles_to_render[i] = g_triangles_to_render[j];
-          g_triangles_to_render[j] = temp;
+    // Sort the triangles to render by their average depth
+    {
+      s32 num_triangles = array_length(g_triangles_to_render);
+      for (s32 i = 0; i < num_triangles; ++i) {
+        for (s32 j = i; j < num_triangles; ++j) {
+          if (g_triangles_to_render[i].average_depth < g_triangles_to_render[j].average_depth) {
+            Triangle2F32 temp = g_triangles_to_render[i];
+            g_triangles_to_render[i] = g_triangles_to_render[j];
+            g_triangles_to_render[j] = temp;
+          }
         }
       }
     }
   }
 
-  // now draw
+  // NOTE(tijani): Now draw
   {
     r_clear_colour_buffer(&buffer, 0xFF000000);
     r_draw_grid(&buffer, 0xFF444444);
-    // r_draw_filled_triangle(&buffer, 300, 100, 50, 400, 500, 700, 0xFF392876);
 
     // Loop through all projected points and render
     int triangle_count = array_length(g_triangles_to_render);
@@ -248,7 +262,7 @@ internal b32 frame() {
     array_free(g_triangles_to_render);
   }
 
-  // send to window
+  // NOTE(tijani): Send back-buffer to window.
   r_copy_buffer_to_window(device_context, &buffer);
 
   scratch_end(scratch);
@@ -262,7 +276,7 @@ void entry_point() {
   window_handle = os_window_open(V2S32(1250, 900), 0, str8_lit(BUILD_TITLE));
   os_window_first_paint(window_handle);
   device_context = os_get_device_context(window_handle);
-  // load_obj_file_data_from_file("data/meshes/f22.obj");
+  // load_obj_file_data_from_file("data/meshes/teapot.obj");
   load_cube_mesh_data();
 
   // equip renderer
