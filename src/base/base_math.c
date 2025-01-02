@@ -8,24 +8,24 @@ internal Vec2S32 vec2_s32(s32 x, s32 y) {
   return v;
 }
 
-f32 vec2_length(Vec2F32 vector) { return (f32)sqrt(vector.x * vector.x + vector.y * vector.y); }
+internal f32 vec2_length(Vec2F32 vector) { return (f32)sqrt(vector.x * vector.x + vector.y * vector.y); }
 
-Vec2F32 vec2_add(Vec2F32 a, Vec2F32 b) {
+internal Vec2F32 vec2_add(Vec2F32 a, Vec2F32 b) {
   Vec2F32 result = {.x = a.x + b.x, .y = a.y + b.y};
 
   return result;
 }
-Vec2F32 vec2_sub(Vec2F32 a, Vec2F32 b) {
+internal Vec2F32 vec2_sub(Vec2F32 a, Vec2F32 b) {
   Vec2F32 result = {.x = a.x - b.x, .y = a.y - b.y};
   return result;
 }
 
-Vec2F32 vec2_mul(Vec2F32 vector, f32 factor) {
+internal Vec2F32 vec2_mul(Vec2F32 vector, f32 factor) {
   Vec2F32 result = {.x = vector.x * factor, .y = vector.y * factor};
   return result;
 }
 
-Vec2F32 vec2_div(Vec2F32 vector, f32 factor) {
+internal Vec2F32 vec2_div(Vec2F32 vector, f32 factor) {
   Vec2F32 result = {.x = vector.x / factor, .y = vector.y / factor};
   return result;
 }
@@ -33,23 +33,25 @@ Vec2F32 vec2_div(Vec2F32 vector, f32 factor) {
 internal f32 vec2_dot(Vec2F32 a, Vec2F32 b) { return ((a.x * b.x) + (a.y * b.y)); }
 
 // 3D Vector Operations
-f32 vec3_length(Vec3F32 vector) { return (f32)sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z); }
+internal f32 vec3_length(Vec3F32 vector) {
+  return (f32)sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
+}
 
-Vec3F32 vec3_add(Vec3F32 a, Vec3F32 b) {
+internal Vec3F32 vec3_add(Vec3F32 a, Vec3F32 b) {
   Vec3F32 result = {.x = a.x + b.x, .y = a.y + b.y, .z = a.z + b.z};
   return result;
 }
-Vec3F32 vec3_sub(Vec3F32 a, Vec3F32 b) {
+internal Vec3F32 vec3_sub(Vec3F32 a, Vec3F32 b) {
   Vec3F32 result = {.x = a.x - b.x, .y = a.y - b.y, .z = a.z - b.z};
   return result;
 }
 
-Vec3F32 vec3_mul(Vec3F32 vector, f32 factor) {
+internal Vec3F32 vec3_mul(Vec3F32 vector, f32 factor) {
   Vec3F32 result = {.x = vector.x * factor, .y = vector.y * factor, .z = vector.z * factor};
   return result;
 }
 
-Vec3F32 vec3_div(Vec3F32 vector, f32 factor) {
+internal Vec3F32 vec3_div(Vec3F32 vector, f32 factor) {
   Vec3F32 result = {.x = vector.x / factor, .y = vector.y / factor, .z = vector.z / factor};
   return result;
 }
@@ -62,7 +64,7 @@ internal void vec3_normalize(Vec3F32 *v) {
   v->z /= length;
 }
 
-Vec3F32 vec3_cross(Vec3F32 a, Vec3F32 b) {
+internal Vec3F32 vec3_cross(Vec3F32 a, Vec3F32 b) {
   Vec3F32 result = {.x = (a.y * b.z) - (a.z * b.y), .y = (a.z * b.x) - (a.x * b.z), .z = (a.x * b.y) - (a.y * b.x)};
   return result;
 }
@@ -71,21 +73,21 @@ Vec3F32 vec3_cross(Vec3F32 a, Vec3F32 b) {
 // a*b = axbx + ayby
 internal f32 vec3_dot(Vec3F32 a, Vec3F32 b) { return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z)); }
 
-Vec3F32 vec3f32_rotate_x(Vec3F32 vector, f32 new_angle) {
+internal Vec3F32 vec3f32_rotate_x(Vec3F32 vector, f32 new_angle) {
   Vec3F32 rotated_vector = {.x = vector.x,
                             .y = vector.y * (f32)cos(new_angle) - vector.z * (f32)sin(new_angle),
                             .z = vector.y * (f32)sin(new_angle) + vector.z * (f32)cos(new_angle)};
   return rotated_vector;
 }
 
-Vec3F32 vec3f32_rotate_y(Vec3F32 vector, f32 new_angle) {
+internal Vec3F32 vec3f32_rotate_y(Vec3F32 vector, f32 new_angle) {
   Vec3F32 rotated_vector = {.x = vector.x * (f32)cos(new_angle) - vector.z * (f32)sin(new_angle),
                             .y = vector.y,
                             .z = vector.x * (f32)sin(new_angle) + vector.z * (f32)cos(new_angle)};
   return rotated_vector;
 }
 
-Vec3F32 vec3f32_rotate_z(Vec3F32 vector, f32 new_angle) {
+internal Vec3F32 vec3f32_rotate_z(Vec3F32 vector, f32 new_angle) {
   Vec3F32 rotated_vector = {.x = vector.x * (f32)cos(new_angle) - vector.y * (f32)sin(new_angle),
                             .y = vector.x * (f32)sin(new_angle) + vector.y * (f32)cos(new_angle),
                             .z = vector.z};
@@ -99,14 +101,14 @@ Vec4F32 vec4f32_from_vec3f32(Vec3F32 v) {
   return result;
 }
 
-Vec3F32 vec3f32_from_vec4f32(Vec4F32 v) {
+internal Vec3F32 vec3f32_from_vec4f32(Vec4F32 v) {
   Vec3F32 result = {v.x, v.y, v.z};
   return result;
 }
 
 // tijani: Mat 4x4
 
-Mat4F32 mat4f32_identity(void) {
+internal Mat4F32 mat4f32_identity(void) {
   // | 1 0 0 0 |
   // | 0 1 0 0 |
   // | 0 0 1 0 |
@@ -116,7 +118,7 @@ Mat4F32 mat4f32_identity(void) {
   return m;
 }
 
-Mat4F32 mat4f32_scale(f32 x, f32 y, f32 z) {
+internal Mat4F32 mat4f32_scale(f32 x, f32 y, f32 z) {
   // |  x 0 0 0 |
   // |  0 y 0 0 |
   // |  0 0 z 0 |
@@ -129,7 +131,7 @@ Mat4F32 mat4f32_scale(f32 x, f32 y, f32 z) {
   return m;
 }
 
-Mat4F32 mat4f32_translate(f32 tx, f32 ty, f32 tz) {
+internal Mat4F32 mat4f32_translate(f32 tx, f32 ty, f32 tz) {
   // |1 0 0 tx|			|x|					|x + tx|
   // |0 1 0 ty|   	|y|					|y + ty|
   // |0 0 1 tz|	 *	|z|    =		|z + tz|
@@ -143,7 +145,7 @@ Mat4F32 mat4f32_translate(f32 tx, f32 ty, f32 tz) {
   return m;
 }
 
-Mat4F32 mat4f32_rotate_x(f32 angle) {
+internal Mat4F32 mat4f32_rotate_x(f32 angle) {
   // |1		0				0			0|		|x|
   // |0  cos(x)	-sin(x)	0|		|y|
   // |0  sin(x)	 cos(x)	0|	*	|z|
@@ -162,7 +164,7 @@ Mat4F32 mat4f32_rotate_x(f32 angle) {
   return m;
 }
 
-Mat4F32 mat4f32_rotate_y(f32 angle) {
+internal Mat4F32 mat4f32_rotate_y(f32 angle) {
   // |cos(y)	0		sin(y)	0|			|x|
   // |  0   	1		 0			0|			|y|
   // |-sin(y)	0		cos(y)	0|	 * 	|z|
@@ -181,7 +183,7 @@ Mat4F32 mat4f32_rotate_y(f32 angle) {
   return m;
 }
 
-Mat4F32 mat4f32_rotate_z(f32 angle) {
+internal Mat4F32 mat4f32_rotate_z(f32 angle) {
   // |cos(x) -sin(x)	0	 0|			|x|
   // |sin(x)  cos(x)	0	 0|			|y|
   // | 0			 0			1	 0|  *  |z|
@@ -200,7 +202,7 @@ Mat4F32 mat4f32_rotate_z(f32 angle) {
   return m;
 }
 
-Vec4F32 mat4f32_mul_vec4(Mat4F32 m, Vec4F32 v) {
+internal Vec4F32 mat4f32_mul_vec4(Mat4F32 m, Vec4F32 v) {
   Vec4F32 result;
 
   result.x = m.m[0][0] * v.x + m.m[0][1] * v.y + m.m[0][2] * v.z + m.m[0][3] * v.w;
@@ -220,6 +222,43 @@ internal Mat4F32 mat4f32_mul_mat4f32(Mat4F32 a, Mat4F32 b) {
                              a.m[rows][3] * b.m[3][cols];
     }
   }
+
+  return result;
+}
+
+internal Mat4F32 mat4f32_mul_projection(Mat4F32 projection_matrix, Vec4F32 v) {
+  // Multiply the projection matrix by the original vector
+  Vec4F32 result = mat4f32_mul_vec4(projection_matrix, v);
+
+  // NOTE(tijani): Perform perspective divide with original z-value that is
+  // stored in the projection matrix 'w', hence normalizing the entire image space.
+
+  if (result.w != 0.0) {
+    result.x /= result.w;
+    result.y /= result.w;
+    result.z /= result.w;
+  }
+
+  return result;
+}
+
+// NOTE(tijani): Camera projection matrix.
+// Maybe appropriate to move this into the camera projection code?
+internal Mat4F32 mat4f32_projection(f32 fov, f32 aspect_ratio, f32 znear, f32 zfar) {
+  // Matrix projection formula
+  // clang-format off
+	// |(h/w)*(1/tan(fov/2)							 0										0														 0|			|x|
+	// |									0		1/tan(fov/2)										0														 0| * 	|y|
+	// | 									0							 0		zfar/(zfar-znear)		-(zfar*znear)/(zfar-znear)|			|z|
+	// | 									0							 0										1														 0|			|1|
+  // clang-format on
+  Mat4F32 result = {{0}};
+
+  result.m[0][0] = aspect_ratio * (1 / tan(fov / 2));
+  result.m[1][1] = (1 / tan(fov / 2));
+  result.m[2][2] = (zfar / (zfar - znear));
+  result.m[2][3] = (-(zfar * znear) / (zfar - znear));
+  result.m[3][2] = 1.0;
 
   return result;
 }
