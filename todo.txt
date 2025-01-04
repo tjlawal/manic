@@ -2,21 +2,15 @@
 
 Exhaustive list of things to do. A search on the codebase would also expose all todos, this is just more explanatory.
 
-Everything above the line has been completed
-
 - Logging infrastructure, doesn't have to satisfy everything that would be ever needed, just has to work for now.
 - Profiling on the screen and seperate
 	- Font rendering
-	- 
 - Handle rotating with the mouse instead of autorotating them through code.
-- map keyboard shortcuts to setting render modes.
-
-
-
+- m
 
 
 
 
 Everything below the line has been completed.
 ==========================================================================
-
+- Map keyboard shortcuts to setting render modes.

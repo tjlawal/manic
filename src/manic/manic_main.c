@@ -30,11 +30,19 @@
 
 //////////////////////////////
 // Globals
-// @Revise: is there a better way to do this?
-HDC device_context;
+HDC device_context; // TODO(tijani): is there a better way to do this?
 global OS_Handle window_handle = {0};
 global Triangle2F32 *g_triangles_to_render = NULL;
 global RenderState g_render_state = {.cull_mode = CULL_BACK, .render_mode = RENDER_DEFAULT, .debug_overlay = 0};
+global RenderBackBuffer g_buffer = {0};
+
+// NOTE(tijani): Perspective Projection Matrix Initialization
+global f32 g_fov = PI / 3.0; // NOTE(tijani): this is radians of 180 deg  / 3.0 or 60 deg.
+global f32 g_znear = 1.0;
+global f32 g_zfar = 100.0;
+global f32 g_aspect_ratio = 0.0;
+global Vec2S32 g_dimensions = {0};
+global Mat4F32 g_projection_matrix;
 
 internal b32 frame() {
   b32 quit = 0;
@@ -93,24 +101,34 @@ internal b32 frame() {
     }
   }
 
-  // NOTE(tijani): Setup back-buffer
-  Vec2S32 dimensions = os_window_dimension(window_handle);
-  RenderBackBuffer buffer = {0};
-  r_resize_buffer(scratch.arena, &buffer, dimensions.x, dimensions.y);
+  // NOTE(tijani): Check if window dimension has changed, if true then resize the back buffer.
+  // this way we can keep reusing the same memory and only if the window dimensions have changed,
+  // meaning the back buffer has also changed, then we need to resize the buffer.
+  // Less memory touching unless needed to (in our case with rendering the window dimension is rearly changed)
+  // leads to better performance since we are a software renderer and every CPU counts!
+  g_dimensions = os_window_dimension(window_handle);
+  // g_dimension = os_window_dimension(window_handle);
+  if (g_dimensions.x != g_buffer.width || g_dimensions.y != g_buffer.height) {
+    r_resize_buffer(scratch.arena, &g_buffer, g_dimensions.x, g_dimensions.y);
+
+    // TODO(tijani): Recalculate aspect ratio here so things don't look weird when we resize.
+    // g_aspect_ratio = (f32)g_dimensions.x / (f32)g_dimensions.y;
+    // g_projection_matrix = mat4f32_perspective_project(g_fov, g_aspect_ratio, g_znear, g_zfar);
+  }
 
   // prepare triangle to render
   {
     g_triangles_to_render = NULL;
-    // g_mesh.rotate.x += 0.01;
+    g_mesh.rotate.x += 0.01;
     // g_mesh.rotate.y += 0.01;
     // g_mesh.rotate.z += 0.01;
 
-    g_mesh.scale.x += 0.002;
-    g_mesh.scale.y += 0.002;
-    // g_mesh.scale.z += 0.002;
+    // g_mesh.scale.x += 0.002;
+    // g_mesh.scale.y += 0.002;
+    //  g_mesh.scale.z += 0.002;
 
-    g_mesh.translate.x += 0.01;
-    // g_mesh.translate.y += 0.01;
+    // g_mesh.translate.x += 0.01;
+    //  g_mesh.translate.y += 0.01;
     g_mesh.translate.z = 5.0;
 
     // Create scale matrix to multiply mesh vertices
@@ -144,60 +162,72 @@ internal b32 frame() {
         Mat4F32 world_matrix = mat4f32_identity();
 
         // Multiply all matrices and load the world matrix
-				// NOTE(tijani): Order matters here. First scale, then rotate, then translate.
-				// not respecting the orders of matrix transformations would result in things 
-				// ending up in weird places.
+
+        // NOTE(tijani): Order matters here. First scale, then rotate, then translate.
+        // not respecting the orders of matrix transformations would result in things
+        // ending up in weird places.
+
         world_matrix = mat4f32_mul_mat4f32(scale_matrix, world_matrix);
+
         world_matrix = mat4f32_mul_mat4f32(rotate_matrix_x, world_matrix);
         world_matrix = mat4f32_mul_mat4f32(rotate_matrix_y, world_matrix);
         world_matrix = mat4f32_mul_mat4f32(rotate_matrix_z, world_matrix);
+
         world_matrix = mat4f32_mul_mat4f32(translation_matrix, world_matrix);
 
-        // Multiply world matriy by original vector
+        // Multiply world matrix by original vector
         transformed_vertex = mat4f32_mul_vec4(world_matrix, transformed_vertex);
+
         // Save transformed vertex in the array of transformed vectices
         transformed_vertices[j] = transformed_vertex;
       }
 
       // check backface culling
-      if (g_render_state.cull_mode & CULL_BACK) {
-        // @NOTE: triangles are clockwise.
-        Vec3F32 a = vec3f32_from_vec4f32(transformed_vertices[0]); /*   A   */
-        Vec3F32 b = vec3f32_from_vec4f32(transformed_vertices[1]); /*  / \  */
-        Vec3F32 c = vec3f32_from_vec4f32(transformed_vertices[2]); /* C---B */
+      {
+        if (g_render_state.cull_mode & CULL_BACK) {
+          // @NOTE: triangles are clockwise.
+          Vec3F32 a = vec3f32_from_vec4f32(transformed_vertices[0]); /*   A   */
+          Vec3F32 b = vec3f32_from_vec4f32(transformed_vertices[1]); /*  / \  */
+          Vec3F32 c = vec3f32_from_vec4f32(transformed_vertices[2]); /* C---B */
 
-        // find vectors (b - a) and (c -a)
-        Vec3F32 ab = vec3_sub(b, a);
-        Vec3F32 ac = vec3_sub(c, a);
-        vec3_normalize(&ab);
-        vec3_normalize(&ac);
+          // find vectors (b - a) and (c -a)
+          Vec3F32 ab = vec3_sub(b, a);
+          Vec3F32 ac = vec3_sub(c, a);
+          vec3_normalize(&ab);
+          vec3_normalize(&ac);
 
-        // Compute the face normal using cross product to find perpendicular.
-        Vec3F32 normal = vec3_cross(ab, ac);
-        vec3_normalize(&normal);
+          // Compute the face normal using cross product to find perpendicular.
+          Vec3F32 normal = vec3_cross(ab, ac);
+          vec3_normalize(&normal);
 
-        // Find vector between point in the triangle and the camera origin
-        Vec3F32 camera_ray = vec3_sub(camera_position, a);
+          // Find vector between point in the triangle and the camera origin
+          Vec3F32 camera_ray = vec3_sub(camera_position, a);
 
-        // if face normal (dot_product) is aligned with camera ray, draw if not
-        // cull (dont draw).
-        f32 dot_normal_camera = vec3_dot(normal, camera_ray);
+          // if face normal (dot_product) is aligned with camera ray, draw if not
+          // cull (dont draw).
+          f32 dot_normal_camera = vec3_dot(normal, camera_ray);
 
-        // Dont render if looking away  from the camera, remember we are a right
-        // handed coordinate system.
-        if (dot_normal_camera < 0) {
-          continue;
+          // Dont render if looking away  from the camera, remember we are a right
+          // handed coordinate system.
+          if (dot_normal_camera < 0) {
+            continue;
+          }
         }
       }
 
-      Vec2F32 projected_points[3];
+      Vec4F32 projected_points[3];
       // Loop through all the vectices and perform projection
       for (s32 k = 0; k < 3; ++k) {
-        projected_points[k] = perspective_projection(vec3f32_from_vec4f32(transformed_vertices[k]));
+        // Project the current vertex
+        projected_points[k] = mat4f32_mul_projection(g_projection_matrix, transformed_vertices[k]);
 
-        // Scale and translate projected points to the middle of the screen
-        projected_points[k].x += (buffer.width / 2);
-        projected_points[k].y += (buffer.height / 2);
+        // Scale into the viewport
+        projected_points[k].x *= (g_buffer.width / 2.0);
+        projected_points[k].y *= (g_buffer.height / 2.0);
+
+        // Translate projected points to the middle of the screen.
+        projected_points[k].x += (g_buffer.width / 2.0);
+        projected_points[k].y += (g_buffer.height / 2.0);
       }
 
       // Calculate average depth for each face based on the vertices z value after transformation
@@ -234,8 +264,8 @@ internal b32 frame() {
 
   // NOTE(tijani): Now draw
   {
-    r_clear_colour_buffer(&buffer, 0xFF000000);
-    r_draw_grid(&buffer, 0xFF444444);
+    r_clear_colour_buffer(&g_buffer, 0xFF000000);
+    r_draw_grid(&g_buffer, 0xFF444444);
 
     // Loop through all projected points and render
     int triangle_count = array_length(g_triangles_to_render);
@@ -245,21 +275,21 @@ internal b32 frame() {
 
       // Draw vertex points
       if (g_render_state.render_mode & RENDER_VERTEX) {
-        r_draw_rect(&buffer, triangle.points[0].x, triangle.points[0].y, 3, 3, 0xFFFE7104);
-        r_draw_rect(&buffer, triangle.points[1].x, triangle.points[1].y, 3, 3, 0xFFFE7104);
-        r_draw_rect(&buffer, triangle.points[2].x, triangle.points[2].y, 3, 3, 0xFFFE7104);
+        r_draw_rect(&g_buffer, triangle.points[0].x, triangle.points[0].y, 3, 3, 0xFFFE7104);
+        r_draw_rect(&g_buffer, triangle.points[1].x, triangle.points[1].y, 3, 3, 0xFFFE7104);
+        r_draw_rect(&g_buffer, triangle.points[2].x, triangle.points[2].y, 3, 3, 0xFFFE7104);
       }
 
       // Draw filled triangle
       if (g_render_state.render_mode == RENDER_DEFAULT || g_render_state.render_mode & RENDER_FILL) {
-        r_draw_filled_triangle(&buffer, triangle.points[0].x, triangle.points[0].y, triangle.points[1].x,
+        r_draw_filled_triangle(&g_buffer, triangle.points[0].x, triangle.points[0].y, triangle.points[1].x,
                                triangle.points[1].y, triangle.points[2].x, triangle.points[2].y, triangle.colour);
       }
 
       // Draw wireframe
       if (g_render_state.render_mode & RENDER_WIREFRAME) {
-        r_draw_triangle(&buffer, triangle.points[0].x, triangle.points[0].y, triangle.points[1].x, triangle.points[1].y,
-                        triangle.points[2].x, triangle.points[2].y, 0xFFFFFFF);
+        r_draw_triangle(&g_buffer, triangle.points[0].x, triangle.points[0].y, triangle.points[1].x,
+                        triangle.points[1].y, triangle.points[2].x, triangle.points[2].y, 0xFFFFFFF);
       }
     }
     // free the triangle
@@ -267,7 +297,7 @@ internal b32 frame() {
   }
 
   // NOTE(tijani): Send back-buffer to window.
-  r_copy_buffer_to_window(device_context, &buffer);
+  r_copy_buffer_to_window(device_context, &g_buffer);
 
   scratch_end(scratch);
   return quit;
@@ -280,6 +310,12 @@ void entry_point() {
   window_handle = os_window_open(V2S32(1250, 900), 0, str8_lit(BUILD_TITLE));
   os_window_first_paint(window_handle);
   device_context = os_get_device_context(window_handle);
+
+  // Initialize the perspective matrix
+  Vec2S32 dimension = os_window_dimension(window_handle);
+  g_aspect_ratio = (f32)dimension.x / (f32)dimension.y; // NOTE(tijani): may be better to just call os_window_dimension?
+  g_projection_matrix = mat4f32_perspective_project(g_fov, g_aspect_ratio, g_znear, g_zfar);
+
   // load_obj_file_data_from_file("data/meshes/teapot.obj");
   load_cube_mesh_data();
 

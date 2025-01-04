@@ -416,8 +416,8 @@ internal void os_gfx_init(void) {
   os_w32_gfx_state->gfx_thread_id = (u32)GetCurrentThreadId();
   os_w32_gfx_state->hInstance = GetModuleHandle(0);
 
-  // @TODO: this might be too windows 10 specific. research if that is the case and find a better way to handle it.
-  // Set DPI Awareness for the entire application, this applies to all related threads.
+  // TODO(tijani): this might be too windows 10 specific. research if that is the case and find a better way to handle
+  // it. Set DPI Awareness for the entire application, this applies to all related threads.
   SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
   // register graphical window class

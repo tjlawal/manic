@@ -3,6 +3,9 @@
 #ifndef BASE_MATH_H
 #define BASE_MATH_H
 
+//- tijani: Miscl defines
+#define PI 3.14159265
+
 //- tijani: Vertices are points;
 typedef union Vec2F32 Vec2F32;
 union Vec2F32 {
@@ -100,9 +103,8 @@ internal Mat4F32 mat4f32_rotate_z(f32 z);
 
 internal Vec4F32 mat4f32_mul_vec4(Mat4F32 m, Vec4F32 v);
 internal Mat4F32 mat4f32_mul_mat4f32(Mat4F32 a, Mat4F32 b);
-internal Mat4F32 mat4f32_mul_projection(Mat4F32 projection_matrix, Vec4F32 v);
 
-internal Mat4F32 mat4f32_projection(f32 fov, f32 aspect_ratio, f32 znear, f32 zfar);
-
+internal Vec4F32 mat4f32_mul_projection(Mat4F32 projection_matrix, Vec4F32 v);
+internal Mat4F32 mat4f32_perspective_project(f32 fov, f32 aspect_ratio, f32 znear, f32 zfar);
 
 #endif // BASE_MATH_H
