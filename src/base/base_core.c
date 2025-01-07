@@ -1,5 +1,12 @@
 // Copyright Frost Gorilla, Inc. All Rights Reserved.
 
+// Safe casts
+internal u16 safe_cast_u16(u32 x) {
+  assert_always(x <= max_u16);
+  u16 result = (u16)x;
+  return result;
+}
+
 #define ARRAY_RAW_DATA(array) ((int *)(array) - 2)
 #define ARRAY_CAPACITY(array) (ARRAY_RAW_DATA(array)[0])
 #define ARRAY_OCCUPIED(array) (ARRAY_RAW_DATA(array)[1])
