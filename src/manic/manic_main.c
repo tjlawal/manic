@@ -2,8 +2,12 @@
 
 ///////////////////////////////////////////////////////
 // Build Options
-#define BUILD_TITLE          "Manic Renderer"
-#define OS_FEATURE_GRAPHICAL 1
+#define BUILD_TITLE                        "Manic Renderer"
+#define BUILD_VERSION_MAJOR                0
+#define BUILD_VERSION_MINOR                10
+#define BUILD_VERSION_PATCH                0
+#define BUILD_RELEASE_PHASE_STRING_LITERAL "Alpha"
+#define OS_FEATURE_GRAPHICAL               1
 
 // clang-format off
 
@@ -112,8 +116,8 @@ internal b32 frame() {
     r_resize_buffer(scratch.arena, &g_buffer, g_dimensions.x, g_dimensions.y);
 
     // TODO(tijani): Recalculate aspect ratio here so things don't look weird when we resize.
-    // g_aspect_ratio = (f32)g_dimensions.x / (f32)g_dimensions.y;
-    // g_projection_matrix = mat4f32_perspective_project(g_fov, g_aspect_ratio, g_znear, g_zfar);
+    g_aspect_ratio = (f32)g_dimensions.x / (f32)g_dimensions.y;
+    g_projection_matrix = mat4f32_perspective_project(g_fov, g_aspect_ratio, g_znear, g_zfar);
   }
 
   // prepare triangle to render
@@ -307,13 +311,14 @@ internal b32 frame() {
 // Entrypoint
 
 void entry_point() {
-  window_handle = os_window_open(V2S32(1250, 900), 0, str8_lit(BUILD_TITLE));
+  window_handle = os_window_open(V2S32(1250, 900), 0, str8_lit(BUILD_TITLE_STRING_LITERAL));
   os_window_first_paint(window_handle);
   device_context = os_get_device_context(window_handle);
 
   // Initialize the perspective matrix
   Vec2S32 dimension = os_window_dimension(window_handle);
-  g_aspect_ratio = (f32)dimension.x / (f32)dimension.y; // NOTE(tijani): may be better to just call os_window_dimension?
+  g_aspect_ratio = (f32)dimension.x / (f32)dimension.y; // NOTE(tijani): may be better to just call
+  // os_window_dimension?
   g_projection_matrix = mat4f32_perspective_project(g_fov, g_aspect_ratio, g_znear, g_zfar);
 
   // load_obj_file_data_from_file("data/meshes/teapot.obj");
