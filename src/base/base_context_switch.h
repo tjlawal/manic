@@ -79,6 +79,15 @@
   #error Compiler not supported.
 #endif
 
+//- tijani: read-only segment
+#if COMPILER_MSVC || (COMPILER_CLANG && OS_WINDOWS)
+  #pragma section(".rdata$", read)
+  #define read_only __declspec(allocate(".rdata$"))
+
+#elif (COMPILER_CLANG && OS_LINUX)
+  #define read_only __attribute__((section(".rodata")))
+#endif
+
 // Architecture
 #if defined(ARCH_X64)
   #define ARCH_64BIT 1
@@ -145,6 +154,12 @@
   #define BUILD_MODE_STRING_LITERAL_APPEND ""
 #endif
 
+#if defined(BUILD_SVN_REVISION)
+  #define BUILD_SVN_REVISION_STRING_LITERAL_APPEND " [Revision: " BUILD_SVN_REVISION "]"
+#else
+  #define BUILD_SVN_REVISION_STRING_LITERAL_APPEND ""
+#endif
+
 #if defined(BUILD_GIT_HASH)
   #define BUILD_GIT_HASH_STRING_LITERAL_APPEND " [" BUILD_GIT_HASH "]"
 #else
@@ -166,7 +181,7 @@
 #define BUILD_TITLE_STRING_LITERAL                                                                                     \
   BUILD_TITLE                                                                                                          \
   " (" BUILD_VERSION_STRING_LITERAL " " BUILD_RELEASE_PHASE_STRING_LITERAL ") - " __DATE__                             \
-  "" BUILD_GIT_HASH_STRING_LITERAL_APPEND BUILD_MODE_STRING_LITERAL_APPEND
+  "" BUILD_SVN_REVISION_STRING_LITERAL_APPEND BUILD_MODE_STRING_LITERAL_APPEND
 
 // Zero out all options
 
