@@ -49,21 +49,18 @@ internal OS_W32_Window *os_w32_window_from_hwnd(HWND hwnd) {
 internal OS_Handle os_window_open(Vec2S32 window_size, OS_WindowFlags flags, string8 title) {
   HWND hwnd = 0;
   {
-
-    // Arena *arena = arena_alloc();
-    // Temp scratch = temp_begin(arena);
-    // string16 title16 = str16_from_8(scratch.arena, title);
-    // TODO(tijani): Replace with str16 as its supposed to be.
-    hwnd = CreateWindowExW(WS_EX_APPWINDOW, L"graphical-window", (WCHAR *)L"Manic Engine",
-                           WS_OVERLAPPEDWINDOW | WS_SIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, (int)window_size.x,
-                           (int)window_size.y, 0, 0, os_w32_gfx_state->hInstance, 0);
+    Temp scratch = scratch_begin(0, 0);
+    string16 title16 = str16_from_8(scratch.arena, title);
+    hwnd = CreateWindowExW(WS_EX_APPWINDOW, L"graphical-window", (WCHAR *)title16.str, WS_OVERLAPPEDWINDOW | WS_SIZEBOX,
+                           CW_USEDEFAULT, CW_USEDEFAULT, (int)window_size.x, (int)window_size.y, 0, 0,
+                           os_w32_gfx_state->hInstance, 0);
 
     if (hwnd == NULL) {
       DWORD error = GetLastError();
       // Log or debug print the error
       printf("CreateWindowExW failed with error: %lu\n", error);
     }
-    // temp_end(scratch);
+    scratch_end(scratch);
   }
 
   // make window
@@ -350,7 +347,7 @@ internal OS_Key os_w32_os_key_from_vkey(WPARAM virtual_key) {
   // lowest 8-bits of WPARAM. It also ensures we don't tramp
   // on other bit fields of WPARAM since we have no business
   // with them in this context, 256 is all we need.
-  OS_Key key = key_table[virtual_key & (0x000000ff)];
+  OS_Key key = key_table[virtual_key & (bitmask8)];
   return key;
 }
 internal WPARAM os_w32_vkey_from_os_key(OS_Key key) {

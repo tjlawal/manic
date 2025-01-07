@@ -110,12 +110,17 @@ internal void w32_entry_point_caller() {
 }
 
 #if BUILD_CONSOLE_INTERFACE
-int wmain() { w32_entry_point_caller(); }
+int wmain() {
+  w32_entry_point_caller();
+  return 0;
+}
+#elif BUILD_DEBUG
+int main() {
+  w32_entry_point_caller();
+  return 0;
+}
 #else
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd) {
-  // TODO(tijani): __argc and __wargv are specific to MSVC
-  // implement CmdLine layer and then return to it so that the build
-  // does not fail on clang
   w32_entry_point_caller();
   return 0;
 }
