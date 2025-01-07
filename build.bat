@@ -1,6 +1,5 @@
 @echo off
 setlocal
-setlocal enabledelayedexpansion
 cd /D "%~dp0"
 
 :: ----------- Unpack argument ----------------------------------------
