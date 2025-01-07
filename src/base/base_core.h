@@ -36,6 +36,27 @@ typedef s64 b64;
 typedef float f32;
 typedef double f64;
 
+// Constants
+global u16 max_u16 = 0xffff;
+global u32 max_u32 = 0xffffffff;
+
+// Bitmasks
+global const u32 bitmask1 = 0x00000001;
+global const u32 bitmask2 = 0x00000003;
+global const u32 bitmask3 = 0x00000007;
+global const u32 bitmask4 = 0x0000000f;
+global const u32 bitmask5 = 0x0000001f;
+global const u32 bitmask6 = 0x0000003f;
+global const u32 bitmask7 = 0x0000007f;
+global const u32 bitmask8 = 0x000000ff;
+global const u32 bitmask9 = 0x000001ff;
+global const u32 bitmask10 = 0x000003ff;
+
+global const u32 bit8 = (1 << 7);
+global const u32 bit25 = (1 << 24);
+global const u32 bit31 = (1 << 30);
+global const u32 bit32 = (1 << 31);
+
 // Units
 #define KB(n)       (((u64)(n)) << 10)
 #define MB(n)       (((u64)(n)) << 20)
