@@ -1,5 +1,6 @@
 @echo off
 setlocal
+setlocal enabledelayedexpansion
 cd /D "%~dp0"
 
 :: ----------- Unpack argument ----------------------------------------
@@ -65,6 +66,9 @@ if not exist run_tree (
 pushd run_tree
 %rc% /nologo /fo resource.res .\data\resource.rc || exit /b 1
 popd
+
+:: Get Subversion Revision History
+for /f "tokens=2" %%i in ('call svn info ^| findstr "Revision"') do set compile=%compile% -DBUILD_SVN_REVISION=\"%%i\"
 
 :: Build Things ---------------------------------------------------------------
 pushd run_tree
