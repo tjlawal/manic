@@ -1,3 +1,5 @@
+:: Copyright Frost Gorilla, Inc. All Rights Reserved.
+
 @echo off
 setlocal
 cd /D "%~dp0"
