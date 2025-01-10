@@ -18,7 +18,7 @@ set auto_compile_flags=
 if "%asan%"=="1" set auto_compile_flags=%auto_compile_flags% -fsanitize=address && echo [asan enabled]
 
 :: ------------ MSVC --------------------------------------------------
-set cl_common=     /I..\src\ /nologo /FC /Z7 /W4 /std:c11
+set cl_common=     /I..\src\ /nologo /FC /Z7 /W4 /std:c99
 set cl_debug=      call cl /Od /DBUILD_DEBUG=1 %cl_common% %auto_compile_flags%
 set cl_release=    call cl /O2 /DBUILD_DEBUG=0 %cl_common% %auto_compile_flags%
 set cl_link=       /link /INCREMENTAL:NO
