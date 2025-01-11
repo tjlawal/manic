@@ -5,10 +5,12 @@
 
 // tijani: Render Modes
 
-#define RENDER_DEFAULT   (1 << 0)
-#define RENDER_WIREFRAME (1 << 1)
-#define RENDER_VERTEX    (1 << 2)
-#define RENDER_FILL      (1 << 3)
+#define RENDER_DEFAULT           (1 << 0)
+#define RENDER_WIREFRAME         (1 << 1)
+#define RENDER_VERTEX            (1 << 2)
+#define RENDER_FILL              (1 << 3)
+#define RENDER_TEXTURE           (1 << 4)
+#define RENDER_TEXTURE_WIREFRAME (1 << 5)
 
 // tijani: Culling Modes
 
