@@ -3,6 +3,9 @@
 + means todo
 - means completed
 
+01-11-2025:
++ fix weird bug that scales mesh to match the aspect ration
+
 01-10-2025:
 - Texture mapping
 	- Flat-Bottom triangle
