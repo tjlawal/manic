@@ -69,10 +69,18 @@ internal Vec3F32 vec3f32_from_vec4f32(Vec4F32 v);
 //- tijani: Vec4
 internal Vec4F32 vec4f32_from_vec3f32(Vec3F32 v);
 
+//- tijani: Textures
+typedef struct TextureF32 TextureF32;
+struct TextureF32 {
+  f32 u;
+  f32 v;
+};
+
 //- tijani: Triangles
 typedef struct Triangle2F32 Triangle2F32;
 struct Triangle2F32 {
   Vec2F32 points[3];
+  TextureF32 texture_coords[3];
   u32 colour;
   f32 average_depth;
 };
@@ -83,6 +91,9 @@ struct Face3S32 {
   s32 a;
   s32 b;
   s32 c;
+  TextureF32 a_uv;
+  TextureF32 b_uv;
+  TextureF32 c_uv;
   u32 colour;
 };
 

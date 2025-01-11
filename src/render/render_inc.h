@@ -28,6 +28,6 @@
 // #error Renderer backend not supported
 // #endif
 
-#include "software/render_software.h"
+#include "raster/render_raster.h"
 
 #endif // RENDER_INC_H
