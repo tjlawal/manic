@@ -159,6 +159,28 @@ C_LINK void __asan_unpoison_memory_region(void const volatile *addr, size_t size
 #define min(A, B)       (((A) < (B)) ? (A) : (B))
 #define clamp_top(A, X) min(A, X)
 #define clamp_bot(X, B) max(X, B)
+#define clamp(A, X, B)  (((A) < (X)) ? (X) : ((A) > (B)) ? (B) : (A))
+
+// tijani: Swap types
+#define swap(a, b, type)                                                                                               \
+  do {                                                                                                                 \
+    type temp = *(a);                                                                                                  \
+    *(a) = *(b);                                                                                                       \
+    *(b) = temp;                                                                                                       \
+  } while (0)
+
+// Utilities
+// inline internal void swap_ints(s32 *a, s32 *b) {
+//  s32 temp = *a;
+//  *a = *b;
+//  *b = temp;
+//}
+
+// inline internal void swap_floats(f32 *a, f32 *b) {
+//   f32 temp = *a;
+//   *a = *b;
+//   *b = temp;
+// }
 
 // tijani: Type Alignment
 #if COMPILER_MSVC
