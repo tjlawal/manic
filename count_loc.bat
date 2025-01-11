@@ -2,7 +2,7 @@
 setlocal
 setlocal enabledelayedexpansion
 
-set folder="..\playground\Aseprite-v1.3.10.1-Source"
+set folder="."
 set total_lines=0
 set total_c_files=0
 set total_h_files=0
