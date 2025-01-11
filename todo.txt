@@ -1,16 +1,43 @@
-[frost gorilla inc] 
+[frost gorilla inc]
 
-Exhaustive list of things to do. A search on the codebase would also expose all todos, this is just more explanatory.
++ means todo
+- means completed
 
-- Logging infrastructure, doesn't have to satisfy everything that would be ever needed, just has to work for now.
-- Profiling on the screen and seperate
-	- Font rendering
-- Handle rotating with the mouse instead of autorotating them through code.
-- m
-
-
+01-10-2025:
+- Texture mapping
+	- Flat-Bottom triangle
+	- Flat-Top triangle
 
 
-Everything below the line has been completed.
-==========================================================================
+01-09-2025:
+
++ Texture mapping
+	+ Textured triangles
+	+ Flat-Bottom triangle
+	+ Flat-Top triangle
+	+ Baycentric Cordinates
+		+ Baycentric Weights
++ Texture mapping using PNG
++ Textured OBJ files
++ Z-Buffer
++ Camera
++ Clipping
++ Multiple Meshes
+
+01-08-2025: 
+
++ Parse command line options
++ Logging
++ Multithreading
++ SIMD calculation for math, this would significantly speed up matrix calculations.
++ Handle DPI Scaling and refresh rates at the OS layer.
++ Make the BackBuffer not too platform specific. The current implementation stores WIN32 BITMAPINFO, we would like that to not be the case. 
+	Render functions copying from he backbuffer to the windows are also WIN32 specific, this is not desireble as it creates dependence of engine code on the platform. 
+	The Engine code should not be aware of the platform it is running on, it should know handle engine stuff and reach out to the OS layer when it needs OS things.  
++ Profiler. Maybe first with Tracy then make a customized one as needs become clearer.
++ FPS Counter, Triangles Counter
++ Fully/90%  compliant .obj file parser.
++ Create state to handle mesh rotation, scaling and translation with mouse instead of auto rotation and scalling.
+
+
 - Map keyboard shortcuts to setting render modes.
