@@ -16,15 +16,13 @@
 
 // NOTE(tijani): order is important here
 
-// thirdparti
-#include "third_party/framepro/FramePro.h"
-
 // [.h]
 #include "base/base_inc.h"
 #include "os/os_inc.h"
 #include "camera/camera_inc.h"
 #include "render/render_inc.h"
 #include "mesh/mesh_inc.h"
+#include "manic_core.h"
 
 // [.c]
 #include "base/base_inc.c"
