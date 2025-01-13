@@ -18,14 +18,14 @@ set auto_compile_flags=
 if "%asan%"=="1" set auto_compile_flags=%auto_compile_flags% -fsanitize=address && echo [asan enabled]
 
 :: ------------ MSVC --------------------------------------------------
-set cl_common=     /I..\src\ /nologo /FC /Z7 /W4 /std:c99
+set cl_common=     /I..\src\ /nologo /FC /Z7 /W1
 set cl_debug=      call cl /Od /DBUILD_DEBUG=1 %cl_common% %auto_compile_flags%
 set cl_release=    call cl /O2 /DBUILD_DEBUG=0 %cl_common% %auto_compile_flags%
 set cl_link=       /link /INCREMENTAL:NO
 set cl_out=        /out:
 
 :: ------------ Clang -------------------------------------------------
-set clang_common=   -I..\src\ -Wall -gcodeview -fdiagnostics-absolute-paths -std=c11 -Wno-initializer-overrides -Wno-unused-function -Wno-missing-braces -Wno-unused-variable
+set clang_common=   -I..\src\ -Wall -gcodeview -fdiagnostics-absolute-paths -std=c99 -Wno-initializer-overrides -Wno-unused-function -Wno-missing-braces -Wno-unused-variable 
 set clang_debug=    call clang -g -O0 -DBUILD_DEBUG=1 %clang_common% %auto_compile_flags%
 set clang_release=  call clang -g -O2 -DBUILD_DEBUG=0 %clang_common% %auto_compile_flags%
 set clang_link=     -fuse-ld=lld -Xlinker /MANIFEST:EMBED
