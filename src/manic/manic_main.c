@@ -19,7 +19,6 @@
 // [.h]
 #include "base/base_inc.h"
 #include "os/os_inc.h"
-#include "camera/camera_inc.h"
 #include "render/render_inc.h"
 #include "mesh/mesh_inc.h"
 #include "manic_core.h"
@@ -27,7 +26,6 @@
 // [.c]
 #include "base/base_inc.c"
 #include "os/os_inc.c"
-#include "camera/camera_inc.c"
 #include "render/render_inc.c"
 #include "mesh/mesh_inc.c"
 
@@ -46,12 +44,14 @@ struct GlobalLight {
 
 //////////////////////////////
 // Globals
-HDC device_context; // TODO(tijani): is there a better way to do this?
+global HDC g_device_context; // TODO(tijani): is there a better way to do this?
 global OS_Handle window_handle = {0};
 global Triangle2F32 *g_triangles_to_render = NULL;
 global RenderState g_render_state = {.cull_mode = CULL_BACK, .render_mode = RENDER_DEFAULT, .debug_overlay = 0};
 global RenderBackBuffer g_buffer = {0};
 global GlobalLight g_light = {0, 0, 1};
+global Vec3F32 g_camera_position = {.x = 0, .y = 0, .z = 0};
+
 
 // NOTE(tijani): Perspective Projection Matrix Initialization
 global f32 g_fov = PI / 3.0; // NOTE(tijani): this is radians of 180 deg  / 3.0 or 60 deg.
@@ -242,7 +242,7 @@ internal b32 frame() {
       vec3_normalize(&normal);
 
       // Find vector between point in the triangle and the camera origin
-      Vec3F32 camera_ray = vec3_sub(camera_position, a);
+      Vec3F32 camera_ray = vec3_sub(g_camera_position, a);
 
       // if face normal (dot_product) is aligned with camera ray, draw if not
       // cull (dont draw).
@@ -378,7 +378,7 @@ internal b32 frame() {
   }
 
   // NOTE(tijani): Send back-buffer to window.
-  r_copy_buffer_to_window(device_context, &g_buffer);
+  r_copy_buffer_to_window(g_device_context, &g_buffer);
 
   r_clear_colour_buffer(&g_buffer, 0xFF000000);
 
@@ -392,7 +392,7 @@ internal b32 frame() {
 void entry_point() {
   window_handle = os_window_open(V2S32(900, 800), 0, str8_lit(BUILD_TITLE_STRING_LITERAL));
   os_window_first_paint(window_handle);
-  device_context = os_get_device_context(window_handle);
+  g_device_context = os_get_device_context(window_handle);
 
   // Initialize the perspective matrix
   Vec2S32 dimension = os_window_dimension(window_handle);
