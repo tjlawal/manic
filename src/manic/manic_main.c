@@ -91,11 +91,6 @@ internal b32 frame() {
         // process keypress
       case (OS_EventKind_Press): {
         switch (event->key) {
-          case (OS_Key_A): {
-            // TODO(tijani): handle the exception thrown here on the os layer
-            //*(int *)0 = 0;
-            break;
-          }
           case (OS_Key_Q): {
             quit = 1;
             break;
@@ -160,14 +155,14 @@ internal b32 frame() {
   {
     g_triangles_to_render = NULL;
     g_mesh.rotate.x += 0.01;
-    //g_mesh.rotate.y += 0.01;
-    //g_mesh.rotate.z += 0.01;
+    // g_mesh.rotate.y += 0.01;
+    // g_mesh.rotate.z += 0.01;
 
-     g_mesh.scale.x += 0.002;
-     //g_mesh.scale.y += 0.002;
-     //g_mesh.scale.z += 0.02;
+    g_mesh.scale.x += 0.002;
+    // g_mesh.scale.y += 0.002;
+    // g_mesh.scale.z += 0.02;
 
-     g_mesh.translate.x += 0.001;
+    g_mesh.translate.x += 0.001;
     // g_mesh.translate.y += 0.01;
     g_mesh.translate.z = 5.0;
 
@@ -385,7 +380,7 @@ internal b32 frame() {
   // NOTE(tijani): Send back-buffer to window.
   r_copy_buffer_to_window(device_context, &g_buffer);
 
-   r_clear_colour_buffer(&g_buffer, 0xFF000000);
+  r_clear_colour_buffer(&g_buffer, 0xFF000000);
 
   scratch_end(scratch);
   return quit;
@@ -404,8 +399,8 @@ void entry_point() {
   g_aspect_ratio = (f32)dimension.x / (f32)dimension.y;
   g_projection_matrix = mat4f32_perspective_project(g_fov, g_aspect_ratio, g_znear, g_zfar);
 
-   load_obj_file_data_from_file("data/meshes/f22.obj");
-  //load_cube_mesh_data();
+  load_obj_file_data_from_file("data/meshes/f22.obj");
+  // load_cube_mesh_data();
 
   // equip renderer
   for (; !update();) {
