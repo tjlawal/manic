@@ -74,7 +74,7 @@ global const u32 bit32 = (1 << 31);
 #endif
 
 // Branch prediction hints
-#if defined COMPILER_CLANG
+#if defined(__clang__)
   #define expect(expr, val) __builtin_expect((expr), (val))
 #else
   #define expect(expr, val) (expr)
