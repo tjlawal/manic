@@ -8,6 +8,7 @@
 
 #include <windows.h>
 #include <shellapi.h>
+#include <shlobj.h>
 #include <processthreadsapi.h>
 
 // clang-format on
@@ -15,32 +16,14 @@
 #pragma comment(lib, "user32")
 #pragma comment(lib, "shell32")
 #pragma comment(lib, "gdi32")
+#pragma comment(lib, "shlwapi")
+#pragma comment(lib, "comctl32")
 
-// tijani: Thread Primitives
-typedef enum OS_W32_ThreadPrimitiveKind {
-  OS_W32_ThreadPrimitiveKind_NULL,
-  OS_W32_ThreadPrimitiveKind_Thread,
-  OS_W32_ThreadPrimitiveKind_Mutex,
-  OS_W32_ThreadPrimitiveKind_RWMutex,
-  OS_W32_ThreadPrimitiveKind_ConditionVariable,
-} OS_W32_ThreadPrimitiveKind;
-
-typedef struct OS_W32_ThreadPrimitive OS_W32_ThreadPrimitive;
-struct OS_W32_ThreadPrimitive {
-  OS_W32_ThreadPrimitive *next;
-  OS_W32_ThreadPrimitiveKind *thread_primitive_kind;
-  union {
-    struct {
-      OS_ThreadFunctionType *func;
-      void *ptr;
-      HANDLE handle;
-      DWORD thread_id;
-    } thread;
-    CRITICAL_SECTION mutex;
-    SRWLOCK read_write_mutex;
-    CONDITION_VARIABLE condition_variable;
-  };
-};
+// NOTE(tijani): This line is required for loading the correct comctl32 dll file.
+// It ensures the correct version (6) is selected to enable visual styles for the exception window.
+#pragma comment(                                                                                                       \
+    linker,                                                                                                            \
+    "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 // Windows State
 typedef struct OS_W32_State OS_W32_State;

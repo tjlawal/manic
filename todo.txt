@@ -3,6 +3,9 @@
 + means todo
 - means completed
 
+01-12-2025:
+- Handle hard crashes on win32 with exception and call stack.
+
 01-11-2025:
 + fix weird bug that scales mesh to match the aspect ration
 
