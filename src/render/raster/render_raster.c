@@ -142,8 +142,8 @@ internal void r_draw_textured_triangle(RenderBackBuffer *buffer, s32 x0, s32 y0,
   if (y2 - y0 != 0)
     inverse_right_leg = (f32)(x2 - x0) / (abs((y2 - y0)));
 
-  //printf("%f\n", inverse_left_leg);
-  //printf("%f\n", inverse_right_leg);
+  // printf("%f\n", inverse_left_leg);
+  // printf("%f\n", inverse_right_leg);
 
   if (y1 - y0 != 0) {
     for (s32 y = y0; y <= y1; y++) {

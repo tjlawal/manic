@@ -3,16 +3,6 @@
 #ifndef OS_CORE_H
 #define OS_CORE_H
 
-// Handle Type
-typedef struct OS_Handle OS_Handle;
-struct OS_Handle {
-  u64 handle[1];
-};
-
-// tijani: Thread Types
-
-typedef void OS_ThreadFunctionType(void *ptr);
-
 // System information
 typedef struct OS_SystemInfo OS_SystemInfo;
 struct OS_SystemInfo {
@@ -35,6 +25,12 @@ struct OS_ProcessInfo {
   string8list environment;
 };
 
+// Handle Type
+typedef struct OS_Handle OS_Handle;
+struct OS_Handle {
+  u64 handle[1];
+};
+
 // System info (implemented per-os)
 internal OS_SystemInfo *os_get_system_info(void);
 internal OS_ProcessInfo *os_get_process_info(void);
@@ -49,10 +45,6 @@ internal void os_release(void *ptr, u64 size);
 internal void *os_reserve_large(u64 size);
 internal b32 os_commit_large(void *ptr, u64 size);
 
-// Thread Info (implemented per-os)
-internal u32 os_thread_id(void);
-internal void os_set_thread_name(string8 name);
-
 // Aborting (implemented per-os)
 internal void os_abort(s32 exit_code);
 
@@ -62,8 +54,7 @@ internal void os_abort(s32 exit_code);
 // BUILD_ENTRY_DEFINING_UNIT is set to 1. this will call into the standard
 // codebase program entry points, named "entry_point". This would allow to have
 // multiple console programs in the code base that are console oriented but
-// still have access to all the aspects of the codebase. Credit to Ryan Fluery
-// of Epic Games Tools Raddebugger.
+// still have access to all the aspects of the codebase. Credit to Epic Games Tools Raddebugger.
 
 #if BUILD_ENTRY_DEFINING_UNIT
 internal void entry_point();
