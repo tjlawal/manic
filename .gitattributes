@@ -1,9 +1,0 @@
-* text=auto
-* text eol=lf
-
-*.txt -text
-*.ascii -text
-
-# git dont touch these.
-*.dll binary
-*.lib binary
