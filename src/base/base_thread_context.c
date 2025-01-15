@@ -66,7 +66,7 @@ internal string8 thread_context_get_thread_name(void) {
 // Thread names
 internal void set_thread_name(string8 name) {
   // TODO(tijani): send thread name to profiler
-  os_set_thread_name(name);
+  // os_set_thread_name(name);
 }
 
 internal void set_thread_namef(char *format, ...) {
