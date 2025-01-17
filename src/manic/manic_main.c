@@ -52,20 +52,19 @@ global RenderBackBuffer g_buffer = {0};
 global GlobalLight g_light = {0, 0, 1};
 global Vec3F32 g_camera_position = {.x = 0, .y = 0, .z = 0};
 
-
 // NOTE(tijani): Perspective Projection Matrix Initialization
-global f32 g_fov = PI / 3.0; // NOTE(tijani): this is radians of 180 deg  / 3.0 or 60 deg.
+global f32 g_fov = PI / 3.0; // NOTE(tijani): see unit circle
 global f32 g_znear = 1.0;
 global f32 g_zfar = 100.0;
 global f32 g_aspect_ratio = 0.0;
 global Vec2S32 g_dimensions = {0};
-global Mat4F32 g_projection_matrix;
+global Mat4F32 g_projection_matrix = {0};
 
 // Load hard coded texture data
 global u32 *g_texture_mesh = (u32 *)REDBRICK_TEXTURE;
 
 internal u32 light_intensity(u32 colour, f32 percentage) {
-  clamp(percentage, 0, 1);
+  CLAMP(percentage, 0, 1);
   u32 alpha = (colour & 0xFF000000);
   u32 red = (colour & 0x00FF0000) * percentage;
   u32 green = (colour & 0x0000FF00) * percentage;
@@ -77,6 +76,7 @@ internal u32 light_intensity(u32 colour, f32 percentage) {
 
 internal b32 frame() {
   b32 quit = 0;
+  u64 frame_start = os_now_microseconds();
   Temp scratch = scratch_begin(0, 0);
 
   // tijani: do event stuff
@@ -137,38 +137,37 @@ internal b32 frame() {
     }
   }
 
-  // NOTE(tijani): Check if window dimension has changed, if true then resize the back buffer.
-  // this way we can keep reusing the same memory and only if the window dimensions have changed,
-  // meaning the back buffer has also changed, then we need to resize the buffer.
-  // Less memory touching unless needed to (in our case with rendering, the window dimension is rearly changed)
-  // leads to better performance since we are a software renderer and every CPU counts!
   g_dimensions = os_window_dimension(window_handle);
-  if (g_dimensions.x != g_buffer.width || g_dimensions.y != g_buffer.height) {
-    r_resize_buffer(scratch.arena, &g_buffer, g_dimensions.x, g_dimensions.y);
-
-    // TODO(tijani): Recalculate aspect ratio here so things don't look weird when we resize.
-    g_aspect_ratio = (f32)g_dimensions.x / (f32)g_dimensions.y;
-    g_projection_matrix = mat4f32_perspective_project(g_fov, g_aspect_ratio, g_znear, g_zfar);
-  }
+  r_resize_buffer(scratch.arena, &g_buffer, g_dimensions.x, g_dimensions.y);
 
   // prepare triangle to render
   {
-    g_triangles_to_render = NULL;
-    g_mesh.rotate.x += 0.01;
-    // g_mesh.rotate.y += 0.01;
-    // g_mesh.rotate.z += 0.01;
+    // NOTE(tijani): cool mesh animation, dont delete
+    //   g_triangles_to_render = NULL;
+    //   g_mesh.rotate.x += 0.01;
+    //   // g_mesh.rotate.y += 0.01;
+    //   // g_mesh.rotate.z += 0.01;
 
-    g_mesh.scale.x += 0.002;
+    //   g_mesh.scale.x += 0.002;
+    //   // g_mesh.scale.y += 0.002;
+    //   // g_mesh.scale.z += 0.02;
+
+    //   g_mesh.translate.x += 0.001;
+    //   // g_mesh.translate.y += 0.01;
+    //   g_mesh.translate.z = 5.0;
+
+    g_triangles_to_render = NULL;
+    // g_mesh.rotate.x += 0.01;
+    // g_mesh.rotate.y += 0.01;
+    //  g_mesh.rotate.z += 0.01;
+
+    g_mesh.scale.x += 0.00;
     // g_mesh.scale.y += 0.002;
     // g_mesh.scale.z += 0.02;
 
-    g_mesh.translate.x += 0.001;
+    g_mesh.translate.x += 0.00;
     // g_mesh.translate.y += 0.01;
     g_mesh.translate.z = 5.0;
-
-    //   printf("Rotation: X:%f, Y:%f, Z:%f\n", g_mesh.rotate.x, g_mesh.rotate.y, g_mesh.rotate.z);
-    //   printf("Scale: X:%f, Y:%f, Z:%f\n", g_mesh.scale.x, g_mesh.scale.y, g_mesh.scale.z);
-    //   printf("Translate: X:%f, Y:%f, Z:%f\n", g_mesh.translate.x, g_mesh.translate.y, g_mesh.translate.z);
 
     // Create scale matrix to multiply mesh vertices
     Mat4F32 scale_matrix = mat4f32_scale(g_mesh.scale.x, g_mesh.scale.y, g_mesh.scale.z);
@@ -186,15 +185,10 @@ internal b32 frame() {
     for (s32 i = 0; i < faces_count; ++i) {
       Face3S32 current_mesh_face = g_mesh.faces[i];
 
-      // printf("g_mesh.faces[i]: .a:%d, .b:%d, .c:%d\n", g_mesh.faces[i].a, g_mesh.faces[i].b, g_mesh.faces[i].c);
-
       Vec3F32 face_vertices[3];
       face_vertices[0] = g_mesh.vertices[current_mesh_face.a - 1];
       face_vertices[1] = g_mesh.vertices[current_mesh_face.b - 1];
       face_vertices[2] = g_mesh.vertices[current_mesh_face.c - 1];
-
-      // printf("current_mesh_faces: a:%d, b:%d, c:%d\n", current_mesh_face.a, current_mesh_face.b,
-      // current_mesh_face.c);
 
       Vec4F32 transformed_vertices[3];
 
@@ -269,6 +263,8 @@ internal b32 frame() {
         projected_points[k].x *= (g_buffer.width / 2.0);
         projected_points[k].y *= (g_buffer.height / 2.0);
 
+        // printf("ProjectedPoints: x - %f, y - %f\n", projected_points[k].x, projected_points[k].y);
+
         // Translate projected points to the middle of the screen.
         projected_points[k].x += (g_buffer.width / 2.0);
         projected_points[k].y += (g_buffer.height / 2.0);
@@ -277,42 +273,32 @@ internal b32 frame() {
       // Calculate average depth for each face based on the vertices z value after transformation
       f32 l_average_depth = (transformed_vertices[0].z + transformed_vertices[1].z + transformed_vertices[2].z) / 3.0;
 
-      // calculate light intensity based on the alignment of the face normal and the light ray.
+      // Calculate light intensity based on the alignment of the face normal and the light ray.
       f32 light_intensity_factor = -vec3_dot(normal, g_light.direction);
-
       u32 triangle_colour = light_intensity(current_mesh_face.colour, light_intensity_factor);
-      // light_intensity(triangle_colour, );
 
-      Triangle2F32 projected_triangle = {.points =
-                                             {
-                                                 {projected_points[0].x, projected_points[0].y},
-                                                 {projected_points[1].x, projected_points[1].y},
-                                                 {projected_points[2].x, projected_points[2].y},
-                                             },
-                                         .texture_coords =
-                                             {
-                                                 {
-                                                     current_mesh_face.a_uv.u,
-                                                     current_mesh_face.a_uv.v,
-                                                 },
-                                                 {
-                                                     current_mesh_face.b_uv.u,
-                                                     current_mesh_face.b_uv.v,
-                                                 },
-                                                 {
-                                                     current_mesh_face.c_uv.u,
-                                                     current_mesh_face.c_uv.v,
-                                                 },
-                                             },
-                                         .colour = triangle_colour,
-                                         .average_depth = l_average_depth};
+      // clang-format off
+      Triangle2F32 projected_triangle = {
+				.points = { {projected_points[0].x, projected_points[0].y},
+										{projected_points[1].x, projected_points[1].y},
+										{projected_points[2].x, projected_points[2].y},
+									},
+				.texture_coords = { {current_mesh_face.a_uv.u, current_mesh_face.a_uv.v},
+														{current_mesh_face.b_uv.u, current_mesh_face.b_uv.v},
+														{current_mesh_face.c_uv.u, current_mesh_face.c_uv.v},
+													},
+				.colour = triangle_colour,
+				.average_depth = l_average_depth
+			};
+      // clang-format on
 
       // save projected triangle in array of triangles to be rendered
       array_push(g_triangles_to_render, projected_triangle);
     }
 
-    // NOTE(tijani): Bubble sort
+    // NOTE(tijani): Bubble sort.
     // Sort the triangles to render by their average depth
+    // TODO(tijani): replace with faster alternative of speed up!!
     {
       s32 num_triangles = array_length(g_triangles_to_render);
       for (s32 i = 0; i < num_triangles; ++i) {
@@ -329,7 +315,7 @@ internal b32 frame() {
 
   // NOTE(tijani): Now draw
   {
-    // r_clear_colour_buffer(&g_buffer, 0xFF000000);
+    r_clear_colour_buffer(&g_buffer, 0xFF000000);
     // r_draw_grid(&g_buffer, 0xFF444444);
 
     // Loop through all projected points and render
@@ -395,12 +381,12 @@ void entry_point() {
   g_device_context = os_get_device_context(window_handle);
 
   // Initialize the perspective matrix
-  Vec2S32 dimension = os_window_dimension(window_handle);
-  g_aspect_ratio = (f32)dimension.x / (f32)dimension.y;
+  g_dimensions = os_window_dimension(window_handle);
+  g_aspect_ratio = (f32)g_dimensions.x / (f32)g_dimensions.y;
   g_projection_matrix = mat4f32_perspective_project(g_fov, g_aspect_ratio, g_znear, g_zfar);
 
-  load_obj_file_data_from_file("data/meshes/f22.obj");
-  // load_cube_mesh_data();
+  // load_obj_file_data_from_file("data/meshes/f22.obj");
+  load_cube_mesh_data();
 
   // equip renderer
   for (; !update();) {

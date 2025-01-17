@@ -262,3 +262,27 @@ internal Mat4F32 mat4f32_perspective_project(f32 fov, f32 aspect_ratio, f32 znea
 
   return result;
 }
+
+// Calculato the barycentric weights of alpha, beta and gamma for point p;
+internal Vec3F32 barycentric_weights(Vec2F32 a, Vec2F32 b, Vec2F32 c, Vec2F32 p) {
+  // Find the vectors between the vertices ABC and point p
+  Vec2F32 ac = vec2_sub(c, a);
+  Vec2F32 ab = vec2_sub(b, a);
+  Vec2F32 pc = vec2_sub(c, p);
+  Vec2F32 pb = vec2_sub(b, p);
+  Vec2F32 ap = vec2_sub(p, a);
+
+  // NOTE(tijani): Area of the parallelogram (triangle ABC) using cross product
+  f32 area_parallelogram_abc = ((ac.x * ab.y) - (ac.y * ab.x)); // || AC x AB ||
+
+  // NOTE(tijani): Alpha is area of the parallelogram [PBC] over the area of the full parallelogram [ABC]
+  f32 alpha = ((pc.x * pb.y) - (pc.y * pb.x)) / area_parallelogram_abc;
+
+  // NOTE(tijani): Beta is area of the parallelogram [APC] over the area of the full parallelogram [ABC]
+  f32 beta = ((ac.x * ap.y) - (ac.y * ap.x)) / area_parallelogram_abc;
+
+  f32 gamma = 1.0 - alpha - beta;
+
+  Vec3F32 weights = {alpha, beta, gamma};
+  return weights;
+}

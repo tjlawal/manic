@@ -394,14 +394,13 @@ internal OS_Modifiers os_get_modifiers(void) {
 
 // Native facing graphical message (implemented per-os)
 internal void os_graphical_message(b32 error, string8 title, string8 message) {
-  // Arena *arena = arena_alloc(.reserve_size = MB(1));
-  // Temp scratch = temp_begin(arena);
-  // string16 title16 = str16_from_8(scratch.arena, title);
-  // string16 message16 = str16_from_8(scratch.arena, message);
-  // MessageBoxW(0, (WCHAR *)message16.str, (WCHAR *)title16.str, MB_OK | (!!error * MB_ICONERROR));
-  // scratch_end(scratch);
+  Temp scratch = scratch_begin(0, 0);
 
-  MessageBoxW(0, (WCHAR *)L"Error Occured", (WCHAR *)L"Error!!", MB_OK | MB_ICONERROR);
+  string16 title16 = str16_from_8(scratch.arena, title);
+  string16 message16 = str16_from_8(scratch.arena, message);
+	// NOTE(tijani): The bit trick here is a shortcut, it flips 
+  MessageBoxW(0, (WCHAR *)message16.str, (WCHAR *)title16.str, MB_OK | (!!error * MB_ICONERROR));
+  scratch_end(scratch);
 }
 
 // Main initialization (Implemented per-os)

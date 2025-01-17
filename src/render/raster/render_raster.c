@@ -1,5 +1,7 @@
 // Copyright Frost Gorilla, Inc. All Rights Reserved.
 
+// clang-format off
+
 // TODO(tijani): this function is too os specific.
 internal void r_resize_buffer(Arena *arena, RenderBackBuffer *buffer, s32 width, s32 height) {
   buffer->width = width;
@@ -32,8 +34,8 @@ internal void r_draw_pixel(RenderBackBuffer *buffer, s32 x, s32 y, u32 colour) {
 }
 
 void r_clear_colour_buffer(RenderBackBuffer *buffer, u32 colour) {
-  for (int y = 0; y < buffer->height; y++) {
-    for (int x = 0; x < buffer->width; x++) {
+  for (s32 y = 0; y < buffer->height; y++) {
+    for (s32 x = 0; x < buffer->width; x++) {
       buffer->colour_buffer[(buffer->width * y) + x] = colour;
     }
   }
@@ -131,6 +133,11 @@ internal void r_draw_textured_triangle(RenderBackBuffer *buffer, s32 x0, s32 y0,
     swap(&v0, &v1, f32);
   }
 
+  // Create vector points after sorting the vertices
+  Vec2F32 point_a = {x0, y0};
+  Vec2F32 point_b = {x1, y1};
+  Vec2F32 point_c = {x2, y2};
+
   // NOTE(tijani): Render the upper part of the triangle (the flat-bottom)
   // This is the (delta x / delta y)
   f32 inverse_left_leg = 0;
@@ -157,7 +164,8 @@ internal void r_draw_textured_triangle(RenderBackBuffer *buffer, s32 x0, s32 y0,
 
       for (s32 x = x_start; x < x_end; x++) {
         // Draw pixel with colour from texture.
-        r_draw_pixel(buffer, x, y, (x % 2 == 0 && y % 2 == 0) ? 0xFF380772 : 0xFF138112);
+        r_draw_texel(buffer, x, y, point_a, point_b, point_c, u0, v0, u1, v1, u2, v2, texture);
+        // r_draw_pixel(buffer, x, y, (x % 2 == 0 && y % 2 == 0) ? 0xFF380772 : 0xFF138112);
       }
     }
   }
@@ -186,8 +194,8 @@ internal void r_draw_textured_triangle(RenderBackBuffer *buffer, s32 x0, s32 y0,
 
       for (s32 x = x_start; x < x_end; x++) {
         // Draw pixel with colour from texture.
-        // r_draw_pixel(buffer, x, y, 0xFFFF00FF);
-        r_draw_pixel(buffer, x, y, (x % 2 == 0 && y % 2 == 0) ? 0xFF380772 : 0xFF138112);
+        r_draw_texel(buffer, x, y, point_a, point_b, point_c, u0, v0, u1, v1, u2, v2, texture);
+        // r_draw_pixel(buffer, x, y, (x % 2 == 0 && y % 2 == 0) ? 0xFF380772 : 0xFF138112);
       }
     }
   }
@@ -232,6 +240,29 @@ internal void r_draw_fill_flat_top_triangle(RenderBackBuffer *buffer, s32 x0, s3
     x_start -= left_leg;
     x_end -= right_leg;
   }
+}
+
+internal void r_draw_texel(RenderBackBuffer *buffer, s32 x, s32 y, Vec2F32 a, Vec2F32 b, Vec2F32 c, 
+													 f32 u0, f32 v0, f32 u1, f32 v1, f32 u2, f32 v2, u32 *texture) {
+  Vec2F32 point_p = {x, y};
+  Vec3F32 weights = barycentric_weights(a, b, c, point_p);
+  f32 alpha = weights.x;
+  f32 beta = weights.y;
+  f32 gamma = weights.z;
+
+  // NOTE(tijani): Interpolate u and v values using barycentric weights. 
+	// Always going to be between the values of 0 and 1
+  f32 interpolated_u = (u0 * alpha) + (u1 * beta) + (u2 * gamma);
+  f32 interpolated_v = (v0 * alpha) + (v1 * beta) + (v2 * gamma);
+
+	// NOTE(tijani): Check texture_x and texture_y to prevent buffer overflow on texture[]!!
+  s32 texture_x = abs((s32)(interpolated_u * texture_width));
+  s32 texture_y = abs((s32)(interpolated_v * texture_height));
+
+	texture_x = MIN(texture_x, texture_width - 1);
+	texture_y = MIN(texture_y, texture_height - 1);
+
+	r_draw_pixel(buffer, x, y, texture[(texture_width * texture_y) + texture_x]);
 }
 
 void r_draw_dots(RenderBackBuffer *buffer, u32 colour) {
