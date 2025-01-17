@@ -52,7 +52,7 @@ internal Arena *thread_context_get_scratch(Arena **conflicts, u64 count) {
 
 internal void thread_context_set_thread_name(string8 name) {
   ThreadContext *thread_context = thread_context_get_equipped();
-  u64 size = clamp_top(name.size, sizeof(thread_context->thread_name));
+  u64 size = CLAMP_TOP(name.size, sizeof(thread_context->thread_name));
   memory_copy(thread_context->thread_name, name.str, size);
   thread_context->thread_name_size = size;
 }

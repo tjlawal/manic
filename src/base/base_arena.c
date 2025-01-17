@@ -106,7 +106,7 @@ internal void *arena_push(Arena *arena, u64 size_to_push, u64 alignment) {
   if (current_arena->commit < position_post_push) {
     u64 commit_position_aligned = position_post_push + current_arena->commit_size - 1;
     commit_position_aligned -= commit_position_aligned % current_arena->commit_size;
-    u64 commit_position_clamped = clamp_top(commit_position_aligned, current_arena->reserve);
+    u64 commit_position_clamped = CLAMP_TOP(commit_position_aligned, current_arena->reserve);
     u64 commit_size = commit_position_clamped - current_arena->commit;
     u8 *commit_ptr = (u8 *)current_arena + current_arena->commit;
 
@@ -143,7 +143,7 @@ internal u64 arena_position(Arena *arena) {
 }
 
 internal void arena_pop_to(Arena *arena, u64 position) {
-  u64 big_position = clamp_bot(ARENA_HEADER_SIZE, position);
+  u64 big_position = CLAMP_BOT(ARENA_HEADER_SIZE, position);
   Arena *current_arena = arena->current;
 
 #if ARENA_FREE_LIST
