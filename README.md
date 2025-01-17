@@ -1,5 +1,7 @@
 # Manic 3D Renderer
 
+<!-- Add screenshot or looped video -->
+
 Manic is a native 3D renderer. It currently supports rendering 3D meshes on Window x64 with plans to support Linux x64
 and MacOS. Manic is currently in ALPHA. This means that it is neither performant 
 (i.e. very limited in the amount of triangles it can draw on the screen), nor does it support a wide range of 
@@ -8,7 +10,8 @@ file format (currently OBJ) used to store 3D meshes.
 ## Development Setup Instructions
 > [!NOTE]
 > Only x64 is supported. While support for x86 is not specifically outlawed, it may not work as the codebase makes 
-> specific assumptions on where it would be ran.
+> specific assumptions about its architecture.
+
 <!-- Build instructions here -->
 
 
@@ -40,12 +43,7 @@ List of layers in the codebase and their associated namespaces:
 
 
 
-
-
-
-
-
 ## References & Motivations
 + [RADDebugger](https://github.com/EpicGamesExt/raddebugger)
 + [Handmade Hero](https://www.youtube.com/playlist?list=PLnuhp3Xd9PYTt6svyQPyRO_AAuMWGxPzU)
-
++ [Computer Enhance](https://www.computerenhance.com)

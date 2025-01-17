@@ -186,8 +186,7 @@ struct OS_GfxInfo {
 // Window types
 typedef u32 OS_WindowFlags;
 enum {
-  OS_WindowFlag_NormalBorder = (1 << 0),
-  OS_WindowFlag_CustomBorder = (1 << 1),
+  OS_WindowFlag_CustomBorder = (1 << 0),
 };
 
 // Event types

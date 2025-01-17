@@ -155,11 +155,11 @@ C_LINK void __asan_unpoison_memory_region(void const volatile *addr, size_t size
 
 // tijani: Max, Min, Clamps
 
-#define max(A, B)       (((A) > (B)) ? (A) : (B))
-#define min(A, B)       (((A) < (B)) ? (A) : (B))
-#define clamp_top(A, X) min(A, X)
-#define clamp_bot(X, B) max(X, B)
-#define clamp(A, X, B)  (((A) < (X)) ? (X) : ((A) > (B)) ? (B) : (A))
+#define MAX(A, B)       (((A) > (B)) ? (A) : (B))
+#define MIN(A, B)       (((A) < (B)) ? (A) : (B))
+#define CLAMP_TOP(A, X) MIN(A, X)
+#define CLAMP_BOT(X, B) MAX(X, B)
+#define CLAMP(A, X, B)  (((A) < (X)) ? (X) : ((A) > (B)) ? (B) : (A))
 
 // tijani: Swap types
 #define swap(a, b, type)                                                                                               \

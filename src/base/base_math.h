@@ -118,4 +118,7 @@ internal Mat4F32 mat4f32_mul_mat4f32(Mat4F32 a, Mat4F32 b);
 internal Vec4F32 mat4f32_mul_projection(Mat4F32 projection_matrix, Vec4F32 v);
 internal Mat4F32 mat4f32_perspective_project(f32 fov, f32 aspect_ratio, f32 znear, f32 zfar);
 
+// Calculato the barycentric weights of alpha, beta and gamma for point p;
+internal Vec3F32 barycentric_weights(Vec2F32 a, Vec2F32 b, Vec2F32 c, Vec2F32 p);
+
 #endif // BASE_MATH_H

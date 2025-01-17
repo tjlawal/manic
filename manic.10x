@@ -8,7 +8,7 @@
 		<ShowEmptyFolders>true</ShowEmptyFolders>
 		<IncludeFilesWithoutExt>false</IncludeFilesWithoutExt>
 		<IsFolder>false</IsFolder>
-		<BuildCommand>build clang manic debug</BuildCommand>
+		<BuildCommand>build msvc manic debug</BuildCommand>
 		<RebuildCommand></RebuildCommand>
 		<BuildFileCommand></BuildFileCommand>
 		<CleanCommand></CleanCommand>
