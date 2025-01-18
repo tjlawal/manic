@@ -73,12 +73,12 @@ for /f "tokens=2" %%i in ('call svn info ^| findstr "Revision"') do set compile=
 
 :: Build Things ---------------------------------------------------------------
 pushd run_tree
-if "%manic%"=="1"           		set didbuild=1 && %compile% ..\src\manic\manic_main.c %compile_link% %link_resource% %out%manic.exe || exit /b 1
-if "%manic_console%"=="1"   		set didbuild=1 && %compile% ..\src\manic\manic_main.c %compile_link% %out%manic_console.exe || exit /b 1
+	if "%manic%"=="1"           		set didbuild=1 && %compile% ..\src\manic\manic_main.c %compile_link% %link_resource% %out%manic.exe || exit /b 1
+	if "%manic_console%"=="1"   		set didbuild=1 && %compile% ..\src\manic\manic_main.c %compile_link% %out%manic_console.exe || exit /b 1
 
 :: Experimentals
-if "%scratch_main%"=="1"				set didbuild=1 && %compile% ..\src\scratch\scratch_main.c %compile_link% %out%scratch_main.exe || exit /b 1
-if "%scratch_fps%"=="1"					set didbuild=1 && %compile% ..\src\scratch\fps_counter.c %compile_link% %out%scratch_fps.exe || exit /b 1
+	if "%scratch_profiler%"=="1"				set didbuild=1 && %compile% ..\src\scratch\scratch_profiler.c %compile_link% %out%scratch_profiler.exe || exit /b 1
+	if "%scratch_exception%"=="1"				set didbuild=1 && %compile% ..\src\scratch\scratch_exception.c %compile_link% %out%scratch_exception.exe || exit /b 1
 popd
 
 :: --- Warn On No Builds ------------------------------------------------------
@@ -86,3 +86,5 @@ if "%didbuild%"=="" (
   echo [WARNING] no valid build target specified; must use build target names as arguments to this script, like `build manic` or `build tests`.
   exit /b 1
 )
+
+endlocal
