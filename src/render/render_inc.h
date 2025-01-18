@@ -3,7 +3,7 @@
 #ifndef RENDER_INC_H
 #define RENDER_INC_H
 
-#include "core/render_core.h"
+#include "render_core.h"
 
 /////////////////////////////////////////////////////////
 // NOTE(tijani): Decide which backend to use;
