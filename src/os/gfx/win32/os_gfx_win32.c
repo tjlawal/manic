@@ -398,7 +398,8 @@ internal void os_graphical_message(b32 error, string8 title, string8 message) {
 
   string16 title16 = str16_from_8(scratch.arena, title);
   string16 message16 = str16_from_8(scratch.arena, message);
-	// NOTE(tijani): The bit trick here is a shortcut, it flips 
+  // NOTE(tijani): The bit trick here is a shortcut for if/else.
+  // It checks if error is 0, if it is then it just displays MB_OK else it displays MB_ICONERROR * the error.
   MessageBoxW(0, (WCHAR *)message16.str, (WCHAR *)title16.str, MB_OK | (!!error * MB_ICONERROR));
   scratch_end(scratch);
 }
@@ -412,8 +413,9 @@ internal void os_gfx_init(void) {
   os_w32_gfx_state->gfx_thread_id = (u32)GetCurrentThreadId();
   os_w32_gfx_state->hInstance = GetModuleHandle(0);
 
-  // TODO(tijani): this might be too windows 10 specific. research if that is the case and find a better way to handle
-  // it. Set DPI Awareness for the entire application, this applies to all related threads.
+  // TODO(tijani): this might be too windows 10 specific. research if that is
+  // the case and find a better way to handle it. Set DPI Awareness for the
+  // entire application, this applies to all related threads.
   SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
   // register graphical window class
