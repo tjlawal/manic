@@ -20,22 +20,31 @@
   #error x86 intrinsic not available on your compiler.
 #endif
 
-static u64 os_timer_freq() {
+typedef struct State {
+  u64 microsecond_resolution;
+} State;
+
+State g_state;
+
+static void os_timer_freq() {
   LARGE_INTEGER freq;
   QueryPerformanceFrequency(&freq);
-  return freq.QuadPart;
+  g_state.microsecond_resolution = freq.QuadPart;
 }
 
 static u64 os_time_counter(void) {
+  u64 result = 0;
   LARGE_INTEGER counter;
   QueryPerformanceCounter(&counter);
-  return counter.QuadPart;
+  result = (counter.QuadPart * Million(1)) / g_state.microsecond_resolution;
+  return result;
+  // return counter.QuadPart;
 }
 
 static u64 read_cpu_timer(void) { return __rdtsc(); }
 
 void entry_point(void) {
-  u64 os_freq = os_timer_freq();
+  u64 os_freq = g_state.microsecond_resolution;
   printf("OS Frequency: %llu\n", os_freq);
 
   u64 os_start = os_time_counter();
