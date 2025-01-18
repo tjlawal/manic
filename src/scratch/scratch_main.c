@@ -11,17 +11,4 @@
 #include "os/os_inc.c"
 // clang-format on
 
-#include <shlwapi.h>
-
-void entry_point() {
-  // Test exception on the terminal
-  // int *ptr = NULL;
-  //*ptr = 5;
-
-  // printf("%d", ptr);
-
-  int z = 0;
-  int r = 1 / z;
-
-  printf("%d", r);
-}
+void entry_point() {}
