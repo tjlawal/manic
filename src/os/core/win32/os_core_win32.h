@@ -19,8 +19,9 @@
 #pragma comment(lib, "shlwapi")
 #pragma comment(lib, "comctl32")
 
-// NOTE(tijani): This line is required for loading the correct comctl32 dll file.
-// It ensures the correct version (6) is selected to enable visual styles for the exception window.
+// NOTE(tijani): This line is required for loading the correct comctl32 dll
+// file. It ensures the correct version (6) is selected to enable visual styles
+// for the exception window.
 #pragma comment(                                                                                                       \
     linker,                                                                                                            \
     "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -31,8 +32,7 @@ struct OS_W32_State {
   Arena *arena;
   OS_SystemInfo system_info;
   OS_ProcessInfo process_info;
-  // TODO(tijani): perfect place to store timing information for windows
-  // using QueryPerformanceCounter.
+  u64 microsecond_resolution;
 };
 
 // NOTE(tijani): Win32 Globals

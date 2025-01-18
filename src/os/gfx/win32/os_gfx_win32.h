@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Frost Gorilla, Inc. All Rights Reserved.
 
 #ifndef OS_GFX_WIN32_H
-#define OS_GFX_WIN32_H	
+#define OS_GFX_WIN32_H
 
 typedef struct OS_W32_Window OS_W32_Window;
 struct OS_W32_Window {

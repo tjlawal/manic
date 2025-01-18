@@ -1,4 +1,5 @@
 // Copyright Frost Gorilla, Inc. All Rights Reserved.
+// clang-format off
 
 // 2D Vector Operations
 
@@ -65,7 +66,11 @@ internal void vec3_normalize(Vec3F32 *v) {
 }
 
 internal Vec3F32 vec3_cross(Vec3F32 a, Vec3F32 b) {
-  Vec3F32 result = {.x = (a.y * b.z) - (a.z * b.y), .y = (a.z * b.x) - (a.x * b.z), .z = (a.x * b.y) - (a.y * b.x)};
+  Vec3F32 result = {
+		.x = (a.y * b.z) - (a.z * b.y), 
+		.y = (a.z * b.x) - (a.x * b.z), 
+		.z = (a.x * b.y) - (a.y * b.x)
+	};
   return result;
 }
 
@@ -135,7 +140,8 @@ internal Mat4F32 mat4f32_translate(f32 tx, f32 ty, f32 tz) {
   // |1 0 0 tx|			|x|					|x + tx|
   // |0 1 0 ty|   	|y|					|y + ty|
   // |0 0 1 tz|	 *	|z|    =		|z + tz|
-  // |0 0 0 1 |			|1|					|	 1	 |
+  // |0 0 0 1 |			|1|					|
+  // 1	 |
   Mat4F32 m = mat4f32_identity();
 
   m.m[0][3] = tx;
@@ -145,12 +151,13 @@ internal Mat4F32 mat4f32_translate(f32 tx, f32 ty, f32 tz) {
   return m;
 }
 
-internal Mat4F32 mat4f32_rotate_x(f32 angle) {
-  // |1		0				0			0|		|x|
-  // |0  cos(x)	-sin(x)	0|		|y|
-  // |0  sin(x)	 cos(x)	0|	*	|z|
-  // |0		0	  		0	  	1|		|1|
 
+// Matrix rotation in x-axis
+// |1		0				0			0|			|x|
+// |0  cos(x)	-sin(x)	0|			|y|
+// |0  sin(x)	 cos(x)	0|		*	|z|
+// |0		0	  		0	  	1|			|1|
+internal Mat4F32 mat4f32_rotate_x(f32 angle) {
   f32 l_cos = cos(angle);
   f32 l_sin = sin(angle);
 
@@ -231,7 +238,8 @@ internal Vec4F32 mat4f32_mul_projection(Mat4F32 projection_matrix, Vec4F32 v) {
   Vec4F32 result = mat4f32_mul_vec4(projection_matrix, v);
 
   // NOTE(tijani): Perform perspective divide with original z-value that is
-  // stored in the projection matrix 'w', hence normalizing the entire image space.
+  // stored in the projection matrix 'w', hence normalizing the entire image
+  // space.
 
   if (result.w != 0.0) {
     result.x /= result.w;
@@ -275,10 +283,12 @@ internal Vec3F32 barycentric_weights(Vec2F32 a, Vec2F32 b, Vec2F32 c, Vec2F32 p)
   // NOTE(tijani): Area of the parallelogram (triangle ABC) using cross product
   f32 area_parallelogram_abc = ((ac.x * ab.y) - (ac.y * ab.x)); // || AC x AB ||
 
-  // NOTE(tijani): Alpha is area of the parallelogram [PBC] over the area of the full parallelogram [ABC]
+  // NOTE(tijani): Alpha is area of the parallelogram [PBC] over the area of the
+  // full parallelogram [ABC]
   f32 alpha = ((pc.x * pb.y) - (pc.y * pb.x)) / area_parallelogram_abc;
 
-  // NOTE(tijani): Beta is area of the parallelogram [APC] over the area of the full parallelogram [ABC]
+  // NOTE(tijani): Beta is area of the parallelogram [APC] over the area of the
+  // full parallelogram [ABC]
   f32 beta = ((ac.x * ap.y) - (ac.y * ap.x)) / area_parallelogram_abc;
 
   f32 gamma = 1.0 - alpha - beta;

@@ -24,8 +24,8 @@ internal void thread_context_release(void) {
 // Return the currently equipped thread in this context
 internal ThreadContext *thread_context_get_equipped(void) { return (thread_context_thread_local); }
 
-// NOTE(tijani): This is looking through a collection of arenas to find one that is not
-// in conflict and then return it to be used.
+// NOTE(tijani): This is looking through a collection of arenas to find one that
+// is not in conflict and then return it to be used.
 internal Arena *thread_context_get_scratch(Arena **conflicts, u64 count) {
   ThreadContext *thread_context = thread_context_get_equipped();
 
@@ -41,7 +41,8 @@ internal Arena *thread_context_get_scratch(Arena **conflicts, u64 count) {
       }
     }
 
-    // NOTE(tijani): if has_conflict is not true (i.e. still zero = false), use the arena.
+    // NOTE(tijani): if has_conflict is not true (i.e. still zero = false), use
+    // the arena.
     if (!has_conflict) {
       result = *arena_ptr;
       break;

@@ -85,10 +85,10 @@ void load_obj_file_data_from_file(char *filename) {
              &vertex_indices[1], &texture_indices[1], &normal_indices[1], &vertex_indices[2], &texture_indices[2],
              &normal_indices[2]);
 
-      Face3S32 faces = {.a = vertex_indices[0], .b = vertex_indices[1], .c = vertex_indices[2], .colour = 0xFFFFFFFF};
+      Face3S32 face = {.a = vertex_indices[0], .b = vertex_indices[1], .c = vertex_indices[2], .colour = 0xFFFFFFFF};
 
-      sscanf(buffer, "f %d %d %d", &faces.a, &faces.b, &faces.c);
-      array_push(g_mesh.faces, faces);
+      // sscanf(buffer, "f %d %d %d", &faces.a, &faces.b, &faces.c);
+      array_push(g_mesh.faces, face);
     }
   }
 }
