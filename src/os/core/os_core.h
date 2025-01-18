@@ -48,13 +48,17 @@ internal b32 os_commit_large(void *ptr, u64 size);
 // Aborting (implemented per-os)
 internal void os_abort(s32 exit_code);
 
+// Time (implemented per-os)
+internal u64 os_now_microseconds(void);
+
 // Application Entry Point (implemented per-os)
 
 // NOTE(tijani): `os_core` defines the low-level entry points if
 // BUILD_ENTRY_DEFINING_UNIT is set to 1. this will call into the standard
 // codebase program entry points, named "entry_point". This would allow to have
 // multiple console programs in the code base that are console oriented but
-// still have access to all the aspects of the codebase. Credit to Epic Games Tools Raddebugger.
+// still have access to all the aspects of the codebase. Credit to Epic Games
+// Tools Raddebugger.
 
 #if BUILD_ENTRY_DEFINING_UNIT
 internal void entry_point();

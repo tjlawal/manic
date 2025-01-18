@@ -153,34 +153,20 @@ C_LINK void __asan_unpoison_memory_region(void const volatile *addr, size_t size
 #define memory_zero_array(array)           memory_zero(array, sizeof(array))
 #define memory_zero_struct(struct_to_zero) memory_zero((struct_to_zero), sizeof(*(struct_to_zero)))
 
-// tijani: Max, Min, Clamps
+// tijani: Max, Min, Clamps, Abs, Swap
 
 #define MAX(A, B)       (((A) > (B)) ? (A) : (B))
 #define MIN(A, B)       (((A) < (B)) ? (A) : (B))
 #define CLAMP_TOP(A, X) MIN(A, X)
 #define CLAMP_BOT(X, B) MAX(X, B)
 #define CLAMP(A, X, B)  (((A) < (X)) ? (X) : ((A) > (B)) ? (B) : (A))
-
-// tijani: Swap types
-#define swap(a, b, type)                                                                                               \
+#define ABS(a)          (((a) < 0) ? -(a) : (a))
+#define SWAP(a, b, type)                                                                                               \
   do {                                                                                                                 \
     type temp = *(a);                                                                                                  \
     *(a) = *(b);                                                                                                       \
     *(b) = temp;                                                                                                       \
   } while (0)
-
-// Utilities
-// inline internal void swap_ints(s32 *a, s32 *b) {
-//  s32 temp = *a;
-//  *a = *b;
-//  *b = temp;
-//}
-
-// inline internal void swap_floats(f32 *a, f32 *b) {
-//   f32 temp = *a;
-//   *a = *b;
-//   *b = temp;
-// }
 
 // tijani: Type Alignment
 #if COMPILER_MSVC
@@ -214,8 +200,8 @@ C_LINK void __asan_unpoison_memory_region(void const volatile *addr, size_t size
 // NOTE(tijani): Doubly linked list operations
 
 // NOTE(tijani): Breakdown:-
-// Either, check if it is an empty list, if not insert at the front of the list, else if not insert at the
-// end of the list, else insert in the middle.
+// Either, check if it is an empty list, if not insert at the front of the list,
+// else if not insert at the end of the list, else insert in the middle.
 #define DLL_InsertNextPrevZero(nil, first, last, position, node, next, previous)                                       \
   (CheckNil(nil, first) ? ((first) = (last) = (node), SetNil(nil, (node)->next), SetNil(nil, (node)->previous))        \
    : CheckNil(nil, position)                                                                                           \
@@ -232,7 +218,8 @@ C_LINK void __asan_unpoison_memory_region(void const volatile *addr, size_t size
   DLL_InsertNextPrevZero(nil, last, first, first, node, previous, next)
 
 // NOTE(tijani): Breakdown:-
-// Upate first if needed, update last if needed, update previous link, update next link
+// Upate first if needed, update last if needed, update previous link, update
+// next link
 #define DLL_RemoveNextPrevZero(nil, first, last, node, next, previous)                                                 \
   (((node) == (first) ? (first) = (node)->next : (0)), ((node) == (last) ? (last) = (last)->previous : (0)),           \
    (CheckNil(nil, (node)->previous) ? (0) : ((node)->previous->next = (node)->next)),                                  \

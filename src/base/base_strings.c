@@ -54,7 +54,8 @@ internal string16 str16_from_8(Arena *arena, string8 input) {
 
 // UTF Types - Encoding & Decoding
 
-// NOTE(tijani): Lookup table to determine the type/class of a UTF-8 byte based on its high bits.
+// NOTE(tijani): Lookup table to determine the type/class of a UTF-8 byte based
+// on its high bits.
 read_only global u8 utf8_class[32] = {
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 3, 3, 4, 5,
 };

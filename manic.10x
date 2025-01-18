@@ -8,13 +8,13 @@
 		<ShowEmptyFolders>true</ShowEmptyFolders>
 		<IncludeFilesWithoutExt>false</IncludeFilesWithoutExt>
 		<IsFolder>false</IsFolder>
-		<BuildCommand>build msvc manic debug</BuildCommand>
+		<BuildCommand>build msvc scratch_profiler debug</BuildCommand>
 		<RebuildCommand></RebuildCommand>
 		<BuildFileCommand></BuildFileCommand>
 		<CleanCommand></CleanCommand>
 		<BuildWorkingDirectory>D:/manic</BuildWorkingDirectory>
 		<CancelBuild></CancelBuild>
-		<Exe>D:/manic/run_tree/manic.exe</Exe>
+		<Exe>D:/manic/run_tree/scratch_profiler.exe</Exe>
 		<Args></Args>
 		<WorkingDirectory>D:/manic/run_tree/</WorkingDirectory>
 		<DebugCommand></DebugCommand>
