@@ -7,6 +7,13 @@ internal u16 safe_cast_u16(u32 x) {
   return result;
 }
 
+internal u32 u32_from_u64_saturate(u64 x) {
+  u32 x32 = (x > max_u32) ? max_u32 : (u32)x;
+  return x32;
+}
+
+/// TODO(tijani): CRUFT, delete and use arenas in its place of something else.
+
 #define ARRAY_RAW_DATA(array) ((int *)(array) - 2)
 #define ARRAY_CAPACITY(array) (ARRAY_RAW_DATA(array)[0])
 #define ARRAY_OCCUPIED(array) (ARRAY_RAW_DATA(array)[1])

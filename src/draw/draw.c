@@ -69,18 +69,18 @@ internal void draw_filled_triangle(RenderBackBuffer *buffer, s32 x0, s32 y0, s32
                                    u32 colour) {
   // sort vertices by y-coords in ascending arder (y0 < y1 < y2)
   if (y0 > y1) {
-    SWAP(&y0, &y1, s32);
-    SWAP(&x0, &x1, s32);
+    SWAPP(&y0, &y1, s32);
+    SWAPP(&x0, &x1, s32);
   }
 
   if (y1 > y2) {
-    SWAP(&y1, &y2, s32);
-    SWAP(&x1, &x2, s32);
+    SWAPP(&y1, &y2, s32);
+    SWAPP(&x1, &x2, s32);
   }
 
   if (y0 > y1) {
-    SWAP(&y0, &y1, s32);
-    SWAP(&x0, &x1, s32);
+    SWAPP(&y0, &y1, s32);
+    SWAPP(&x0, &x1, s32);
   }
 
   if (y1 == y2) {
@@ -207,24 +207,24 @@ internal void draw_textured_triangle(RenderBackBuffer *buffer, s32 x0, s32 y0, f
   // sort all the vertices from top-to-bottom to make sure they are always in order,
   // i.e. by ascending order in y-coordinate (y0 < y1 < y2).
   if (y0 > y1) {
-    SWAP(&y0, &y1, s32);
-    SWAP(&x0, &x1, s32);
-    SWAP(&u0, &u1, f32);
-    SWAP(&v0, &v1, f32);
+    SWAPP(&y0, &y1, s32);
+    SWAPP(&x0, &x1, s32);
+    SWAPP(&u0, &u1, f32);
+    SWAPP(&v0, &v1, f32);
   }
 
   if (y1 > y2) {
-    SWAP(&y1, &y2, s32);
-    SWAP(&x1, &x2, s32);
-    SWAP(&u1, &u2, f32);
-    SWAP(&v1, &v2, f32);
+    SWAPP(&y1, &y2, s32);
+    SWAPP(&x1, &x2, s32);
+    SWAPP(&u1, &u2, f32);
+    SWAPP(&v1, &v2, f32);
   }
 
   if (y0 > y1) {
-    SWAP(&y0, &y1, s32);
-    SWAP(&x0, &x1, s32);
-    SWAP(&u0, &u1, f32);
-    SWAP(&v0, &v1, f32);
+    SWAPP(&y0, &y1, s32);
+    SWAPP(&x0, &x1, s32);
+    SWAPP(&u0, &u1, f32);
+    SWAPP(&v0, &v1, f32);
   }
 
   // Create vector points after sorting the vertices
@@ -250,7 +250,7 @@ internal void draw_textured_triangle(RenderBackBuffer *buffer, s32 x0, s32 y0, f
 
       // if x_end is to the left of x_start, SWAP them so x_start is always to the left of x_end.
       if (x_end < x_start) {
-        SWAP(&x_start, &x_end, s32);
+        SWAPP(&x_start, &x_end, s32);
       }
 
       for (s32 x = x_start; x < x_end; x++) {
@@ -279,7 +279,7 @@ internal void draw_textured_triangle(RenderBackBuffer *buffer, s32 x0, s32 y0, f
 
       // if x_end is to the left of x_start, SWAP them so x_start is always to the left of x_end.
       if (x_end < x_start) {
-        SWAP(&x_start, &x_end, s32);
+        SWAPP(&x_start, &x_end, s32);
       }
 
       for (s32 x = x_start; x < x_end; x++) {

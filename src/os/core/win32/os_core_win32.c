@@ -51,6 +51,83 @@ internal b32 os_commit_large(void *ptr, u64 size) {
 // Aborting (implemented per-os)
 internal void os_abort(s32 exit_code) { ExitProcess(exit_code); }
 
+// File system (implemented per-os)
+internal OS_Handle os_file_open(OS_AccessFlags flags, string8 path) {
+  OS_Handle result = {0};
+  Temp scratch = scratch_begin(0, 0);
+  string16 path16 = str16_from_8(scratch.arena, path);
+  DWORD access_flags = 0;
+  DWORD disposition = OPEN_EXISTING;
+
+  if (flags & OS_AccessFlag_Read) {
+    access_flags |= GENERIC_READ;
+  }
+
+  if (flags & OS_AccessFlag_Write) {
+    access_flags |= GENERIC_WRITE;
+  }
+
+  if (flags & OS_AccessFlag_Append) {
+    disposition = OPEN_ALWAYS;
+    access_flags = FILE_APPEND_DATA;
+  }
+
+  HANDLE file = CreateFileW((WCHAR *)path16.str, access_flags, 0, 0, DISPATCH_LEVEL, FILE_ATTRIBUTE_NORMAL, 0);
+
+  if (file != INVALID_HANDLE_VALUE) {
+    result.handle[0] = (u64)file;
+  }
+
+  scratch_end(scratch);
+  return result;
+}
+
+internal void os_file_close(OS_Handle file) {
+  if (os_handle_match(file, os_handle_zero())) {
+    return;
+  }
+  HANDLE handle = (HANDLE)file.handle[0];
+  BOOL result = CloseHandle(handle);
+  (void)result;
+}
+
+internal u64 os_file_read(OS_Handle file, Rng1u64 rng, void *data_dest) {
+  if (os_handle_match(file, os_handle_zero())) {
+    return 0;
+  }
+
+  HANDLE file_handle = (HANDLE)file.handle[0];
+  u64 size = 0;
+  GetFileSizeEx(file_handle, (LARGE_INTEGER *)&size);
+  Rng1u64 clamped_range = r1u64(CLAMP_TOP(rng.min, size), CLAMP_TOP(rng.max, size));
+  u64 total_read_size = 0;
+
+  // NOTE(tijani): This is equivalent to reading the entire file, but it is done in a chunked manner.
+  // Reason is cause WIN32 only allows reading a max of 32-bit(4GB) at once so this reads the file
+  // that is bigger than that in 32-bit chunks but all at once.
+  {
+    u64 bytes_to_read = rngdiff1u64(clamped_range);
+    for (u64 offset = rng.min; total_read_size < bytes_to_read;) {
+      u64 amt64 = bytes_to_read - total_read_size;
+      u32 amt32 = u32_from_u64_saturate(amt64);
+
+      DWORD read_size = 0;
+      OVERLAPPED overlapped = {0};
+      overlapped.Offset = (offset & 0x00000000ffffffff);
+      overlapped.OffsetHigh = (offset & 0xffffffff00000000) >> 32;
+      ReadFile(file_handle, (u8 *)data_dest + total_read_size, amt32, &read_size, &overlapped);
+      offset += read_size;
+      total_read_size += read_size;
+      if (read_size != amt32) {
+        break;
+      }
+    }
+  }
+  return total_read_size;
+}
+
+internal u64 os_file_write(OS_Handle file, Rng1u64 rng, void *data) {}
+
 // Win32 entry point
 #include <dbghelp.h>
 #undef OS_WINDOWS // shlwapi uses OS_WINDOWS in its own context
@@ -235,6 +312,7 @@ internal LONG WINAPI win32_exception_filter(EXCEPTION_POINTERS *exception_ptrs) 
 
   ExitProcess(1);
 }
+
 // clang-format on
 
 #undef OS_WINDOWS

@@ -39,6 +39,7 @@ typedef double f64;
 // Constants
 global u16 max_u16 = 0xffff;
 global u32 max_u32 = 0xffffffff;
+global u64 max_u64 = 0xffffffffffffffff;
 
 // Bitmasks
 global const u32 bitmask1 = 0x00000001;
@@ -163,6 +164,13 @@ C_LINK void __asan_unpoison_memory_region(void const volatile *addr, size_t size
 #define ABS(a)          (((a) < 0) ? -(a) : (a))
 #define SWAP(a, b, type)                                                                                               \
   do {                                                                                                                 \
+    type __t = a;                                                                                                      \
+    a = b;                                                                                                             \
+    b = __t;                                                                                                           \
+  } while (0)
+
+#define SWAPP(a, b, type)                                                                                              \
+  do {                                                                                                                 \
     type temp = *(a);                                                                                                  \
     *(a) = *(b);                                                                                                       \
     *(b) = temp;                                                                                                       \
@@ -249,5 +257,8 @@ C_LINK void __asan_unpoison_memory_region(void const volatile *addr, size_t size
 void *array_hold(void *array, int count, int item_size);
 int array_length(void *array);
 void array_free(void *array);
+
+// Bit patterns
+internal u32 u32_from_u64_saturate(u64 x); // Fill a u32 to the brim with infromation from a u64.
 
 #endif // BASE_TYPES_H
