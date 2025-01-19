@@ -78,7 +78,7 @@ internal u32 light_intensity(u32 colour, f32 percentage) {
 
 internal b32 frame() {
   b32 quit = 0;
-  u64 frame_start = os_now_microseconds();
+  // u64 frame_start = os_now_microseconds();
   Temp scratch = scratch_begin(0, 0);
 
   // tijani: do event stuff
@@ -119,10 +119,10 @@ internal b32 frame() {
             break;
           }
 
-            // case (OS_Key_N): {
-            //   g_render_state.render_mode ^= RENDER_TEXTURE_WIREFRAME;
-            //   break;
-            // }
+          case (OS_Key_N): {
+            g_render_state.render_mode ^= RENDER_TEXTURE_WIREFRAME;
+            break;
+          }
 
           case (OS_Key_C): {
             g_render_state.cull_mode ^= CULL_BACK;

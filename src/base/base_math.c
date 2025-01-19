@@ -1,9 +1,7 @@
 // Copyright Frost Gorilla, Inc. All Rights Reserved.
 // clang-format off
 
-// 2D Vector Operations
-
-// Signed
+// 2D 
 internal Vec2S32 vec2_s32(s32 x, s32 y) {
   Vec2S32 v = {x, y};
   return v;
@@ -33,7 +31,7 @@ internal Vec2F32 vec2_div(Vec2F32 vector, f32 factor) {
 
 internal f32 vec2_dot(Vec2F32 a, Vec2F32 b) { return ((a.x * b.x) + (a.y * b.y)); }
 
-// 3D Vector Operations
+// 3D 
 internal f32 vec3_length(Vec3F32 vector) {
   return (f32)sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
 }
@@ -99,19 +97,23 @@ internal Vec3F32 vec3f32_rotate_z(Vec3F32 vector, f32 new_angle) {
   return rotated_vector;
 }
 
-// tijani: Vec4F32
+internal Vec3F32 vec3f32_from_vec4f32(Vec4F32 v) {
+  Vec3F32 result = {v.x, v.y, v.z};
+  return result;
+}
+
+// 4D
 
 Vec4F32 vec4f32_from_vec3f32(Vec3F32 v) {
   Vec4F32 result = {v.x, v.y, v.z, 1.0};
   return result;
 }
 
-internal Vec3F32 vec3f32_from_vec4f32(Vec4F32 v) {
-  Vec3F32 result = {v.x, v.y, v.z};
-  return result;
-}
 
-// tijani: Mat 4x4
+
+// Matrix
+
+// 4 x 4
 
 internal Mat4F32 mat4f32_identity(void) {
   // | 1 0 0 0 |
@@ -269,6 +271,23 @@ internal Mat4F32 mat4f32_perspective_project(f32 fov, f32 aspect_ratio, f32 znea
   result.m[3][2] = 1.0;
 
   return result;
+}
+
+// Range ops
+
+internal Rng1u64 rng_1u64(u64 min, u64 max) {
+  Rng1u64 r = {.min = min, .max = max};
+
+  if (r.min > r.max) {
+    SWAP(r.min, r.max, u64);
+  }
+
+  return r;
+}
+
+internal u64 rngdiff1u64(Rng1u64 rng) {
+  u64 r = rng.max - rng.min;
+  return r;
 }
 
 // Calculato the barycentric weights of alpha, beta and gamma for point p;

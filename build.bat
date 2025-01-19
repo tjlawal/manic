@@ -79,6 +79,7 @@ pushd run_tree
 :: Experimentals
 	if "%scratch_profiler%"=="1"				set didbuild=1 && %compile% ..\src\scratch\scratch_profiler.c %compile_link% %out%scratch_profiler.exe || exit /b 1
 	if "%scratch_exception%"=="1"				set didbuild=1 && %compile% ..\src\scratch\scratch_exception.c %compile_link% %out%scratch_exception.exe || exit /b 1
+	if "%scratch_objparser%"=="1"				set didbuild=1 && %compile% ..\src\scratch\scratch_objparser.c %compile_link% %out%scratch_objparser.exe || exit /b 1
 popd
 
 :: --- Warn On No Builds ------------------------------------------------------
