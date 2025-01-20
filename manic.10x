@@ -23,7 +23,6 @@
 		<CaptureExeOutput>true</CaptureExeOutput>
 		<Configurations>
 			<Configuration>Debug</Configuration>
-			<Configuration>Release</Configuration>
 		</Configurations>
 		<Platforms>
 			<Platform>x64</Platform>

@@ -1,18 +1,57 @@
 # Manic 3D Renderer
 
-<!-- Add screenshot or looped video -->
+![Demo GIF](manic_demo_alpha_45.gif)
 
-Manic is a native 3D renderer. It currently supports rendering 3D meshes on Window x64 with plans to support Linux x64
-and MacOS. Manic is currently in ALPHA. This means that it is neither performant 
-(i.e. very limited in the amount of triangles it can draw on the screen), nor does it support a wide range of 
-file format (currently OBJ) used to store 3D meshes.
+Manic is a prototype 3D software renderer. The goal is to create a 3D rendering engine that can load and display models for 
+interaction. Currently, the project is in an unstable state, so be aware of potential crashes, performance issues, and other 
+bugs — development is ongoing.
+
+The main development occurs on a private server, with updates typically synced to GitHub at the end of each week.
 
 ## Development Setup Instructions
 > [!NOTE]
 > Only x64 is supported. While support for x86 is not specifically outlawed, it may not work as the codebase makes 
 > specific assumptions about its architecture.
 
-<!-- Build instructions here -->
+1. Install Required Tools (Windows SDK & MSVC)
+You need the [Microsoft C/C++ Build Tools](https://visualstudio.microsoft.com/downloads/?q=build+tools) for both the Windows SDK and the MSVC Compiler. 
+If you already have the Windows SDK installed, you may also build with [Clang](https://releases.llvm.org/)
+
+2. Build Environment
+The renderer can be using MSVC or Clang in the command line. This is done by calling vcvarsall.bat x64 (included with the Microsoft C/C++ Build Tools).
+This can be done automatically by the `x64 Native Tools Command Prompt for VS <year>` cmd variant installed by the Microsoft C/C++ Build Tools. If you have 
+installed the build tools, the command prompt can be located by searching for *native* from the Windows Start Menu.
+
+To confirm that you have access to the MSVC Compiler after opening the cmd variant, run:
+
+```
+cl
+```
+
+If everything is set up right, you should see output similar to this:
+```
+Microsoft (R) C/C++ Optimizing Compiler Version 19.42.34435 for x64
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+usage: cl [ option... ] filename... [ /link linkoption... ]
+```
+
+3. Building
+Within the `x64 Native Tool Command Prompt`, `cd` to the root directory of the codebase and run the `build` script like so:
+```
+## For MSVC
+build manic msvc debug
+
+## For Clang
+build manic clang debug
+```
+
+You should see the following: 
+```
+[debug mode]
+[msvc compile]
+manic_main.c
+```
 
 
 ## Codebase Introduction
