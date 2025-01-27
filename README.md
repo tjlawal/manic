@@ -1,6 +1,6 @@
 # Manic 3D Renderer
 
-![Demo GIF](manic_demo_alpha_45.gif)
+![Demo GIF](media/manic_demo_alpha_75.gif)
 
 Manic is a prototype 3D software renderer. The goal is to create a 3D rendering engine that can load and display models for 
 interaction. Currently, the project is in an unstable state, so be aware of potential crashes, performance issues, and other 
