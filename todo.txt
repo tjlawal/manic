@@ -5,47 +5,30 @@
 
 [pending]
 
-+ Fix distortion that happens during rotation and a texture is active on the rotated mesh.
-+ Implement draw layer
-+ Display frame draw metric on screen (i.e. FPS, Triangles Counter, etc).
-+ Get video frame rate from monitor and enforce it
-+ Texture mapping
-	+ Textured triangles
-	+ Baycentric Cordinates
-		+ Baycentric Weights
-+ Fully/90%  compliant .obj file parser.
-+ Texture mapping using PNG
-+ Textured OBJ files
-+ Z-Buffer
-+ Camera
++ Camera system
 + Clipping
-+ Multiple Meshes
-+ Make DPI Scaling and refresh rates at the OS layer more roboust.
-+ Profiler. Maybe first with Tracy then make a customized one as needs become clearer.
-+ Make the BackBuffer not too platform specific. The current implementation stores WIN32 BITMAPINFO, we would like that to not be the case. 
-	Render functions copying from he backbuffer to the windows are also WIN32 specific, this is not desireble as it creates dependence of engine 
-	code on the platform. The Engine code should not be aware of the platform it is running on, it should know handle 
-	engine stuff and reach out to the OS layer when it needs OS things.  
-+ Create state to handle mesh rotation, scaling and translation with mouse instead of auto rotation and scaling.
-+ Parse command line options
-+ Logging
-+ SIMD calculation for math, this would significantly speed up matrix calculations.
-+ Multithreading
-
-
-
-
++ Multiple meshes
++ Mouse state for mesh rotation, scaling and translation.
++ Better support for OBJ files
++ Remove dependency on the C Runtime.
++ Debug UI: profiling, optimization.
++ SIMD Maths.
++ Multithreading.
++ Linux OS layer support.
 
 
 [done]
-
-- Fixed weird bug that stretches the mesh when the aspect ratio changed. 
-- Add high precision timing (win32) 01-16-2025
-- Handle hard crashes on win32 with exception and call stack. 01-12-2025
-- Texture mapping 01-10-2025
-	- Flat-Bottom triangle
-	- Flat-Top triangle
-- Map keyboard shortcuts to setting render modes.
-
-
+- Z-Buffer.
+ - Remove painters algorithm.
+- Textured OBJ files loading.
+- Decoding and loading PNG files using stb_image.
+- Invert uv coordinates in cube.
+- Perspective correct interpolation on textures.
+- Texture mapping: textured triangles using baycentric coordinates.
+- Lighting and shading
+- Matrices, matrix transformation, projection matrix
+- Triangle rasterization, sorting faces, painters algorithm
+- Loading OBJ files, vector operations
+- Linear transformations, triangle and vertices, line drawing
+- Vectors, points, projecting points
 

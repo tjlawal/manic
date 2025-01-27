@@ -49,6 +49,7 @@ internal Vec2F32 vec2_sub(Vec2F32 a, Vec2F32 b);
 internal Vec2F32 vec2_mul(Vec2F32 vector, f32 factor);
 internal Vec2F32 vec2_div(Vec2F32 vector, f32 factor);
 internal f32 vec2_dot(Vec2F32 a, Vec2F32 b);
+internal Vec2F32 vec2f32_from_vec4f32(Vec4F32 v);
 
 // 3D
 internal f32 vec3_length(Vec3F32 vector);
@@ -113,8 +114,8 @@ internal u64 rngdiff1u64(Rng1u64 rng);
 
 //// TODO(tijani): Revise these, they shouldn't be in the math header!
 //- tijani: Textures
-typedef struct TextureF32 TextureF32;
-struct TextureF32 {
+typedef struct Texture2F32 Texture2F32;
+struct Texture2F32 {
   f32 u;
   f32 v;
 };
@@ -122,10 +123,9 @@ struct TextureF32 {
 //- tijani: Triangles
 typedef struct Triangle2F32 Triangle2F32;
 struct Triangle2F32 {
-  Vec2F32 points[3];
-  TextureF32 texture_coords[3];
+  Vec4F32 points[3];
+  Texture2F32 texture_coords[3];
   u32 colour;
-  f32 average_depth;
 };
 
 //- tijani: Faces are the surfaces formed by connecting those points.
@@ -134,9 +134,9 @@ struct Face3S32 {
   s32 a;
   s32 b;
   s32 c;
-  TextureF32 a_uv;
-  TextureF32 b_uv;
-  TextureF32 c_uv;
+  Texture2F32 a_uv;
+  Texture2F32 b_uv;
+  Texture2F32 c_uv;
   u32 colour;
 };
 

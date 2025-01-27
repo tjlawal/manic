@@ -69,14 +69,15 @@ pushd run_tree
 popd
 
 :: Get Subversion Revision History
-for /f "tokens=2" %%i in ('call svn info ^| findstr "Revision"') do set compile=%compile% -DBUILD_SVN_REVISION=\"%%i\"
+for /f "tokens=2" %%i in ('call svn info ^| findstr "Revision"') do set compile=%compile% -DBUILD_SVN_REVISION=%%i
 
 :: Build Things ---------------------------------------------------------------
 pushd run_tree
-	if "%manic%"=="1"           		set didbuild=1 && %compile% ..\src\manic\manic_main.c %compile_link% %link_resource% %out%manic.exe || exit /b 1
-	if "%manic_console%"=="1"   		set didbuild=1 && %compile% ..\src\manic\manic_main.c %compile_link% %out%manic_console.exe || exit /b 1
+	if "%manic%"=="1"           			  set didbuild=1 && %compile% ..\src\manic\manic_main.c %compile_link% %link_resource% %out%manic.exe || exit /b 1
+	if "%manic_console%"=="1"   			  set didbuild=1 && %compile% ..\src\manic\manic_main.c %compile_link% %out%manic_console.exe || exit /b 1
 
 :: Experimentals
+	if "%scratch_main%"=="1"						set didbuild=1 && %compile% ..\src\scratch\scratch_main.c %compile_link% %out%scratch_main.exe || exit /b 1
 	if "%scratch_profiler%"=="1"				set didbuild=1 && %compile% ..\src\scratch\scratch_profiler.c %compile_link% %out%scratch_profiler.exe || exit /b 1
 	if "%scratch_exception%"=="1"				set didbuild=1 && %compile% ..\src\scratch\scratch_exception.c %compile_link% %out%scratch_exception.exe || exit /b 1
 	if "%scratch_objparser%"=="1"				set didbuild=1 && %compile% ..\src\scratch\scratch_objparser.c %compile_link% %out%scratch_objparser.exe || exit /b 1

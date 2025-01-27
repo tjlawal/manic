@@ -67,6 +67,55 @@ global const u32 bit32 = (1 << 31);
 #define Million(n)  ((n) * 1000000)
 #define Billion(n)  ((n) * 1000000000)
 
+// Time primitives
+typedef u64 DenseTime;
+
+typedef enum WeekDay {
+  WeekDay_Sun,
+  WeekDay_Mon,
+  WeekDay_Tue,
+  WeekDay_Wed,
+  WeekDay_Thur,
+  WeekDay_Fri,
+  WeekDay_Sat,
+  WeekDay_COUNT,
+} WeekDay;
+
+typedef enum Month {
+  Month_Jan,
+  Month_Feb,
+  Month_Mar,
+  Month_Apr,
+  Month_May,
+  Month_Jun,
+  Month_Jul,
+  Month_Aug,
+  Month_Sep,
+  Month_Oct,
+  Month_Nov,
+  Month_Dec,
+  Month_COUNT,
+} Month;
+
+typedef struct DateTime DateTime;
+struct DateTime {
+  u16 micro_seconds; // [0, 999]
+  u16 milli_seconds; // [0, 999]
+  u16 seconds;       // [0, 60]
+  u16 minutes;       // [0, 59]
+  u16 hour;          // [0, 24]
+  u16 day;           // [0, 30]
+  union {
+    WeekDay week_day;
+    u32 wday;
+  };
+  union {
+    Month month;
+    u32 mon;
+  };
+  u32 year;
+};
+
 // Thread local storage shenanigans
 #if COMPILER_MSVC
   #define thread_static __declspec(thread)
@@ -105,12 +154,17 @@ global const u32 bit32 = (1 << 31);
   #error Unknown trap intrinsic for this compiler.
 #endif
 
-#define assert_always(x)                                                                                               \
+#define AssertAlways(x)                                                                                                \
   do {                                                                                                                 \
     if (!(x)) {                                                                                                        \
       trap();                                                                                                          \
     }                                                                                                                  \
   } while (0)
+#if BUILD_DEBUG
+  #define Assert(x) AssertAlways(x)
+#else
+  #define Assert(x) (void)(x)
+#endif
 
 // tijani: Address Sanitizer
 
@@ -188,7 +242,8 @@ C_LINK void __asan_unpoison_memory_region(void const volatile *addr, size_t size
 #endif
 
 // Alignment Macros
-#define align_pow2(x, b) (((x) + (b) - 1) & (~((b) - 1)))
+#define Compose64Bit(a, b) ((((u64)a) << 32) | ((u64)b));
+#define align_pow2(x, b)   (((x) + (b) - 1) & (~((b) - 1)))
 
 // Generic Linked List and Queues macros
 // NOTE(tijani): The benefits this present outweight their drawbacks.
@@ -242,9 +297,10 @@ C_LINK void __asan_unpoison_memory_region(void const volatile *addr, size_t size
 //////////////////////////////////////
 // tijani: Miscellaneous
 #define array_count(array_to_count) (sizeof(array_to_count) / sizeof((array_to_count)[0]))
-#define stringify_(string)          #string
-#define stringify(string)           stringify_(string)
+#define Stringify_(string)          #string
+#define Stringify(string)           Stringify_(string)
 
+/// TODO(tijani): REMOVE THIS, use my own arena based dynamic array!!
 // Note(tijani): dynamic array library from gustavopezzi [dynamic array]:
 // https://github.com/gustavopezzi/dynamicarray
 // @remove: make better implementation.
@@ -257,6 +313,16 @@ C_LINK void __asan_unpoison_memory_region(void const volatile *addr, size_t size
 void *array_hold(void *array, int count, int item_size);
 int array_length(void *array);
 void array_free(void *array);
+
+// Buffer - used for general purpose data handling
+// You can use to store arbritary type of data in memory.
+// It contains the data you point it to and its size.
+
+typedef struct Buffer Buffer;
+struct Buffer {
+  u8 *data;
+  u64 size;
+};
 
 // Bit patterns
 internal u32 u32_from_u64_saturate(u64 x); // Fill a u32 to the brim with infromation from a u64.

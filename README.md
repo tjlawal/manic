@@ -79,6 +79,8 @@ List of layers in the codebase and their associated namespaces:
 - `render` (`render_`): This is an abstract API for rendering using either software rasterization or either of the 
 	various GPU APIs under a common interface. This currently also implements the drawing API but it would be refactored
 	to strictly implement the rendering APIs.
+- `draw` (`draw_`): This implements the API that implements the drawing mechanisms. They are called by things around the 
+	codebase draw to a buffer.
 
 
 

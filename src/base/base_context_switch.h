@@ -146,7 +146,7 @@
 #endif
 
 #define BUILD_VERSION_STRING_LITERAL                                                                                   \
-  stringify(BUILD_VERSION_MAJOR) "." stringify(BUILD_VERSION_MINOR) "." stringify(BUILD_VERSION_PATCH)
+  Stringify(BUILD_VERSION_MAJOR) "." Stringify(BUILD_VERSION_MINOR) "." Stringify(BUILD_VERSION_PATCH)
 
 #if BUILD_DEBUG
   #define BUILD_MODE_STRING_LITERAL_APPEND " [Debug]"
@@ -155,7 +155,7 @@
 #endif
 
 #if defined(BUILD_SVN_REVISION)
-  #define BUILD_SVN_REVISION_STRING_LITERAL_APPEND " [Revision: " BUILD_SVN_REVISION "]"
+  #define BUILD_SVN_REVISION_STRING_LITERAL_APPEND " [Revision: " Stringify(BUILD_SVN_REVISION) "]"
 #else
   #define BUILD_SVN_REVISION_STRING_LITERAL_APPEND ""
 #endif

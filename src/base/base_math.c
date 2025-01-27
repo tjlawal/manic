@@ -31,6 +31,12 @@ internal Vec2F32 vec2_div(Vec2F32 vector, f32 factor) {
 
 internal f32 vec2_dot(Vec2F32 a, Vec2F32 b) { return ((a.x * b.x) + (a.y * b.y)); }
 
+internal Vec2F32 vec2f32_from_vec4f32(Vec4F32 v){
+	Vec2F32 result = { v.x, v.y };
+	return result;
+}
+
+
 // 3D 
 internal f32 vec3_length(Vec3F32 vector) {
   return (f32)sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);

@@ -163,7 +163,7 @@ internal void arena_pop_to(Arena *arena, u64 position) {
 #endif
   arena->current = current_arena;
   u64 new_position = big_position - current_arena->base_position;
-  assert_always(new_position <= current_arena->position);
+  AssertAlways(new_position <= current_arena->position);
   AsanPoisonMemoryRegion((u8 *)current_arena + new_position, (current_arena->position - new_position));
   current_arena->position = new_position;
 }

@@ -1,8 +1,14 @@
 // Copyright Frost Gorilla, Inc. All Rights Reserved.
 
+// Buffer construction
+internal Buffer buffer(u8 *data, u64 size) {
+  Buffer result = {data, size};
+  return result;
+}
+
 // Safe casts
 internal u16 safe_cast_u16(u32 x) {
-  assert_always(x <= max_u16);
+  AssertAlways(x <= max_u16);
   u16 result = (u16)x;
   return result;
 }
@@ -12,7 +18,15 @@ internal u32 u32_from_u64_saturate(u64 x) {
   return x32;
 }
 
-/// TODO(tijani): CRUFT, delete and use arenas in its place of something else.
+// Time conversions
+
+internal DenseTime dense_time_from_date_time(DateTime date_time) {
+  DenseTime result = 0;
+
+  return (result);
+}
+
+/// TODO(tijani): CRUFT, delete and use arenas in its place or something else.
 
 #define ARRAY_RAW_DATA(array) ((int *)(array) - 2)
 #define ARRAY_CAPACITY(array) (ARRAY_RAW_DATA(array)[0])

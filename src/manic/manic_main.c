@@ -5,32 +5,37 @@
 #define BUILD_TITLE                        "Manic"
 #define BUILD_VERSION_MAJOR                00
 #define BUILD_VERSION_MINOR                00
-#define BUILD_VERSION_PATCH                50
+#define BUILD_VERSION_PATCH                BUILD_SVN_REVISION
 #define BUILD_RELEASE_PHASE_STRING_LITERAL "Alpha"
 #define OS_FEATURE_GRAPHICAL               1
+#define STBI_ONLY_PNG
+#define STB_IMAGE_IMPLEMENTATION
+
+#define _CRT_SECURE_NO_WARNINGS
 
 // clang-format off
-
 ////////////////////////////
 // Includes
 
 // NOTE(tijani): order is important here
 
+// Thirdparty
+#include "third_party/stb_image.h"
+
 // [.h]
 #include "base/base_inc.h"
 #include "os/os_inc.h"
 #include "render/render_inc.h"
-#include "draw/draw.h"
-#include "mesh/mesh_inc.h"
+#include "mesh/mesh.h"
 #include "manic_core.h"
+#include "draw/draw.h"
 
 // [.c]
 #include "base/base_inc.c"
 #include "os/os_inc.c"
 #include "render/render_inc.c"
+#include "mesh/mesh.c"
 #include "draw/draw.c"
-#include "mesh/mesh_inc.c"
-
 // clang-format on
 
 typedef struct SpotLight SpotLight;
@@ -61,9 +66,6 @@ global f32 g_zfar = 100.0;
 global f32 g_aspect_ratio = 0.0;
 global Vec2S32 g_dimensions = {0};
 global Mat4F32 g_projection_matrix = {0};
-
-// Load hard coded texture data
-global u32 *g_texture_mesh = (u32 *)REDBRICK_TEXTURE;
 
 internal u32 light_intensity(u32 colour, f32 percentage) {
   CLAMP(percentage, 0, 1);
@@ -147,28 +149,28 @@ internal b32 frame() {
     // NOTE(tijani): cool mesh animation, don't delete.
     //   g_triangles_to_render = NULL;
     //   g_mesh.rotate.x += 0.01;
-    //   // g_mesh.rotate.y += 0.01;
-    //   // g_mesh.rotate.z += 0.01;
+    //   g_mesh.rotate.y += 0.01;
+    //   g_mesh.rotate.z += 0.01;
 
     //   g_mesh.scale.x += 0.002;
-    //   // g_mesh.scale.y += 0.002;
-    //   // g_mesh.scale.z += 0.02;
+    //   g_mesh.scale.y += 0.002;
+    //   g_mesh.scale.z += 0.02;
 
     //   g_mesh.translate.x += 0.001;
-    //   // g_mesh.translate.y += 0.01;
+    //   g_mesh.translate.y += 0.01;
     //   g_mesh.translate.z = 5.0;
 
     g_triangles_to_render = NULL;
-    g_mesh.rotate.x += 0.01;
-    g_mesh.rotate.y += 0.01;
-    g_mesh.rotate.z += 0.01;
+    //g_mesh.rotate.x += 0.01;
+     g_mesh.rotate.y += 0.01;
+    // g_mesh.rotate.z += 0.01;
 
     // g_mesh.scale.x += 0.00;
-    //  g_mesh.scale.y += 0.002;
-    //  g_mesh.scale.z += 0.02;
+    // g_mesh.scale.y += 0.002;
+    // g_mesh.scale.z += 0.02;
 
     // g_mesh.translate.x += 0.00;
-    //  g_mesh.translate.y += 0.01;
+    // g_mesh.translate.y += 0.01;
     g_mesh.translate.z = 5.0;
 
     // Create scale matrix to multiply mesh vertices
@@ -274,55 +276,35 @@ internal b32 frame() {
         projected_points[k].y += (g_buffer.height / 2.0);
       }
 
-      // Calculate average depth for each face based on the vertices z value
-      // after transformation
-      f32 l_average_depth = (transformed_vertices[0].z + transformed_vertices[1].z + transformed_vertices[2].z) / 3.0;
-
       // Calculate light intensity based on the alignment of the face normal and
       // the light ray.
       f32 light_intensity_factor = -vec3_dot(normal, g_light.direction);
       u32 triangle_colour = light_intensity(current_mesh_face.colour, light_intensity_factor);
 
-      // clang-format off
       Triangle2F32 projected_triangle = {
-				.points = { {projected_points[0].x, projected_points[0].y},
-										{projected_points[1].x, projected_points[1].y},
-										{projected_points[2].x, projected_points[2].y},
-									},
-				.texture_coords = { {current_mesh_face.a_uv.u, current_mesh_face.a_uv.v},
-														{current_mesh_face.b_uv.u, current_mesh_face.b_uv.v},
-														{current_mesh_face.c_uv.u, current_mesh_face.c_uv.v},
-													},
-				.colour = triangle_colour,
-				.average_depth = l_average_depth
+          .points = {
+						{projected_points[0].x, projected_points[0].y, projected_points[0].z, projected_points[0].w},
+						{projected_points[1].x, projected_points[1].y, projected_points[1].z, projected_points[1].w},
+						{projected_points[2].x, projected_points[2].y, projected_points[2].z, projected_points[2].w},
+					},
+          .texture_coords = {
+						{current_mesh_face.a_uv.u, current_mesh_face.a_uv.v},
+						{current_mesh_face.b_uv.u, current_mesh_face.b_uv.v},
+						{current_mesh_face.c_uv.u, current_mesh_face.c_uv.v},
+					},
+          .colour = triangle_colour
 			};
-      // clang-format on
 
+			// TODO: use arena here!!
       // save projected triangle in array of triangles to be rendered
       array_push(g_triangles_to_render, projected_triangle);
-    }
-
-    // NOTE(tijani): Bubble sort.
-    // Sort the triangles to render by their average depth
-    // TODO(tijani): replace with faster alternative of speed up!!
-    {
-      s32 num_triangles = array_length(g_triangles_to_render);
-      for (s32 i = 0; i < num_triangles; ++i) {
-        for (s32 j = i; j < num_triangles; ++j) {
-          if (g_triangles_to_render[i].average_depth < g_triangles_to_render[j].average_depth) {
-            Triangle2F32 temp = g_triangles_to_render[i];
-            g_triangles_to_render[i] = g_triangles_to_render[j];
-            g_triangles_to_render[j] = temp;
-          }
-        }
-      }
     }
   }
 
   // NOTE(tijani): Now draw
-  {
-    r_clear_colour_buffer(&g_buffer, 0xFF000000);
-    // draw_grid(&g_buffer, 0xFF444444);
+  { // ARGB
+    r_clear_colour_buffer(&g_buffer, 0xFF2C2C2C);
+    r_clear_z_buffer(&g_buffer);
 
     // Loop through all projected points and render
     int triangle_count = array_length(g_triangles_to_render);
@@ -330,7 +312,6 @@ internal b32 frame() {
     for (u32 i = 0; i < triangle_count; ++i) {
       Triangle2F32 triangle = g_triangles_to_render[i];
 
-      // clang-format off
       // Draw vertex points
       if (g_render_state.render_mode & RENDER_VERTEX) {
         draw_rect(&g_buffer, triangle.points[0].x, triangle.points[0].y, 3, 3, 0xFFFE7104); // Vertex A
@@ -340,40 +321,38 @@ internal b32 frame() {
 
       // Draw filled triangle
       if (g_render_state.render_mode == RENDER_DEFAULT || g_render_state.render_mode & RENDER_FILL) {
-        draw_filled_triangle(&g_buffer, triangle.points[0].x, triangle.points[0].y, // Vertex A
-                               triangle.points[1].x, triangle.points[1].y,            // Vertex B
-                               triangle.points[2].x, triangle.points[2].y,            // Vertex C
-                               triangle.colour);
+        draw_filled_triangle(
+            &g_buffer, triangle.points[0].x, triangle.points[0].y, triangle.points[0].z,
+            triangle.points[0].w,                                                                   // Vertex A
+            triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w, // Vertex B
+            triangle.points[2].x, triangle.points[2].y, triangle.points[2].z, triangle.points[2].w, // Vertex C
+            triangle.colour);
       }
 
       // Draw just wireframe or textured wireframe
       if (g_render_state.render_mode & RENDER_WIREFRAME || g_render_state.render_mode & RENDER_TEXTURE_WIREFRAME) {
-        draw_triangle(&g_buffer, 
-											triangle.points[0].x, triangle.points[0].y,  // Vertex A
-                      triangle.points[1].x, triangle.points[1].y,  // Vertex B
-                      triangle.points[2].x, triangle.points[2].y,  // Vertex C
+        draw_triangle(&g_buffer, triangle.points[0].x, triangle.points[0].y, // Vertex A
+                      triangle.points[1].x, triangle.points[1].y,            // Vertex B
+                      triangle.points[2].x, triangle.points[2].y,            // Vertex C
                       0xFFFFFFF);
       }
 
       // Draw textured triangle
       if (g_render_state.render_mode & RENDER_TEXTURE) {
-        draw_textured_triangle(&g_buffer, 
-																 triangle.points[0].x, triangle.points[0].y, triangle.texture_coords[0].u, triangle.texture_coords[0].v, 	// Vertex A
-																 triangle.points[1].x, triangle.points[1].y, triangle.texture_coords[1].u, triangle.texture_coords[1].v,  // Vertex B
-																 triangle.points[2].x, triangle.points[2].y, triangle.texture_coords[2].u, triangle.texture_coords[2].v,  // Vertex C
-																 g_texture_mesh);
+        draw_textured_triangle(&g_buffer, triangle.points[0].x, triangle.points[0].y, triangle.points[0].z,
+                               triangle.points[0].w, triangle.texture_coords[0].u,
+                               triangle.texture_coords[0].v, // Vertex A
+                               triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w,
+                               triangle.texture_coords[1].u, triangle.texture_coords[1].v, // Vertex B
+                               triangle.points[2].x, triangle.points[2].y, triangle.points[2].z, triangle.points[2].w,
+                               triangle.texture_coords[2].u, triangle.texture_coords[2].v, // Vertex C
+                               g_texture_mesh);
       }
-
-      // clang-format on
     }
-    // free the triangle
-    array_free(g_triangles_to_render);
   }
 
   // NOTE(tijani): Send back-buffer to window.
   r_copy_buffer_to_window(g_device_context, &g_buffer);
-
-  r_clear_colour_buffer(&g_buffer, 0xFF000000);
 
   scratch_end(scratch);
   return quit;
@@ -392,8 +371,8 @@ void entry_point() {
   g_aspect_ratio = (f32)g_dimensions.x / (f32)g_dimensions.y;
   g_projection_matrix = mat4f32_perspective_project(g_fov, g_aspect_ratio, g_znear, g_zfar);
 
-  // load_obj_file_data_from_file("data/meshes/f22.obj");
-  load_cube_mesh_data();
+  load_obj_file_data_from_file("data/meshes/drone.obj");
+  load_texture_data("data/textures/drone.png");
 
   // equip renderer
   for (; !update();) {

@@ -4,6 +4,10 @@
 #define BASE_STRINGS_H
 
 // String types
+// These are different from a Buffer in that: a. They come in different sizes. b. A way to draw distinction between what
+// a string is and what a buffer is.
+//
+// On more spartan level, they are exactly the same in memory, just different in size and interaction.
 typedef struct string8 string8;
 struct string8 {
   u8 *str;
