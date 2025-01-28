@@ -349,6 +349,9 @@ internal b32 frame() {
                                g_texture_mesh);
       }
     }
+		// TODO: Revise this, to use the scratch memory already allocated per-frame.
+		// Just need a way to load-up dynamic arrays into it.
+		array_free(g_triangles_to_render);
   }
 
   // NOTE(tijani): Send back-buffer to window.
