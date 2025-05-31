@@ -65,7 +65,6 @@
 #define min(A, B)       (((A) < (B)) ? (A) : (B))
 #define clamp_min(A, X) min(A, X)
 #define clamp_max(X, B) max(X, B)
-#define abs(a)          (((a) < 0) ? -(a) : (a))
 
 ///////////////////////////////////////////// Temporary, will delete soonest ///////////////////////////////////////
 #define CheckNil(nil, ptr) ((ptr) == 0 || (ptr) == (nil))
@@ -111,7 +110,6 @@
 
 // Miscl
 #define ArrayCount(arr) (sizeof(arr) / sizeof((arr)[0]))
-#define StaticCast(T, V) static_cast<T>(V)
 
 namespace Starlight {
 	namespace Foundation {
@@ -148,41 +146,8 @@ namespace Starlight {
 			return (array != nullptr) ? ARRAY_OCCUPIED(array) : 0;
 		}
 
-
 		internal u16 cast_u16_from_u32(u32 x);
 		internal u32 saturate_u32_from_u64(u64 x); // Fill a u32 to the brim with infromation from a u64.
 
 	}
-} // namespace Base
-
-
-// Address Sanitizer
-//#if COMPILER_MSVC
-//  #if defined(__SANITIZE_ADDRESS__)
-//    #define ASAN_ENABLED 1
-//    #define NO_ASAN      __declspec(no_sanitize_address)
-//  #else
-//    #define NO_ASAN
-//  #endif
-
-//#elif COMPILER_CLANG
-//  #if defined(__has_feature)
-//    #if __has_feature(address_sanitizer) || defined(__SANITIZE_ADDRESS__)
-//      #define ASAN_ENABLED 1
-//    #endif
-//    #define NO_ASAN __attribute__((no_sanitize("address")))
-//  #endif
-//#else
-//  #define NO_ASAN
-//#endif
-
-//#if ASAN_ENABLED
-//  #pragma comment(lib, "clang_rt.asan-x86_64.lib")
-//C_LINK void __asan_poison_memory_region(void const volatile *addr, size_t size);
-//C_LINK void __asan_unpoison_memory_region(void const volatile *addr, size_t size);
-//  #define AsanPoisonMemoryRegion(addr, size)   __asan_poison_memory_region((addr), (size))
-//  #define AsanUnpoisonMemoryRegion(addr, size) __asan_unpoison_memory_region((addr), (size))
-//#else
-//  #define AsanPoisonMemoryRegion(addr, size)   ((void)(addr), (void)(size))
-//  #define AsanUnpoisonMemoryRegion(addr, size) ((void)(addr), (void)(size))
-//#endif
+} 
