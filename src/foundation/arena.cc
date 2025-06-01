@@ -83,7 +83,7 @@ namespace Starlight {
 			// Push to the current arena
 			void* result = {};
 			if(current_arena->commit >= pos_post_push) {
-				result = reinterpret_cast<u8*>(current_arena + pos_pre_push);
+				result = reinterpret_cast<u8*>(current_arena) + pos_pre_push;
 				current_arena->position = pos_post_push;
 				// @TODO: UnpoisonMemoryRegion so
 			}
