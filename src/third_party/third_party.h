@@ -3,8 +3,8 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_SPRINTF_STATIC
-#define STBI_NO_STDIO
-//#include "stb/stb_image.h"
+#define STBI_NO_STDIO 	1
+#include "stb/stb_image.h"
 
 #define STB_SPRINTF_DECORATE(name) starlight_##name
 #define STB_SPRINTF_IMPLEMENTATION
