@@ -46,8 +46,9 @@ namespace Starlight {
 				UnicodeDecode consume;
 				for(; l_ptr < one_past_last; l_ptr += consume.increment) {
 					consume = utf8_decode(l_ptr, one_past_last - l_ptr);
-					new_size = utf16_encode(l_str + new_size, consume.codepoint);
+					new_size += utf16_encode(l_str + new_size, consume.codepoint);
 				}
+
 				l_str[new_size] = 0;
 				arena_pop_off(arena, (capacity - new_size)*2);
 				result = str16(l_str, new_size);

@@ -6,7 +6,8 @@ namespace Starlight {
 		struct string8 {
 			u8 *str;
 			u64 size;
-		};	
+		};
+
 		internal string8 str8(u8 *str, u64 size);
 		#define str8_lit(string)      str8((u8 *)(string), sizeof(string) - 1)
 
