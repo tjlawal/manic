@@ -63,7 +63,8 @@ struct Mesh {
 
 namespace Starlight {
 
-	global RenderState g_render_state = {.cull_mode = CULL_BACK, .render_mode = RENDER_DEFAULT, .debug_overlay = 0}; // @TODO: this is stupid, find a better way to do it.
+	global RenderState g_render_state = { CULL_BACK, RENDER_DEFAULT, 0}; // @TODO: this is stupid, find a better way to do it.
+	//global RenderState g_render_state = {.cull_mode = CULL_BACK, .render_mode = RENDER_DEFAULT, .debug_overlay = 0}; // @TODO: this is stupid, find a better way to do it.
 	global Triangle2F32 *g_triangles_to_render = NULL;
 
 	global HDC g_device_ctxt; // TODO: is there a better way to do this?
@@ -230,41 +231,40 @@ namespace Starlight {
 				projected_points[k] = Mat4F32::mat4f32_mul_projection(g_projection_matrix, transformed_vertices[k]);
 
 				// Scale into the viewport
-				projected_points[k].x *= (g_buffer.software_framebuffer.width / 2.0);
-				projected_points[k].y *= (g_buffer.software_framebuffer.height / 2.0);
+				projected_points[k].x *= (g_buffer.sw.width / 2.0);
+				projected_points[k].y *= (g_buffer.sw.height / 2.0);
 
 				// printf("ProjectedPoints: x - %f, y - %f\n", projected_points[k].x,
 				// projected_points[k].y);
 
 				// Translate projected points to the middle of the screen.
-				projected_points[k].x += (g_buffer.software_framebuffer.width / 2.0);
-				projected_points[k].y += (g_buffer.software_framebuffer.height / 2.0);
+				projected_points[k].x += (g_buffer.sw.width / 2.0);
+				projected_points[k].y += (g_buffer.sw.height / 2.0);
 			}
 
-			// Calculate light intensity based on the alignment of the face normal and
-			// the light ray.
+			// Calculate light intensity based on the alignment of the face normal and the light ray.
 			f32 light_intensity_factor = -Vec3F32::dot(normal, g_light);
 			u32 triangle_colour = light_intensity(current_mesh_face.colour, light_intensity_factor);
 
 			Triangle2F32 projected_triangle = {
-				.points = {
+				{
 					{projected_points[0].x, projected_points[0].y, projected_points[0].z, projected_points[0].w},
 					{projected_points[1].x, projected_points[1].y, projected_points[1].z, projected_points[1].w},
 					{projected_points[2].x, projected_points[2].y, projected_points[2].z, projected_points[2].w},
 				},
-				.texture_coords = {
+				{
 					{current_mesh_face.a_uv.u, current_mesh_face.a_uv.v},
 					{current_mesh_face.b_uv.u, current_mesh_face.b_uv.v},
 					{current_mesh_face.c_uv.u, current_mesh_face.c_uv.v},
 				},
-				.colour = triangle_colour
+				triangle_colour
 			};
 
 			//arena_push(g_triangles_to_render, projected_triangle);
-
-			scratch_end(scratch);
 			//array_push(g_triangles_to_render, projected_triangle);
+
 		}
+		scratch_end(scratch);
 	}
 
 	internal void render() {

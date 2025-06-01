@@ -7,7 +7,8 @@ namespace Starlight {
 
 		enum RendererType : u8 {
 			RendererType_Software,
-			RendererType_DirectX,
+			RendererType_DirectX11,
+			RendererType_DirectX12,
 			RendererType_Vulkan,
 			RendererType_OpenGL,
 			RendererType_Metal,
@@ -27,17 +28,18 @@ namespace Starlight {
 				} opengl;
 
 				struct {
-					#if defined(OS_WINDOWS)
-						BITMAPINFO win32_bitmapinfo;
-					#endif
-					void* memory;
+					void* memory_buffer;
 					u32* colour_buffer;
 					f32* z_buffer;
 					s32 bytes_per_pixel;
 					s32 pitch;
 					s32 height;
 					s32 width;
-				} software_framebuffer;
+
+					#if defined(OS_WINDOWS)
+						BITMAPINFO win32_bitmapinfo;
+					#endif
+				} sw;
 			};
 
 		};

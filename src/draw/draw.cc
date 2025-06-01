@@ -18,8 +18,8 @@ namespace Starlight {
 
 		// REVISE: Could this be unrolled and made faster?
 		void draw_pixel(Renderer *buffer, s32 x, s32 y, u32 colour) {
-			if ((x >= 0) && (x < buffer->software_framebuffer.width) && (y >= 0) && (y < buffer->software_framebuffer.height)) {
-				buffer->software_framebuffer.colour_buffer[(buffer->software_framebuffer.width * y) + x] = colour;
+			if ((x >= 0) && (x < buffer->sw.width) && (y >= 0) && (y < buffer->sw.height)) {
+				buffer->sw.colour_buffer[(buffer->sw.width * y) + x] = colour;
 			}
 		}
 
@@ -72,11 +72,11 @@ namespace Starlight {
 			interpolated_reciprocal_w = 1.0 - interpolated_reciprocal_w;
 
 			// Only draw pixel and update z-buffer if the depth is less that the value that already exists in the z-buffer
-			if(interpolated_reciprocal_w < buffer->software_framebuffer.z_buffer[(buffer->software_framebuffer.width * y) + x] ){
+			if(interpolated_reciprocal_w < buffer->sw.z_buffer[(buffer->sw.width * y) + x] ){
 				draw_pixel(buffer, x, y, colour);
 
 				// update the z-buffer with the 1/w of the current pixel
-				buffer->software_framebuffer.z_buffer[(buffer->software_framebuffer.width * y) + x] = interpolated_reciprocal_w;
+				buffer->sw.z_buffer[(buffer->sw.width * y) + x] = interpolated_reciprocal_w;
 			}
 		}
 
@@ -225,11 +225,11 @@ namespace Starlight {
 			interpolated_reciprocal_w = 1.0 - interpolated_reciprocal_w;
 
 			// Only draw pixel and update z-buffer if the depth is less that the value that already exists in the z-buffer
-			if (interpolated_reciprocal_w < buffer->software_framebuffer.z_buffer[(buffer->software_framebuffer.width * y) + x]) {
+			if (interpolated_reciprocal_w < buffer->sw.z_buffer[(buffer->sw.width * y) + x]) {
 				draw_pixel(buffer, x, y, packed_pixel_colour);
 
 				// Update the z-buffer value withthe 1/w of this current pixel
-				buffer->software_framebuffer.z_buffer[(buffer->software_framebuffer.width * y) + x] = interpolated_reciprocal_w;
+				buffer->sw.z_buffer[(buffer->sw.width * y) + x] = interpolated_reciprocal_w;
 			}
 		}
 
