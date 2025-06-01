@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <N10X>
 	<Workspace>
-		<IncludeFilter>*.c,*.cc,*.cpp,*.c++,*.cp,*.cxx,*.h,*.hh,*.hpp,*.h++,*.hp,*.hxx,*.inl,*.cs,*.rs,*.java,*.jav,*.js,*.jsc,*.jsx,*.json,*.cls,*.py,*.rpy,*.php,*.php3,*.phl,*.phtml,*.rhtml,*.tpl,*.phps,*.lua,*.html,*.html5,*.htm,*.xml,*.xaml,*.css,*.ssi,*.haml,*.yaml,*.bat,*.wbf,*.wbt,*.txt,*.cmake,*.make,*.makefile,*.mak,*.mk,*.sh,*.bash,*.csv,*.asp,*.pl,*.mac,*.ws,*.vbs,*.perl,*.src,*.rss,*.inc,*.f,*.go,*.prl,*.plx,*.rb,*.lsp,*.lpx,*.ps1,*.command,*.cbl,*.cob,*.qs,*.wxs,*.ph,*.msc,*.glsl,*.hlsl,*.fx,*.vert,*.tesc,*.tese,*.geom,*.frag,*.comp,*.pssl,*.scons,*.cu,*.jai,</IncludeFilter>
+		<IncludeFilter>*.c,*.cc,*.cpp,*.c++,*.cp,*.cxx,*.h,*.hh,*.hpp,*.h++,*.hp,*.hxx,*.inl,*.cs,*.rs,*.java,*.jav,*.js,*.jsc,*.jsx,*.json,*.cls,*.py,*.rpy,*.php,*.php3,*.phl,*.phtml,*.rhtml,*.tpl,*.phps,*.lua,*.html,*.html5,*.htm,*.xml,*.xaml,*.css,*.ssi,*.haml,*.yaml,*.bat,*.wbf,*.wbt,*.txt,*.cmake,*.make,*.makefile,*.mak,*.mk,*.sh,*.bash,*.csv,*.asp,*.pl,*.mac,*.ws,*.vbs,*.perl,*.src,*.rss,*.inc,*.f,*.go,*.prl,*.plx,*.rb,*.lsp,*.lpx,*.ps1,*.command,*.cbl,*.cob,*.qs,*.wxs,*.ph,*.msc,*.glsl,*.hlsl,*.fx,*.vert,*.tesc,*.tese,*.geom,*.frag,*.comp,*.pssl,*.scons,*.cu,*.jai,run_tree\data\*.rc,</IncludeFilter>
 		<ExcludeFilter></ExcludeFilter>
-		<SyncFiles>true</SyncFiles>
+		<SyncFiles>false</SyncFiles>
 		<Recursive>true</Recursive>
 		<ShowEmptyFolders>true</ShowEmptyFolders>
 		<IncludeFilesWithoutExt>false</IncludeFilesWithoutExt>
@@ -46,11 +46,11 @@
 				<RebuildCommand></RebuildCommand>
 				<BuildFileCommand></BuildFileCommand>
 				<CleanCommand></CleanCommand>
-				<BuildWorkingDirectory>C:\Work\manic\branches\rewrite</BuildWorkingDirectory>
+				<BuildWorkingDirectory>C:\manic\branches\rewrite</BuildWorkingDirectory>
 				<CancelBuild></CancelBuild>
-				<Exe>C:\Work\manic\branches\rewrite\run_tree\manic.exe</Exe>
+				<Exe>C:\manic\branches\rewrite\run_tree\manic.exe</Exe>
 				<Args></Args>
-				<WorkingDirectory>C:\Work\manic\branches\rewrite\run_tree</WorkingDirectory>
+				<WorkingDirectory>C:\manic\branches\rewrite\run_tree</WorkingDirectory>
 				<DebugCommand></DebugCommand>
 				<DebugSln></DebugSln>
 				<Defines></Defines>
@@ -65,6 +65,30 @@
 				<Defines></Defines>
 			</Platform>
 		</ConfigProperties>
-		<Children></Children>
+		<Children>
+			<Folder>
+				<Path>run_tree</Path>
+				<IncludeFilter>*.c,*.cc,*.cpp,*.c++,*.cp,*.cxx,*.h,*.hh,*.hpp,*.h++,*.hp,*.hxx,*.inl,*.cs,*.rs,*.java,*.jav,*.js,*.jsc,*.jsx,*.json,*.cls,*.py,*.rpy,*.php,*.php3,*.phl,*.phtml,*.rhtml,*.tpl,*.phps,*.lua,*.html,*.html5,*.htm,*.xml,*.xaml,*.css,*.ssi,*.haml,*.yaml,*.bat,*.wbf,*.wbt,*.txt,*.cmake,*.make,*.makefile,*.mak,*.mk,*.sh,*.bash,*.csv,*.asp,*.pl,*.mac,*.ws,*.vbs,*.perl,*.src,*.rss,*.inc,*.f,*.go,*.prl,*.plx,*.rb,*.lsp,*.lpx,*.ps1,*.command,*.cbl,*.cob,*.qs,*.wxs,*.ph,*.msc,*.glsl,*.hlsl,*.fx,*.vert,*.tesc,*.tese,*.geom,*.frag,*.comp,*.pssl,*.scons,*.cu,*.jai,run_tree\data\*.rc,</IncludeFilter>
+				<ExcludeFilter></ExcludeFilter>
+				<SyncFiles>true</SyncFiles>
+				<Recursive>true</Recursive>
+				<ShowEmptyFolders>true</ShowEmptyFolders>
+				<IncludeFilesWithoutExt>false</IncludeFilesWithoutExt>
+				<Children></Children>
+			</Folder>
+			<Folder>
+				<Path>src</Path>
+				<IncludeFilter>*.c,*.cc,*.cpp,*.c++,*.cp,*.cxx,*.h,*.hh,*.hpp,*.h++,*.hp,*.hxx,*.inl,*.cs,*.rs,*.java,*.jav,*.js,*.jsc,*.jsx,*.json,*.cls,*.py,*.rpy,*.php,*.php3,*.phl,*.phtml,*.rhtml,*.tpl,*.phps,*.lua,*.html,*.html5,*.htm,*.xml,*.xaml,*.css,*.ssi,*.haml,*.yaml,*.bat,*.wbf,*.wbt,*.txt,*.cmake,*.make,*.makefile,*.mak,*.mk,*.sh,*.bash,*.csv,*.asp,*.pl,*.mac,*.ws,*.vbs,*.perl,*.src,*.rss,*.inc,*.f,*.go,*.prl,*.plx,*.rb,*.lsp,*.lpx,*.ps1,*.command,*.cbl,*.cob,*.qs,*.wxs,*.ph,*.msc,*.glsl,*.hlsl,*.fx,*.vert,*.tesc,*.tese,*.geom,*.frag,*.comp,*.pssl,*.scons,*.cu,*.jai,run_tree\data\*.rc,</IncludeFilter>
+				<ExcludeFilter></ExcludeFilter>
+				<SyncFiles>true</SyncFiles>
+				<Recursive>true</Recursive>
+				<ShowEmptyFolders>true</ShowEmptyFolders>
+				<IncludeFilesWithoutExt>false</IncludeFilesWithoutExt>
+				<Children></Children>
+			</Folder>
+			<File>
+				<Path>build.bat</Path>
+			</File>
+		</Children>
 	</Workspace>
 </N10X>
