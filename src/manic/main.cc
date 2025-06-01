@@ -35,7 +35,7 @@ namespace Starlight {
 
 
 	internal void system_setup() {
-		window_handle = window_open(Vec2S32(2256, 1504), str8_lit(BUILD_TITLE_STRING_LITERAL));
+		window_handle = window_open(Vec2S32(1920, 1080), str8_lit(BUILD_TITLE_STRING_LITERAL));
 		window_first_paint(window_handle);
 		device_context = reinterpret_cast<HDC>(get_device_context(window_handle));
 	}
