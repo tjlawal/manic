@@ -100,7 +100,7 @@ namespace Starlight {
 
 				void window_set_fullscreen(Handle window, b32 fullscreen) {}
 
-				Vec2S32 window_dimension(Handle handle) {
+				Vec2S32 get_window_dimension(Handle handle) {
 					Window *window = w32_window_from_handle(handle);
 					Vec2S32 result = {};
 					RECT rect;
@@ -145,6 +145,7 @@ namespace Starlight {
 								PAINTSTRUCT paint_struct = {0};
 								BeginPaint(hwnd, &paint_struct);
 								update();
+								//render();
 								EndPaint(hwnd, &paint_struct);
 							} break;
 

@@ -5,6 +5,7 @@
 #define BUILD_RELEASE_PHASE_STRING_LITERAL "Alpha"
 
 // Includes, order is important here.
+#include "foundation/context_switch.h"
 #include "third_party/third_party.h"
 
 // [.h]
@@ -31,6 +32,7 @@ namespace Starlight {
 	global Handle window_handle = {};
 	global Vec2S32 window_dimensions = {};
 	global HDC device_context = {};
+	global Renderer render_buffer = {};
 	global b32 quit = 0;
 
 
@@ -70,9 +72,21 @@ namespace Starlight {
 		scratch_end(scratch);
 	}
 
-	internal void update() {}
+	internal void update() {
+		Temp scratch = scratch_begin(0, 0);
+		// Handle window resize
+		window_dimensions = get_window_dimension(window_handle);
+		r_resize_buffer(scratch.arena, &render_buffer, window_dimensions.x, window_dimensions.y);
 
-	internal void render() {}
+
+		scratch_end(scratch);
+	}
+
+	internal void render() {
+		r_clear_colour_buffer(&render_buffer, 0xFF2C2C2C);
+
+		r_copy_buffer_to_window(device_context, &render_buffer);
+	}
 
 	internal void Platform::MainLoop() {
 		system_setup();

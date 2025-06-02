@@ -53,7 +53,7 @@ namespace Starlight {
 			internal void    	window_first_paint(Handle window);
 			internal void    	window_focus(Handle window);
 			internal void 	 	window_set_fullscreen(Handle window, b32 fullscreen);
-			internal Vec2S32 	window_dimension(Handle handle);
+			internal Vec2S32 	get_window_dimension(Handle handle);
 			internal void*	 	get_device_context(Handle handle);
 			internal void 	 	release_device_context(Handle handle, void *device_context);
 
