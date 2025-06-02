@@ -14,7 +14,12 @@ if "%msvc%"=="1" 			  set clang=0		&& echo [compiling with msvc]
 :: --- Unpack command line build argument
 set auto_compile_flags=
 if "%asan%"=="1" 				set auto_compile_flags=%auto_compile_flags% -fsanitize=address && echo [asan enabled]
-if "%profile%"=="1" 		set auto_compile_flags=%auto_compile_flags% -DPROFILE_ENABLE=1 && echo [profiler enabled]
+
+set profiler_flags=
+if "%profile%"=="1" (
+	if "%sp%"=="1" 				set profiler_flags=%profiler_flags% -DBUILD_PROFILE=1 -DPROFILE_SUPERLUMINAL=1 && echo [profiler enabled, using SuperluminalPerfomance profiler]
+	if "%tracy%"=="1" 		set profiler_flags=%profiler_flags% -DBUILD_PROFILE=1 -DPROFILE_TRACY=1 && echo [profiler enabled, using Tracy profiler]
+)
 
 :: clang writes the result of getting only the preprocessed code to whatever is pointed to by '-o'.
 set preprocessor_flags=
@@ -26,14 +31,14 @@ if "%preprocess%"=="1" (
 
 :: --- Clang 
 set clang_common=   -I..\src\ -Wall -std=c++11 -ferror-limit=200 -gcodeview -fdiagnostics-absolute-paths -fno-exceptions -Wno-initializer-overrides -Wno-unused-function -Wno-missing-braces -Wno-unused-variable -Wno-writable-strings -Wno-address-of-temporary -Wno-switch -Wno-return-type -Wno-unused-command-line-argument -Wno-unused-but-set-variable
-set clang_debug=    call clang -g -O0 -DBUILD_DEBUG=1 %clang_common% %auto_compile_flags% %preprocessor_flags%
+set clang_debug=    call clang -g -O0 -DBUILD_DEBUG=1 %clang_common% %auto_compile_flags% %preprocessor_flags% %profiler_flags%
 set clang_release=  call clang -g -O2 -DBUILD_DEBUG=0 -DBUILD_RELEASE=1 %clang_common% %auto_compile_flags%
 set clang_link=     -fuse-ld=lld -Xlinker /MANIFEST:EMBED -Xlinker /pdbaltpath:%%%%_PDB%%%%
 set clang_out=      -o
 
 :: --- MSVC
 set cl_common=     /I..\src\ /nologo /FC /Z7 /EHsc /W1
-set cl_debug=      call cl /Od /DBUILD_DEBUG=1 %cl_common% %auto_compile_flags% %preprocessor_flags%
+set cl_debug=      call cl /Od /DBUILD_DEBUG=1 %cl_common% %auto_compile_flags% %preprocessor_flags% %profiler_flags%
 set cl_release=    call cl /O2 /DBUILD_DEBUG=0 -DBUILD_RELEASE=1 %cl_common% %auto_compile_flags%
 set cl_link=       /link /MANIFEST:EMBED /DEBUG:FULL /PDBALTPATH:%%%%_PDB%%%%
 set cl_out=        /out:

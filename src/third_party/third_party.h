@@ -11,5 +11,9 @@
 #define STB_SPRINTF_IMPLEMENTATION
 #include "stb/stb_sprintf.h"
 
+#if BUILD_PROFILE && PROFILE_SUPERLUMINAL && OS_WINDOWS
+	#include "Superluminal/include/PerformanceAPI.h"
+	#pragma comment(lib, "../src/third_party/Superluminal/libs/PerformanceAPI_MTd")
+#endif
 
 #endif // THIRD_PARTY_INC_H
