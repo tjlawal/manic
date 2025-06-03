@@ -1,6 +1,7 @@
 #pragma once
 
 #include "types.h"
+#include "profile.h"
 #include "core.h"
 #include "arena.h"
 #include "math.h"

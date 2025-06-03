@@ -11,9 +11,13 @@
 #define STB_SPRINTF_IMPLEMENTATION
 #include "stb/stb_sprintf.h"
 
-#if BUILD_PROFILE && PROFILE_SUPERLUMINAL && OS_WINDOWS
-	#include "Superluminal/include/PerformanceAPI.h"
-	#pragma comment(lib, "../src/third_party/Superluminal/libs/PerformanceAPI_MTd")
+#if BUILD_PROFILE 
+	#if PROFILER_SUPERLUMINAL && OS_WINDOWS
+		#include "Superluminal/include/PerformanceAPI.h"
+		#pragma comment(lib, "../src/third_party/Superluminal/libs/PerformanceAPI_MT")
+	#else 
+		#error "Profiler not recognized, are you using the correct profiler flag?"
+	#endif
 #endif
 
 #endif // THIRD_PARTY_INC_H
