@@ -5,6 +5,7 @@ namespace Starlight {
 	namespace Render {
 
 		void r_resize_buffer(Arena *arena, Renderer *buffer, s32 width, s32 height) {
+			ProfBlock(0, profDebug_fuchsia);
 			buffer->sw.width = width;
 			buffer->sw.height = height;
 			buffer->sw.bytes_per_pixel = 4;
@@ -30,6 +31,7 @@ namespace Starlight {
 		}
 
 		void r_copy_buffer_to_window(HDC device_context, Renderer *buffer) {
+			ProfBlock(0, profDebug_indianred);
 			StretchDIBits(device_context, 0, 0, buffer->sw.width, buffer->sw.height, 0, 0, 
 										buffer->sw.width, buffer->sw.height, buffer->sw.colour_buffer, 
 										&buffer->sw.win32_bitmapinfo, DIB_RGB_COLORS, SRCCOPY);
@@ -37,6 +39,7 @@ namespace Starlight {
 
 		// REVISE: Could this be faster?
 		void r_clear_colour_buffer(Renderer *buffer, u32 colour) {
+			ProfBlock(0, profDebug_deepskyblue);
 			for (s32 y = 0; y < buffer->sw.height; y++) {
 				for (s32 x = 0; x < buffer->sw.width; x++) {
 					buffer->sw.colour_buffer[(buffer->sw.width * y) + x] = colour;
@@ -46,6 +49,7 @@ namespace Starlight {
 
 		// REVISE: Could this be faster?
 		void r_clear_z_buffer(Renderer *buffer) {
+			ProfBlock(0, profDebug_darkred);
 			for (s32 y = 0; y < buffer->sw.height; ++y) {
 				for (s32 x = 0; x < buffer->sw.width; ++x) {
 					buffer->sw.z_buffer[(buffer->sw.width * y) + x] = 1.0f;

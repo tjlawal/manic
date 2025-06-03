@@ -56,7 +56,7 @@ typedef enum profDebugHexColours {
 	profDebug_darkgreen 						=0x006400,
 	profDebug_darkgrey 							=0xA9A9A9,
 	profDebug_darkkhaki 						=0xBDB76B,
-	profDebug_darkmagenta 					=0x8B008B,
+	profDebug_darkmagenta 					=0x8B008B, // For all OS things
 	profDebug_darkolivegreen 				=0x556B2F,
 	profDebug_darkorange 						=0xFF8C00,
 	profDebug_darkorchid 						=0x9932CC,

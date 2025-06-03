@@ -7,10 +7,12 @@ namespace Starlight {
 		internal SystemInfo*  get_system_info(void) { return &w32_state.system_info; }
 		internal ProcessInfo* get_process_info(void) { return &w32_state.process_info; }
 
-		internal void sleep(u64 ns) { Sleep(ns); }
+		internal void sleep(u64 ns) { ProfBlock(0, profDebug_darkmagenta); Sleep(ns); }
 
 		// Memory allocation
 		internal void* mem_reserve(u64 size) {
+			ProfBlock(0, profDebug_darkmagenta);
+			
 			void *result = VirtualAlloc(0, size, MEM_RESERVE, PAGE_READWRITE);
 
 			if (result == NULL) {
@@ -22,11 +24,16 @@ namespace Starlight {
 		}
 
 		internal b32 mem_commit(void *ptr, u64 size) {
+			ProfBlock(0, profDebug_darkmagenta);
+			
 			b32 result = (VirtualAlloc(ptr, size, MEM_COMMIT, PAGE_READWRITE) != 0);
 			return result;
 		}
 
-		internal void mem_decommit(void *ptr, u64 size) { VirtualFree(ptr, size, MEM_DECOMMIT); }
+		internal void mem_decommit(void *ptr, u64 size) { 
+			ProfBlock(0, profDebug_darkmagenta); 
+			VirtualFree(ptr, size, MEM_DECOMMIT); 
+		}
 
 		internal void mem_release(void *ptr, u64 size) {
 			// On Win32, size is not used, but keeping since its harmless and very useful for in other OSes.
@@ -314,6 +321,8 @@ namespace Starlight {
 
 		// @todo: Add argc and argv
 		internal void w32_entry_point_caller() {
+			ProfBlock(0, profDebug_darkmagenta);
+		
 			SetUnhandledExceptionFilter(&win32_exception_filter);
 
 			//  Do initialization stuff here before calling into the "real" entry point

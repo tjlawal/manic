@@ -5,6 +5,8 @@ namespace Starlight {
 	namespace Foundation {
 
 		Arena* arena_alloc(u64 reserve_size, u64 commit_size){
+			ProfBlock(0, profDebug_red);
+
 			u64 aligned_reserve = align_pow2(reserve_size, get_system_info()->page_size);	
 			u64 aligned_commit = align_pow2(commit_size, get_system_info()->page_size);	
 
@@ -43,6 +45,8 @@ namespace Starlight {
 
 		// Main core functions
 		void* arena_push_internal(Arena* arena, u64 size_to_push, u64 alignment) {
+			ProfBlock(0, profDebug_red);
+
 			Arena* current_arena = arena->current;
 			u64 pos_pre_push = align_pow2(current_arena->position, alignment);
 			u64 pos_post_push = pos_pre_push + size_to_push;

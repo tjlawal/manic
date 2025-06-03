@@ -76,7 +76,7 @@ namespace Starlight {
 
 	internal void update() {
 		Temp scratch = scratch_begin(0, 0);
-		ProfBlock(0, profDebug_red);
+		ProfBlock(0, profDebug_hotpink);
 
 		// Handle window resize
 		window_dimensions = get_window_dimension(window_handle);
