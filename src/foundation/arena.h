@@ -1,7 +1,6 @@
 #pragma once
 
 #define ARENA_HEADER_SIZE 128
-//const u8 ARENA_HEADER_SIZE = 128;
 
 namespace Starlight {
 	namespace Foundation {
@@ -35,16 +34,12 @@ namespace Starlight {
 		// Arena is not zeroed out but aligned to 8-byte boundary.
 		template<typename T>
 		internal T* arena_push_non_zeroed_aligned(Arena* arena, u64 size) {
-			ProfBlock(0, profDebug_red);
-
 			return reinterpret_cast<T*>(arena_push_internal(arena, size, max(8, alignof(T))));
 		}
 
 		// Arena is zeroed out and aligned to a .
 		template<typename T>
 		internal T* arena_push(Arena* arena, u64 size) {
-			ProfBlock(0, profDebug_red);
-
 			return reinterpret_cast<T*>(MemoryZero(arena_push_internal(arena, size, max(8, alignof(T))), sizeof(T)*size));
 		}
 

@@ -49,14 +49,14 @@ namespace Starlight {
 			draw_line_dda(buffer, x2, y2, x0, y0, colour);
 		}
 
-		void draw_triangle_pixel(Renderer *buffer, s32 x, s32 y, Vec4F32 point_a, Vec4F32 point_b, Vec4F32 point_c, u32 colour){
-			Vec2F32 point_p = {static_cast<f32>(x), static_cast<f32>(y)};
+		void draw_triangle_pixel(Renderer *buffer, s32 x, s32 y, Vec4 point_a, Vec4 point_b, Vec4 point_c, u32 colour){
+			Vec2f point_p = {static_cast<f32>(x), static_cast<f32>(y)};
 
-			Vec2F32 a = Vec2F32::vec2f32_from_vec4f32(point_a);
-			Vec2F32 b = Vec2F32::vec2f32_from_vec4f32(point_b);
-			Vec2F32 c = Vec2F32::vec2f32_from_vec4f32(point_c);
+			Vec2f a = Vec2f::vec2f_from_vec4(point_a);
+			Vec2f b = Vec2f::vec2f_from_vec4(point_b);
+			Vec2f c = Vec2f::vec2f_from_vec4(point_c);
 
-			Vec3F32 weights = barycentric_weights(a, b, c, point_p);
+			Vec3 weights = barycentric_weights(a, b, c, point_p);
 			f32 alpha = weights.x;
 			f32 beta = weights.y;
 			f32 gamma = weights.z;
@@ -106,12 +106,12 @@ namespace Starlight {
 			}
 
 			// Create vector points after sorting the vertices
-			Vec4F32 point_a = {(f32)x0, (f32)y0, (f32)z0, (f32)w0};
-			Vec4F32 point_b = {(f32)x1, (f32)y1, (f32)z1, (f32)w1};
-			Vec4F32 point_c = {(f32)x2, (f32)y2, (f32)z2, (f32)w2};
+			Vec4 point_a = {(f32)x0, (f32)y0, (f32)z0, (f32)w0};
+			Vec4 point_b = {(f32)x1, (f32)y1, (f32)z1, (f32)w1};
+			Vec4 point_c = {(f32)x2, (f32)y2, (f32)z2, (f32)w2};
 
-			//Vec4F32 point_b = {x1, y1, z1, w1};
-			//Vec4F32 point_c = {x2, y2, z2, w2};
+			//Vec4 point_b = {x1, y1, z1, w1};
+			//Vec4 point_c = {x2, y2, z2, w2};
 
 			// Draw filled flat-bottom of triangle
 			f32 left_leg = 0;
@@ -169,17 +169,17 @@ namespace Starlight {
 
 		// Draw a textured pixel at position x and y using interpolation
 		// REVISE: Could this be done faster??
-		internal void draw_texel(Renderer *buffer, s32 x, s32 y, Vec4F32 point_a, Vec4F32 point_b, Vec4F32 point_c, 
+		internal void draw_texel(Renderer *buffer, s32 x, s32 y, Vec4 point_a, Vec4 point_b, Vec4 point_c, 
 														 Texture2F32 a_uv, Texture2F32 b_uv, Texture2F32 c_uv, 
 														 u32 *texture, s32 texture_width, s32 texture_height) {
 			Assert(texture != NULL);
-			Vec2F32 point_p = {(f32)x, (f32)y};
+			Vec2f point_p = {(f32)x, (f32)y};
 
-			Vec2F32 a = Vec2F32::vec2f32_from_vec4f32(point_a);
-			Vec2F32 b = Vec2F32::vec2f32_from_vec4f32(point_b);
-			Vec2F32 c = Vec2F32::vec2f32_from_vec4f32(point_c);
+			Vec2f a = Vec2f::vec2f_from_vec4(point_a);
+			Vec2f b = Vec2f::vec2f_from_vec4(point_b);
+			Vec2f c = Vec2f::vec2f_from_vec4(point_c);
 
-			Vec3F32 weights = barycentric_weights(a, b, c, point_p);
+			Vec3 weights = barycentric_weights(a, b, c, point_p);
 			f32 alpha = weights.x;
 			f32 beta = weights.y;
 			f32 gamma = weights.z;
@@ -294,17 +294,17 @@ namespace Starlight {
 			v2 = (1.0 - v2);
 
 			// Create vector points after sorting the vertices
-			Vec4F32 point_a = {
+			Vec4 point_a = {
 				static_cast<f32>(x0), static_cast<f32>(y0), 
 				static_cast<f32>(z0), static_cast<f32>(w0)
 			};
 			
-			Vec4F32 point_b = {
+			Vec4 point_b = {
 				static_cast<f32>(x1), static_cast<f32>(y1), 
 				static_cast<f32>(z1), static_cast<f32>(w1)
 			};
 
-			Vec4F32 point_c = {
+			Vec4 point_c = {
 				static_cast<f32>(x2), static_cast<f32>(y2), 
 				static_cast<f32>(z2), static_cast<f32>(w2)
 			};

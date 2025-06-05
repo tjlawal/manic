@@ -5,159 +5,166 @@
 namespace Starlight {
 	namespace Foundation {
 		// Forward declare stuff so order is irrelevant
-		union Vec2F32;
-		union Vec2S32;
-		union Vec3F32;
-		union Vec4F32;
-		union Rng1u64;
-		struct Mat4F32;
-
+		struct Vec2f;
+		struct Vec2s;
+		struct Vec3;
+		struct Vec4;
+		struct Matrix4;
+		struct Rng1u64;
+		
+		
 		// Vectors
-		union Vec2F32 {
-			struct {
-				f32 x;
-				f32 y;
-			};
 
-			f32 v[2];
+		// This is mostly used to represent gfx window.
+		struct Vec2s {
+			s32 x;
+			s32 y;
 
-			Vec2F32() : x(0), y(0) {}
-			Vec2F32(f32 _x, f32 _y) : x(_x), y(_y) {}
-
-			Vec2F32 operator+(const Vec2F32& left) const { return Vec2F32 { x + left.x, y + left.y }; }
-			Vec2F32 operator-(const Vec2F32& left) const { return Vec2F32 { x - left.x, y - left.y }; }
-			Vec2F32 operator*(const Vec2F32& left) const { return Vec2F32 { x * left.x, y * left.y }; }
-			Vec2F32 operator/(const Vec2F32& left) const { return Vec2F32 { x / left.x, y / left.y }; }
-
-			internal f32 dot(Vec2F32 a, Vec2F32 b); 
-			internal f32 length(Vec2F32 vector); 
-			internal Vec2F32 vec2f32_from_vec4f32(Vec4F32 vector); 
+			Vec2s() : x(0), y(0) {}
+			Vec2s(s32 _x, s32 _y) : x(_x), y(_y) {}
 		};
 
-		union Vec2S32 {
-			struct {
-				s32 x;
-				s32 y;
-			};
-			s32 v[2];
+		// 2D
+		struct Vec2f {
+			f32 x;
+			f32 y;
 
-			Vec2S32() : x(0), y(0) {}
-			Vec2S32(s32 _x, s32 _y) : x(_x), y(_y) {}
+			Vec2f() : x(0), y(0) {}
+			Vec2f(f32 _x, f32 _y) : x(_x), y(_y) {}
 
-			Vec2S32 operator+(const Vec2S32& left) const;
-			Vec2S32 operator-(const Vec2S32& left) const;
-			Vec2S32 operator*(const Vec2S32& left) const;
-			Vec2S32 operator/(const Vec2S32& left) const;
+			Vec2f operator+(const Vec2f& right) const { return Vec2f { x + right.x, y + right.y }; }
+			Vec2f operator-(const Vec2f& right) const { return Vec2f { x - right.x, y - right.y }; }
+			Vec2f operator*(const Vec2f& right) const { return Vec2f { x * right.x, y * right.y }; }
+			Vec2f operator/(const Vec2f& right) const { return Vec2f { x / right.x, y / right.y }; }
 
-			internal f32 dot(Vec2F32 a, Vec2F32 b);
-			internal f32 length(Vec2F32 vector);
+			Vec2f operator*(f32 scalar) const { return Vec2f { x * scalar, y * scalar }; }
+			Vec2f operator/(f32 scalar) const { return Vec2f { x / scalar, y / scalar }; }
+
+			internal Vec2f vec2f_from_vec4(Vec4 v);
 		};
 
-		union Vec3F32 {
-			struct {
-				f32 x;
-				f32 y;
-				f32 z;
-			};
-			f32 v[3];
+		// 3D
+		struct Vec3 {
+			f32 x;
+			f32 y;
+			f32 z;
 
-			Vec3F32() : x(0), y(0), z(0) {}
-			Vec3F32(f32 _x, f32 _y, f32 _z) : x(_x), y(_y), z(_z) {}
+			Vec3() : x(0), y(0), z(0) {}
+			Vec3(f32 _x, f32 _y, f32 _z) : x(_x), y(_y), z(_z) {}
 
-			Vec3F32 operator+(const Vec3F32& left) const { return Vec3F32 { x + left.x, y + left.y, z + left.z }; }
-			Vec3F32 operator-(const Vec3F32& left) const { return Vec3F32 { x - left.x, y - left.y, z - left.z }; }
-			Vec3F32 operator*(const Vec3F32& left) const { return Vec3F32 { x * left.x, y * left.y, z * left.z }; }
-			Vec3F32 operator/(const Vec3F32& left) const { return Vec3F32 { x / left.x, y / left.y, z / left.z }; }
+			Vec3 operator+(const Vec3& left) const { return Vec3 { x + left.x, y + left.y, z + left.z }; }
+			Vec3 operator-(const Vec3& left) const { return Vec3 { x - left.x, y - left.y, z - left.z }; }
+			Vec3 operator*(const Vec3& left) const { return Vec3 { x * left.x, y * left.y, z * left.z }; }
+			Vec3 operator/(const Vec3& left) const { return Vec3 { x / left.x, y / left.y, z / left.z }; }
 
-			internal f32 dot(Vec3F32 a, Vec3F32 b);
-			internal f32 length(Vec3F32 v);
-			internal void normalize(Vec3F32* v);
-			internal Vec3F32 cross(Vec3F32 a, Vec3F32 b);
+			internal Vec3 rotate_x(Vec3 vector, f32 angle);
+			internal Vec3 rotate_y(Vec3 vector, f32 angle);
+			internal Vec3 rotate_z(Vec3 vector, f32 angle);
 
-			internal Vec3F32 rotate_x(Vec3F32 vector, f32 angle);
-			internal Vec3F32 rotate_y(Vec3F32 vector, f32 angle);
-			internal Vec3F32 rotate_z(Vec3F32 vector, f32 angle);
-
-			internal Vec3F32 vec3f32_from_vec4f32(Vec4F32);
+			internal Vec3 vec3_from_vec4(Vec4);
 		};
 
-		union Vec4F32 {
-			struct {
-				f32 x;
-				f32 y;
-				f32 z;
-				f32 w;
-			};
-			f32 v[4];
+		// 4D
+		struct Vec4{
+			f32 x;
+			f32 y;
+			f32 z;
+			f32 w;
 
-			Vec4F32() : x(0), y(0), z(0), w(0) {}
-			Vec4F32(f32 _x, f32 _y, f32 _z, f32 _w) : x(_x), y(_y), z(_z), w(_w) {}
+			Vec4() : x(0), y(0), z(0), w(0) {}
+			Vec4(f32 _x, f32 _y, f32 _z, f32 _w) : x(_x), y(_y), z(_z), w(_w) {}
 
-			Vec4F32 operator+(const Vec4F32& left) const { return Vec4F32 { x + left.x, y + left.y, z + left.z, w + left.w }; }
-			Vec4F32 operator-(const Vec4F32& left) const { return Vec4F32 { x - left.x, y - left.y, z - left.z, w - left.w }; }
-			Vec4F32 operator*(const Vec4F32& left) const { return Vec4F32 { x * left.x, y * left.y, z * left.z, w * left.w }; }
-			Vec4F32 operator/(const Vec4F32& left) const { return Vec4F32 { x / left.x, y / left.y, z / left.z, w / left.w }; }
+			Vec4 operator+(const Vec4& left) const { return Vec4 { x + left.x, y + left.y, z + left.z, w + left.w }; }
+			Vec4 operator-(const Vec4& left) const { return Vec4 { x - left.x, y - left.y, z - left.z, w - left.w }; }
+			Vec4 operator*(const Vec4& left) const { return Vec4 { x * left.x, y * left.y, z * left.z, w * left.w }; }
+			Vec4 operator/(const Vec4& left) const { return Vec4 { x / left.x, y / left.y, z / left.z, w / left.w }; }
 
-			internal Vec4F32 vec4f32_from_vec3f32(Vec3F32 v);
+			internal Vec4 vec4_from_vec3(Vec3 v);
 		};
 
-		// Ranges
-		// 1-Dimension
-		union Rng1u64 {
-			struct {
-				u64 minimum;
-				u64 maximum;
-			};
-			u64 r[2];
+		// Common vector operations
 
-			Rng1u64() : minimum(0), maximum(0) {}
-			Rng1u64(u64 _min, u64 _max) : minimum(_min), maximum(_max) {}
-		};
+		FORCE_INLINE internal f32 dot(const Vec2f& a, const Vec2f& b) { return ((a.x * b.x) + (a.y * b.y)); }
+		FORCE_INLINE internal f32 dot(const Vec3& a, const Vec3& b) { return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z)); }
+		FORCE_INLINE internal f32 dot(const Vec4& a, const Vec4& b) { return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z) + (a.w * b.w)); }
 
-		internal u64 rng_diff1u64(Rng1u64 rng);
+		//FORCE_INLINE internal length(Vec2f* v) { return }
+
+		//FORCE_INLINE internal length(Vec3* v) {}
+		
+		//FORCE_INLINE internal length(Vec4* v) {}
+
+
+		FORCE_INLINE internal void normalize(Vec2f* v) {
+			f32 length = sqrtf((v->x * v->x) + (v->y * v->y));
+
+			v->x /= length;
+			v->y /= length;
+		}
+
+		FORCE_INLINE internal void normalize(Vec3* v) {
+			f32 length = sqrtf((v->x * v->x) + (v->y * v->y) + (v->z * v->z));
+
+			v->x /= length;
+			v->y /= length;
+			v->z /= length;
+		}
+
+		FORCE_INLINE internal void normalize(Vec4* v) {
+			f32 length = sqrtf((v->x * v->x) + (v->y * v->y) + (v->z * v->z) + (v->w * v->w));
+
+			v->x /= length;
+			v->y /= length;
+			v->z /= length;
+			v->w /= length;
+		}
+
+		FORCE_INLINE internal Vec3 cross(const Vec3& a, const Vec3& b) {
+			return Vec3 { (a.y * b.z) - (a.z * b.y), (a.z * b.x) - (a.x * b.z), (a.x * b.y) - (a.y * b.x) };
+		}
 
 		// Matrices
 		// 4 x 4
-		struct Mat4F32 {
+		// REVISE, easy clap to speed up using SIMD!
+		struct Matrix4 {
 			f32 m[4][4];
 
-			Mat4F32 operator+(const Mat4F32& left) const {}
-			Mat4F32 operator-(const Mat4F32& left) const {}
-			Mat4F32 operator*(const Mat4F32& left) const {}
-			Mat4F32 operator/(const Mat4F32& left) const {}
+			Matrix4 operator+(const Matrix4& left) const {}
+			Matrix4 operator-(const Matrix4& left) const {}
+			Matrix4 operator*(const Matrix4& left) const {}
+			Matrix4 operator/(const Matrix4& left) const {}
 
 			// REVISE: A second pass should be done on these functions for performance. Not necessary now cause 
 			// its just the foundation.
 
-			FORCE_INLINE internal Mat4F32 identity(void) {
+			FORCE_INLINE internal Matrix4 identity(void) {
 				// | 1 0 0 0 |
 				// | 0 1 0 0 |
 				// | 0 0 1 0 |
 				// | 0 0 0 1 |
-
-				Mat4F32 m = {{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}}};
+				Matrix4 m = {{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}}};
 				return m;
 			}
 
-			FORCE_INLINE internal Mat4F32 scale(f32 x, f32 y, f32 z) {
+			FORCE_INLINE internal Matrix4 scale(f32 x, f32 y, f32 z) {
 				// |  x 0 0 0 |
 				// |  0 y 0 0 |
 				// |  0 0 z 0 |
 				// |  0 0 0 1 |
 
-				Mat4F32 m = identity();
+				Matrix4 m = identity();
 				m.m[0][0] = x;
 				m.m[1][1] = y;
 				m.m[2][2] = z;
 				return m;
 			}
 
-			FORCE_INLINE internal Mat4F32 translate(f32 tx, f32 ty, f32 tz) {
+			FORCE_INLINE internal Matrix4 translate(f32 tx, f32 ty, f32 tz) {
 				// |1 0 0 tx|			|x|					|x + tx|
 				// |0 1 0 ty|   	|y|					|y + ty|
 				// |0 0 1 tz|	 *	|z|    =		|z + tz|
 				// |0 0 0 1 |			|1|					|  1 	 |
-				Mat4F32 m = identity();
+				Matrix4 m = identity();
 
 				m.m[0][3] = tx;
 				m.m[1][3] = ty;
@@ -166,7 +173,7 @@ namespace Starlight {
 				return m;
 			}
 
-			FORCE_INLINE internal Mat4F32 rotate_x(f32 angle) {
+			FORCE_INLINE internal Matrix4 rotate_x(f32 angle) {
 				// Matrix rotation in x-axis
 				// |1		0				0			0|			|x|
 				// |0  cos(x)	-sin(x)	0|			|y|
@@ -175,7 +182,7 @@ namespace Starlight {
 				f32 l_cos = cos(angle);
 				f32 l_sin = sin(angle);
 
-				Mat4F32 m = identity();
+				Matrix4 m = identity();
 
 				m.m[1][1] = l_cos;
 				m.m[1][2] = -l_sin;
@@ -185,7 +192,7 @@ namespace Starlight {
 				return m;
 			}
 
-			FORCE_INLINE internal Mat4F32 rotate_y(f32 angle) {
+			FORCE_INLINE internal Matrix4 rotate_y(f32 angle) {
 				// |cos(y)	0		sin(y)	0|			|x|
 				// |  0   	1		 0			0|			|y|
 				// |-sin(y)	0		cos(y)	0|	 * 	|z|
@@ -194,7 +201,7 @@ namespace Starlight {
 				f32 l_cos = cos(angle);
 				f32 l_sin = sin(angle);
 
-				Mat4F32 m = identity();
+				Matrix4 m = identity();
 
 				m.m[0][0] = l_cos;
 				m.m[0][2] = l_sin;
@@ -204,7 +211,7 @@ namespace Starlight {
 				return m;
 			}
 
-			FORCE_INLINE internal Mat4F32 rotate_z(f32 angle) {
+			FORCE_INLINE internal Matrix4 rotate_z(f32 angle) {
 				// |cos(x) -sin(x)	0	 0|			|x|
 				// |sin(x)  cos(x)	0	 0|			|y|
 				// | 0			 0			1	 0|  *  |z|
@@ -213,7 +220,7 @@ namespace Starlight {
 				f32 l_cos = cos(angle);
 				f32 l_sin = sin(angle);
 
-				Mat4F32 m = identity();
+				Matrix4 m = identity();
 
 				m.m[0][0] = l_cos;
 				m.m[0][1] = -l_sin;
@@ -223,8 +230,8 @@ namespace Starlight {
 				return m;
 			}
 
-			FORCE_INLINE internal Vec4F32 mat4f32_mul_vec4(Mat4F32 m, Vec4F32 v) {
-				Vec4F32 result;
+			FORCE_INLINE internal Vec4 mat4f32_mul_vec4(Matrix4 m, Vec4 v) {
+				Vec4 result;
 				result.x = m.m[0][0] * v.x + m.m[0][1] * v.y + m.m[0][2] * v.z + m.m[0][3] * v.w;
 				result.y = m.m[1][0] * v.x + m.m[1][1] * v.y + m.m[1][2] * v.z + m.m[1][3] * v.w;
 				result.z = m.m[2][0] * v.x + m.m[2][1] * v.y + m.m[2][2] * v.z + m.m[2][3] * v.w;
@@ -233,8 +240,8 @@ namespace Starlight {
 				return result;
 			}
 
-			FORCE_INLINE internal Mat4F32 mat4f32_mul_mat4f32(Mat4F32 a, Mat4F32 b) {
-				Mat4F32 result;
+			FORCE_INLINE internal Matrix4 mat4f32_mul_mat4f32(Matrix4 a, Matrix4 b) {
+				Matrix4 result;
 
 				for (s32 rows = 0; rows < 4; ++rows) {
 					for (s32 cols = 0; cols < 4; ++cols) {
@@ -246,9 +253,9 @@ namespace Starlight {
 				return result;
 			}
 
-			FORCE_INLINE internal Vec4F32 mat4f32_mul_projection(Mat4F32 projection_matrix, Vec4F32 v) {
+			FORCE_INLINE internal Vec4 mat4f32_mul_projection(Matrix4 projection_matrix, Vec4 v) {
 				// Multiply the projection matrix by the original vector
-				Vec4F32 result = mat4f32_mul_vec4(projection_matrix, v);
+				Vec4 result = mat4f32_mul_vec4(projection_matrix, v);
 
 				// Perform perspective divide with original z-value that is
 				// stored in the projection matrix 'w', hence normalizing the entire image
@@ -262,13 +269,13 @@ namespace Starlight {
 				return result;	
 			}
 
-			FORCE_INLINE internal Mat4F32 mat4f32_perspective_project(f32 fov, f32 aspect_ratio, f32 znear, f32 zfar) {
+			FORCE_INLINE internal Matrix4 mat4f32_perspective_project(f32 fov, f32 aspect_ratio, f32 znear, f32 zfar) {
 				// Matrix projection formula
 				// |(h/w)*(1/tan(fov/2)							 0										0														 0|			|x|
 				// |									0		1/tan(fov/2)										0														 0|   	|y|
 				// | 									0							 0		zfar/(zfar-znear)		(-zfar*znear)/(zfar-znear)|	 *	|z|
 				// | 									0							 0										1														 0|			|1|
-				Mat4F32 result = {{0}};
+				Matrix4 result = {{0}};
 
 				result.m[0][0] = aspect_ratio * (1 / tan(fov / 2));
 				result.m[1][1] = (1 / tan(fov / 2));
@@ -281,6 +288,21 @@ namespace Starlight {
 
 		};
 
+		// Ranges
+
+		// 1-Dimension
+		struct Rng1u64 {
+			u64 minimum;
+			u64 maximum;
+
+			Rng1u64() : minimum(0), maximum(0) {}
+			Rng1u64(u64 _min, u64 _max) : minimum(_min), maximum(_max) {}
+			
+			internal u64 rng_diff1u64(Rng1u64 rng);
+		};
+
+
+		// Find a betteer place to store these!
 		// Textures, Triangles, Faces
 		struct Texture2F32 {
 			f32 u;
@@ -288,7 +310,7 @@ namespace Starlight {
 		};
 
 		struct Triangle2F32 {
-			Vec4F32 points[3];
+			Vec4 points[3];
 			Texture2F32 texture_coords[3];
 			u32 colour;
 		};
@@ -304,31 +326,7 @@ namespace Starlight {
 			s32 c;
 		};
 
-		// Calculate the barycentric weights of alpha, beta and gamma for point p;
-		FORCE_INLINE internal Vec3F32 barycentric_weights(Vec2F32 a, Vec2F32 b, Vec2F32 c, Vec2F32 p) {
-			// Find the vectors between the vertices ABC and point p
-			Vec2F32 ac = c - a;
-			Vec2F32 ab = b - a;
-			Vec2F32 pc = c - p;
-			Vec2F32 pb = b - p;
-			Vec2F32 ap = p - a;
-
-
-			// Area of the parallelogram (triangle ABC) using cross product
-			f32 area_parallelogram_abc = ((ac.x * ab.y) - (ac.y * ab.x)); // || AC x AB ||
-
-			// Alpha is area of the parallelogram [PBC] over the area of the full parallelogram [ABC]
-			f32 alpha = ((pc.x * pb.y) - (pc.y * pb.x)) / area_parallelogram_abc;
-
-			// Beta is area of the parallelogram [APC] over the area of the
-			// full parallelogram [ABC]
-			f32 beta = ((ac.x * ap.y) - (ac.y * ap.x)) / area_parallelogram_abc;
-
-			f32 gamma = 1.0 - alpha - beta;
-
-			Vec3F32 weights = {alpha, beta, gamma};
-			return weights;
-		}
 	}
 }
+
 

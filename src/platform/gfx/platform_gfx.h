@@ -20,6 +20,8 @@ namespace Starlight {
 				Event *previous;
 				EventKind event_kind;
 				Handle window;
+
+				// Keyboard event data
 				KeyModifiers key_modifiers;
 				Key key;
 				b32 is_repeat;
@@ -29,9 +31,9 @@ namespace Starlight {
 				u32 repeat_count;
 				u64 timestamp_us;
 
-				Vec2F32 position;
-				Vec2F32 delta;
-				//string8list strings;
+				// Mouse event data
+				Vec2f position;
+				Vec2f delta;
 			};
 
 			typedef struct EventList EventList;
@@ -48,12 +50,12 @@ namespace Starlight {
 			internal GfxInfo* get_gfx_info(void);
 
 			// Windowing function
-			internal Handle  	window_open(Vec2S32 window_size, string8 title);
+			internal Handle  	window_open(Vec2s window_size, string8 title);
 			internal void     window_close(Handle window);
 			internal void    	window_first_paint(Handle window);
 			internal void    	window_focus(Handle window);
 			internal void 	 	window_set_fullscreen(Handle window, b32 fullscreen);
-			internal Vec2S32 	get_window_dimension(Handle handle);
+			internal Vec2s 	get_window_dimension(Handle handle);
 			internal void*	 	get_device_context(Handle handle);
 			internal void 	 	release_device_context(Handle handle, void *device_context);
 

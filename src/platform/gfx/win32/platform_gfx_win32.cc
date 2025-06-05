@@ -56,7 +56,7 @@ namespace Starlight {
 					return result;
 				}
 
-				Handle window_open(Vec2S32 window_size, string8 title) {
+				Handle window_open(Vec2s window_size, string8 title) {
 					ProfBlock(0, profDebug_darkmagenta);
 
 					HWND hwnd = 0;
@@ -108,11 +108,11 @@ namespace Starlight {
 
 				void window_set_fullscreen(Handle window, b32 fullscreen) {}
 
-				Vec2S32 get_window_dimension(Handle handle) {
+				Vec2s get_window_dimension(Handle handle) {
 					ProfBlock(0, profDebug_darkmagenta);
 
 					Window *window = w32_window_from_handle(handle);
-					Vec2S32 result = {};
+					Vec2s result = {};
 					RECT rect;
 
 					GetWindowRect(window->hwnd, &rect);

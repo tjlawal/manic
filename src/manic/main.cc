@@ -30,7 +30,7 @@ using namespace Starlight::Draw;
 namespace Starlight {
 	
 	global Handle window_handle = {};
-	global Vec2S32 window_dimensions = {};
+	global Vec2s window_dimensions = {};
 	global HDC device_context = {};
 	global Renderer render_buffer = {};
 	global b32 quit = 0;
@@ -39,7 +39,7 @@ namespace Starlight {
 	internal void system_setup() {
 		ProfBlock(0, profDebug_cadetblue);
 
-		window_handle = window_open(Vec2S32(1920, 1080), str8_lit(BUILD_TITLE_STRING_LITERAL));
+		window_handle = window_open(Vec2s(1920, 1080), str8_lit(BUILD_TITLE_STRING_LITERAL));
 		window_first_paint(window_handle);
 		device_context = reinterpret_cast<HDC>(get_device_context(window_handle));
 	}
@@ -88,7 +88,7 @@ namespace Starlight {
 
 	internal void render() {
 		ProfBlock(0, profDebug_darkblue);
-		r_clear_colour_buffer(&render_buffer, 0xFF2C2C2C);
+		r_clear_colour_buffer(&render_buffer, 0xFF420420);
 
 		r_copy_buffer_to_window(device_context, &render_buffer);
 	}
