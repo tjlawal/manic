@@ -1,5 +1,39 @@
-#ifndef RENDER_INC_H
-#define RENDER_INC_H
+
+#pragma once
+
+namespace Starlight {
+	namespace Render {
+		
+		union Vertex {
+			struct {
+				f32 x;
+				f32 y;
+				f32 z;
+			};
+			f32 v[3];
+		};
+
+		struct TextureCoords {
+			f32 u;
+			f32 v;
+			f32 w; // Optional
+		};
+
+		struct Normals {
+			f32 i;
+			f32 j;
+			f32 k;
+		};
+
+		struct Face{
+			s32 vertex_idx;
+			s32 texture_idx;
+			s32 normal_idx;
+		};
+
+	}
+}
+
 
 #include "render/core/render_core.h"
 
@@ -9,5 +43,3 @@
 	#error "This rendering backend is not supported yet!"
 #endif 
 
-
-#endif // RENDER_INC_H

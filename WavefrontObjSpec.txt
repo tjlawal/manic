@@ -1,0 +1,135 @@
+OBJ File Extension '.obj' or '.mod'
+
+OBJ Data structure:
+	Vertex data:
+		geometric vertices (v)
+		texture vertices (vt)
+		vertex normals (vn)
+		parameter space vertices (vp)
+	Elements:
+		points (p)
+		line (l)
+		face (f)
+		curve (curv)
+		2D curve (curv2)
+		surface (surf)
+	Free-form curve/surface body statements:
+		parameter values (parm)
+		outer trimming loop (trim)
+		inner trimming loop (hole)
+		special curve (scrv)
+		special point (sp)
+		end statement (end)
+	Connectivity between free-form surfaces:
+		connect (con)
+	Grouping:
+		group name (g)
+		smooting group (s)
+		merging group (mg)
+		object name (o)
+	Display/Render attributes:
+		bevel interpolation (bevl)
+		color interpolation (c_interp)
+		dissolve interpolation (d_interp)
+		level of detail (lod)
+		material name (usemtl)
+		material library (mtlib)
+		shadow casting (shawod_obj)
+		ray tracing (trace_obj)
+		curve approximation (ctech)
+		surface approximation (stech)
+
+==========================================================================
+														Data structure layout
+								----------------------------------------------
+																	Grouping
+														Display/Render Attributes
+								----------------------------------------------
+																	Vertex Data
+								----------------------------------------------
+														Free-form Dttributes
+								----------------------------------------------
+																	Elements
+															Body Statements
+								----------------------------------------------
+														Grouping / Attribute Data
+								----------------------------------------------
+																Element Data
+
+Syntax:
+
+Comments:
+	- They are used to annotate the file, they are not processed.
+	- They can appear anywhere in an .obj file.
+	- Example: # this is a comment.
+
+Vertex data:
+	geometric vertices: `v x y z w`
+		- x, y, z, are the coordinates for the vertex. they are floating point 
+			numbers that define the position of the vertex in three dimension
+		- w is the weight required for rational curves and surfaces. 
+			It is not required for non-rational curves and surfaces
+	
+	texture vertices: `vt u v w`
+		- u, v, w are the texture vertex and its coordinates.
+		 	1D texture uses only u texture coordinates, 2D texture uses u and v, 
+		 	3D texture uses u, v, w.
+		- u is the value for the horizontal direction of the texture.
+		- v is optional, it's value represent the vertical direction of the texture. 
+			The default value is 0.
+		- w is optional, it's value represents the depth of the texture. 
+			The default value is 0.
+	
+	vertex normals: `vn i j k`
+		- i, j, k are the coordinates for the vertex normals. 
+			They are floating point numbers
+	
+	parameter space vertices: `vp u v w`
+		- u and v specify point
+
+Elements:
+	point: `p v1 v2 v3`
+		- Specifiecs a point element and its vertex. 
+		- v is the vertex reference number for a point element. 
+		- Each point element requires one vertex. Positive values indicate absolute 
+			vertex numbers. Negative values indicate relative vertex numbers.
+	
+	line: `l v1/vt1 v2/vt2 v3/vt3`
+		- Specifies a line and its vertex reference number. 
+		- It can optionally include the texture vertex reference numbers.
+		- The reference numbers for the vertices and texture vertices must be 
+			separated by a slash (/). 
+			There is no space between the number and the slash.
+		- v is a reference number for a vertex on the line. 
+			A minimum of two vertex numbers are required. There is no limit 
+			on the maximum. Positive values indicate absolute vertex numbers. 
+	
+	face: `f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3`
+		- Specifiecs the face element and its vertex refernce number. 
+			Optionally the texture vertex and vertex normal could be included.
+		- The reference number for the vertices, texture vertices and normals 
+			must be separated by slashes (/). 
+			There is no space between the number and the slash.
+		- v is the reference number for a vertex in the face element. 
+			A minimun of three vertices are required.
+		- vt is an optional argument. It is the refernce number for a 
+			texture vertex in the face element. It always follow the first slash.
+		- vn is a optional argument. It is the reference number for a 
+			vertex normal in the face element. It must always follow the second slash.
+
+Display/Render attributes:
+	material name: `usemtl material_name`
+		- Specifies the material name for the element following it. 
+			Once a material is assigned, it cannot be turned off; 
+			it can only be changed.
+		- 'material_name' is the name of the material. 
+			If a material name is not specified, a white material is used.
+	
+	material library: `mtlib filename1 filename2 ...`
+		- Specifies the material library file for the material definitions 
+			set with the usemtl satetement.
+		- Multiple filenames can be specified with mtllib. If multiple filenames 
+			are specified, the first file listed is searched first for 
+			the material definition, the second file is searched next, and so on.
+		- 'filename' is the name of the library file that defines the materials. 
+			There is no default.

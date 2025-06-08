@@ -1,9 +1,8 @@
 #pragma once
 
-
 namespace Starlight {
 	namespace Foundation {
-	
+
 		// Calculate the barycentric weights of alpha, beta and gamma for point p;
 		// REVISE: This function is slow, it could definitely be faster just have to find out how!!
 		FORCE_INLINE internal Vec3 barycentric_weights(Vec2f a, Vec2f b, Vec2f c, Vec2f p) {

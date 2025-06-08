@@ -13,12 +13,14 @@
 #include "platform/platform.h"
 #include "render/render.h"
 #include "draw/draw.h"
+#include "resource_manager.h"
 
 // [.c]
 #include "foundation/foundation.cc"
 #include "platform/platform.cc"
 #include "render/render.cc"
 #include "draw/draw.cc"
+#include "resource_manager.cc"
 
 using namespace Starlight::Platform;
 using namespace Starlight::Platform::Gfx;
