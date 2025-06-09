@@ -27,7 +27,7 @@
 // Profiler Debug Colours
 // Colour source: 
 // https://upload.wikimedia.org/wikipedia/commons/2/2b/SVG_Recognized_color_keyword_names.svg
-typedef enum profDebugHexColours {
+enum profDebugHexColours {
 	profDebug_aliceblue 						=0xF0F8FF,
 	profDebug_antiquewhite 					=0xFAEBD7,
 	profDebug_aqua 									=0x00FFFF,
@@ -175,7 +175,7 @@ typedef enum profDebugHexColours {
 	profDebug_whitesmoke 						=0xF5F5F5,
 	profDebug_yellow 								=0xFFFF00,
 	profDebug_yellowgreen 					=0x9ACD32
-} profDebugHexColours;
+};
 
 
 #endif // BASE_PROFILE_H

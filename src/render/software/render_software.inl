@@ -3,8 +3,5 @@
 namespace Starlight {
 	namespace Render {
 		
-		enum 
-	
-	
 	}
 }
