@@ -10,9 +10,9 @@ namespace Starlight {
 
 			// Graphical system information
 			struct GfxInfo {
-				f32 double_click_time;
-				f32 caret_blink_time;
-				f32 default_refresh_rate;
+				f32 monitor_refresh_rate;
+				//f32 double_click_time;
+				//f32 caret_blink_time;
 			};
 
 			struct Event {

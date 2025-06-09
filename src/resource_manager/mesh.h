@@ -1,8 +1,3 @@
 #pragma once
 
-
-
-struct MeshInfo {
-
-	
-};
+struct MeshInfo {};

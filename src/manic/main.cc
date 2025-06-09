@@ -2,7 +2,7 @@
 #define BUILD_VERSION_MAJOR                00
 #define BUILD_VERSION_MINOR                00
 #define BUILD_VERSION_PATCH                BUILD_SVN_REVISION
-#define BUILD_RELEASE_PHASE_STRING_LITERAL "Alpha"
+#define BUILD_RELEASE_PHASE_STRING_LITERAL "Pre-Alpha"
 
 // Includes, order is important here.
 #include "foundation/context_switch.h"
@@ -13,14 +13,14 @@
 #include "platform/platform.h"
 #include "render/render.h"
 #include "draw/draw.h"
-#include "resource_manager.h"
+#include "resource_manager/resource_manager.h"
 
 // [.c]
 #include "foundation/foundation.cc"
 #include "platform/platform.cc"
 #include "render/render.cc"
 #include "draw/draw.cc"
-#include "resource_manager.cc"
+#include "resource_manager/resource_manager.cc"
 
 using namespace Starlight::Platform;
 using namespace Starlight::Platform::Gfx;
