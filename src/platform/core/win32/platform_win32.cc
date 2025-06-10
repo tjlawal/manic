@@ -325,9 +325,9 @@ namespace Starlight {
 		
 			SetUnhandledExceptionFilter(&win32_exception_filter);
 
-			//  Do initialization stuff here before calling into the "real" entry point
+			// Do initialization stuff here before calling into the "real" entry point
 
-			// @TODO: See if large pages support is available here!
+			// TODO: See if large pages support is available here!
 
 			SYSTEM_INFO sys_info;
 			GetSystemInfo(&sys_info);

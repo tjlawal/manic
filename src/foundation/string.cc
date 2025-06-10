@@ -18,7 +18,7 @@ namespace Starlight {
 			va_copy(l_args, args);
 			u32 needed_bytes = starlight_vsnprintf(0, 0, format, args) + 1;
 			string8 result = {0};
-			result.str = arena_push_non_zeroed_aligned<u8>(arena, needed_bytes);
+			result.str = arena_push_non_zeroed<u8>(arena, needed_bytes);
 			result.size = starlight_vsnprintf((char *)result.str, needed_bytes, format, l_args);
 			result.str[result.size] = 0;
 			va_end(l_args);
@@ -29,7 +29,7 @@ namespace Starlight {
 		internal string8 push_str8_copy(Arena *arena, string8 string) {
 			string8 l_string;
 			l_string.size = string.size;
-			l_string.str = arena_push_non_zeroed_aligned<u8>(arena, l_string.size +1);
+			l_string.str = arena_push_non_zeroed<u8>(arena, l_string.size +1);
 			MemoryCopy(l_string.str, string.str, string.size);
 			l_string.str[l_string.size] = 0; // Set null terminator
 			return (l_string);
@@ -39,7 +39,7 @@ namespace Starlight {
 			string16 result = {};
 			if(input.size) {
 				u64 capacity = input.size * 2;
-				u16* l_str = arena_push_non_zeroed_aligned<u16>(arena, capacity + 1);
+				u16* l_str = arena_push_non_zeroed<u16>(arena, capacity + 1);
 				u8* l_ptr = input.str;
 				u8* one_past_last = l_ptr + input.size;
 				u64 new_size = 0;
