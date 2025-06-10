@@ -51,7 +51,7 @@
 				<Exe>C:\manic\branches\rewrite\run_tree\manic.exe</Exe>
 				<Args></Args>
 				<WorkingDirectory>C:\manic\branches\rewrite\run_tree</WorkingDirectory>
-				<DebugCommand></DebugCommand>
+				<DebugCommand>remedybg manic.exe</DebugCommand>
 				<DebugSln></DebugSln>
 				<Defines></Defines>
 				<ForceIncludes></ForceIncludes>
