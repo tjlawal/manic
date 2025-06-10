@@ -14,12 +14,12 @@ namespace Starlight {
 
 			// Panic on failure, very very unlikely
 			if(UNLIKELY(base == nullptr)) {
-				//Platform::Gfx::graphical_message(1, str8_lit("Fatal Allocation Failure!"), 
-				// 																 str8_lit("Unexpected memory allocation failure."));
+				Platform::Gfx::graphical_message(1, str8_lit("Fatal Allocation Failure!"), str8_lit("Unexpected memory allocation failure."));
 				abort(1);
 			}
 
-			Arena *arena = (Arena*)base;
+			//Arena *arena = (Arena*)base;
+			Arena* arena = reinterpret_cast<Arena*>(base);
 			arena->base_position = 0;
 			arena->position = ARENA_HEADER_SIZE;
 			arena->current = arena;
@@ -28,8 +28,8 @@ namespace Starlight {
 			arena->commit = aligned_commit;
 			arena->reserve = aligned_reserve;
 
-			// @TODO: Poison shiny new arena entire memory region
-			// @TODO: UnPoison shiny new arena HEADER memory region
+			AsanPoisonMemoryRegion(base, commit_size);
+			AsanUnpoisonMemoryRegion(base, ARENA_HEADER_SIZE);
 
 			return arena;
 		}
@@ -85,13 +85,12 @@ namespace Starlight {
 			if(current_arena->commit >= pos_post_push) {
 				result = reinterpret_cast<u8*>(current_arena) + pos_pre_push;
 				current_arena->position = pos_post_push;
-				// @TODO: UnpoisonMemoryRegion so
+				AsanUnpoisonMemoryRegion(result, size_to_push);
 			}
 
 			// Panic on failure, very very unlikely
 			if(UNLIKELY(result == nullptr)) {
-				//Platform::Gfx::graphical_message(1, str8_lit("Fatal Allocation Failure!"), 
-				// 																 str8_lit("Unexpected memory allocation failure."));
+				Platform::Gfx::graphical_message(1, str8_lit("Fatal Allocation Failure!"), str8_lit("Unexpected memory allocation failure."));
 				abort(1);
 			}
 			
@@ -116,7 +115,7 @@ namespace Starlight {
 			arena->current  = current_arena;
 			size_t new_pos = big_pos - current_arena->base_position;
 			AssertAlways(new_pos <= current_arena->position);
-			// @TODO: Poison memory region
+			AsanPoisonMemoryRegion(reinterpret_cast<u8*>(current_arena + new_pos), (current_arena->position- new_pos));
 			current_arena->position = new_pos;
 		}
 

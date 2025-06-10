@@ -32,15 +32,30 @@ namespace Starlight {
 		internal void  arena_clear(Arena* arena);
 
 		// Arena is not zeroed out but aligned to 8-byte boundary.
+		//template<typename T>
+		//internal T* arena_push_non_zeroed_aligned(Arena* arena, u64 size) {
+		//	return reinterpret_cast<T*>(arena_push_internal(arena, size, max(8, alignof(T))));
+		//}
+
+		//// Arena is zeroed out and aligned to a .
+		//template<typename T>
+		//internal T* arena_push(Arena* arena, u64 size) {
+		//	return reinterpret_cast<T*>(MemoryZero(arena_push_internal(arena, size, max(8, alignof(T))), sizeof(T)*size));
+		//}
+
 		template<typename T>
-		internal T* arena_push_non_zeroed_aligned(Arena* arena, u64 size) {
-			return reinterpret_cast<T*>(arena_push_internal(arena, size, max(8, alignof(T))));
+		internal T* arena_push_non_zeroed_aligned(Arena* arena, u64 count, u64 alignment) {
+			return reinterpret_cast<T*>(arena_push_internal(arena, (sizeof(T) * count), alignment));
 		}
 
-		// Arena is zeroed out and aligned to a .
 		template<typename T>
-		internal T* arena_push(Arena* arena, u64 size) {
-			return reinterpret_cast<T*>(MemoryZero(arena_push_internal(arena, size, max(8, alignof(T))), sizeof(T)*size));
+		internal T* arena_push_non_zeroed(Arena* arena, u64 count) {
+			return reinterpret_cast<T*>(MemoryZero(arena_push_internal(arena, count, max(8, alignof(T))), (sizeof(T) * count)));
+		}
+
+		template<typename T>
+		internal T* arena_push(Arena* arena, u64 count) {
+			return reinterpret_cast<T*>(MemoryZero(arena_push_internal(arena, count, max(8, alignof(T))), (sizeof(T) * count)));
 		}
 
 		struct Temp{
