@@ -140,7 +140,7 @@ namespace Starlight {
 			Key_MouseButton4,
 			Key_MouseButton5,
 
-			// Extended keys, e.g. laptop screen control
+			// Extended keys
 			KeyExtend0,
 			KeyExtend1,
 			KeyExtend2,

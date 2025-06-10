@@ -10,7 +10,7 @@ namespace Starlight {
 				Window* next;
 				Window* previous;
 				HWND hwnd;
-				//HDC hdc;
+				HDC hdc;
 				WINDOWPLACEMENT window_placement;
 				f32 dpi;
 				b32 first_paint;
@@ -46,8 +46,8 @@ namespace Starlight {
 			internal void 	 w32_window_release(Window *window);
 
 			internal Event*  w32_push_event(EventKind kind, Window *window);
-			internal WPARAM  w32_vkey_from_os_key(Key key);
-			internal Key 		 w32_os_key_from_vkey(WPARAM virtual_key);
+			internal Key 		 key_from_w32_vkey(WPARAM virtual_key);
+			internal WPARAM  w32_vkey_from_key(Key key);
 		}
 	}
 }

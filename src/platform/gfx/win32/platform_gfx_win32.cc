@@ -5,30 +5,6 @@ namespace Starlight {
 	namespace Platform {
 		namespace Gfx {
 
-			Window *w32_window_alloc(void) {
-				ProfBlock(0, profDebug_darkmagenta);
-
-				Window *result = w32_gfx_state->free_window;
-				if (result) {
-					SLLPop(w32_gfx_state->free_window);
-				} else {
-					//result = arena_push_non_zeroed_aligned<Window>(w32_gfx_state->arena, 1);
-					result = arena_push<Window>(w32_gfx_state->arena, 1);
-				}
-				//MemoryZeroStruct(result);
-				if (result) {
-					DLL_PushBack(w32_gfx_state->first_window, w32_gfx_state->last_window, result);
-				}
-				result->window_placement.length = sizeof(WINDOWPLACEMENT);
-				return result;
-			}
-
-			void w32_window_release(Window *window) {
-				DestroyWindow(window->hwnd);
-				DLL_Remove(w32_gfx_state->first_window, w32_gfx_state->last_window, window);
-				SLLPush(w32_gfx_state->free_window, window);
-			}
-
 			// WIN32 to/from platform layer windowing functions
 			Handle w32_handle_from_window(Window *window) {
 				Handle handle = {(u64)window};
@@ -51,16 +27,41 @@ namespace Starlight {
 				return result;
 			}
 
-			Handle window_open(Vec2s window_size, string8 title) {
+			HWND w32_hwnd_from_window(Window* window) { return window->hwnd; }
+
+			Window *w32_window_alloc(void) {
 				ProfBlock(0, profDebug_darkmagenta);
 
+				Window *result = w32_gfx_state->free_window;
+				if (result)
+					SLLPop(w32_gfx_state->free_window);
+				else 
+					result = arena_push_non_zeroed<Window>(w32_gfx_state->arena, 1);
+				MemoryZeroStruct(result);
+
+				if (result) 
+					DLL_PushBack(w32_gfx_state->first_window, w32_gfx_state->last_window, result);
+				result->window_placement.length = sizeof(WINDOWPLACEMENT);
+				return result;
+			}
+
+			void w32_window_release(Window *window) {
+				DestroyWindow(window->hwnd);
+				DLL_Remove(w32_gfx_state->first_window, w32_gfx_state->last_window, window);
+				SLLPush(w32_gfx_state->free_window, window);
+			}
+
+			
+			Handle window_open(Vec2s window_size, string8 title) {
+				ProfBlock(0, profDebug_darkmagenta);
 				HWND hwnd = 0;
+
 				{
 					Temp scratch = scratch_begin(0, 0);
 					string16 title16 = str16_from_8(scratch.arena, title);
-					hwnd = CreateWindowExW(WS_EX_APPWINDOW, L"graphical-window", (WCHAR *)title16.str, WS_OVERLAPPEDWINDOW | WS_SIZEBOX,
-																CW_USEDEFAULT, CW_USEDEFAULT, (int)window_size.x, (int)window_size.y, 0, 0,
-																w32_gfx_state->hInstance, 0);
+					hwnd = CreateWindowExW(WS_EX_APPWINDOW, L"graphical-window", (WCHAR *)title16.str, 
+																 WS_OVERLAPPEDWINDOW | WS_SIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, 
+																 (s32)window_size.x, (s32)window_size.y, 0, 0, w32_gfx_state->hInstance, 0);
 
 					if (hwnd == NULL) {
 						DWORD error = GetLastError();
@@ -74,12 +75,13 @@ namespace Starlight {
 				Window *window = w32_window_alloc();
 				{
 					window->hwnd = hwnd;
-					//window->hdc = GetDC(window->hwnd);
+					window->hdc = GetDC(window->hwnd);
 					window->dpi = GetDpiForWindow(hwnd);;
-					// convert to handle and return
-					Handle result = w32_handle_from_window(window);
-					return result;
 				}
+
+				// convert to handle and return
+				Handle result = w32_handle_from_window(window);
+				return result;
 			}
 
 			void window_close(Handle window_handle) {
@@ -98,10 +100,7 @@ namespace Starlight {
 				}
 			}
 
-			void window_focus(Handle window) {}
-
-			void window_set_fullscreen(Handle window, b32 fullscreen) {}
-
+			// TODO: Delete me
 			Vec2s get_window_dimension(Handle handle) {
 				ProfBlock(0, profDebug_darkmagenta);
 
@@ -193,7 +192,7 @@ namespace Starlight {
 							}
 
 							Event *event = w32_push_event(release ? EventKind_Release : EventKind_Press, window);
-							event->key = w32_os_key_from_vkey(wParam);
+							event->key = key_from_w32_vkey(wParam);
 							// Turn off the top 16 bits, we are only concerned
 							// about the bottom 16 to get key repeat count from there.
 							event->repeat_count = lParam & (0x0000ffff);
@@ -239,7 +238,7 @@ namespace Starlight {
 				return result;
 			}
 
-			Key w32_os_key_from_vkey(WPARAM virtual_key) {
+			Key key_from_w32_vkey(WPARAM virtual_key) {
 				ProfBlock(0, profDebug_darkmagenta);
 
 				local b32 first = 1;
@@ -372,13 +371,124 @@ namespace Starlight {
 			}
 	
 			WPARAM w32_vkey_from_key(Key key) {
-				// TODO(tijani)
-				return 0;
+				WPARAM res = 0;
+				
+				{
+					local b32 inited = 0;
+					local WPARAM vkey_table[Key_COUNT] = {0};
+
+					if(inited == 0) {
+						inited = 1;
+						vkey_table[Key_Escape] = VK_ESCAPE;
+						for(Key key = Key_F1; key < Key_F24; key = static_cast<Key>(key+1)) {
+							vkey_table[key] = VK_F1 + (key - Key_F1);
+						}
+
+						for(Key key = Key_0; key <= Key_9; key = static_cast<Key>(key+1)) {
+							vkey_table[key] = '0' + (key - Key_0);
+						}
+
+						// Punctuation/Symbols
+						vkey_table[Key_Minus] 						= VK_OEM_MINUS;
+						vkey_table[Key_Equals] 						= VK_OEM_PLUS;
+						vkey_table[Key_LeftBracket] 			= VK_OEM_4;
+						vkey_table[Key_RightBracket] 			= VK_OEM_6;
+						vkey_table[Key_Backslash] 				= VK_OEM_5;
+						vkey_table[Key_Semicolon] 				= VK_OEM_1;
+						vkey_table[Key_Quote] 						= VK_OEM_7;
+						vkey_table[Key_Slash]							= VK_OEM_2;
+						vkey_table[Key_Comma]							= VK_OEM_COMMA;
+						vkey_table[Key_Period]						= VK_OEM_PERIOD;
+						vkey_table[Key_Tick] 							= VK_OEM_3;
+
+						// Special Keys
+						vkey_table[Key_Return]						= VK_RETURN;
+						vkey_table[Key_Backspace] 				= VK_BACK;
+						vkey_table[Key_Tab] 							= VK_TAB;
+						vkey_table[Key_Space] 						= VK_SPACE;
+						vkey_table[Key_CapsLock] 					= VK_CAPITAL;
+
+						// Modifiers
+						vkey_table[Key_Shift]							= VK_SHIFT;
+						vkey_table[Key_Ctrl]							= VK_CONTROL;
+						vkey_table[Key_Ctrl]							= VK_LCONTROL;
+						vkey_table[Key_Alt] 							= VK_MENU;
+						vkey_table[Key_Win]								= VK_RWIN;
+
+						// Arrow Keys
+						vkey_table[Key_Up] 								= VK_UP;
+						vkey_table[Key_Left] 							= VK_LEFT;
+						vkey_table[Key_Down] 							= VK_DOWN;
+						vkey_table[Key_Right] 						= VK_RIGHT;
+
+						// Navigation cluster
+						vkey_table[Key_Insert] 						= VK_INSERT;
+						vkey_table[Key_Delete] 						= VK_DELETE;
+						vkey_table[Key_Home] 							= VK_HOME;
+						vkey_table[Key_End] 							= VK_END;
+						vkey_table[Key_PageUp] 						= VK_PRIOR;
+						vkey_table[Key_PageDown] 					= VK_NEXT;
+
+						// Numpad
+						vkey_table[Key_NumLock] 					= VK_NUMLOCK;
+						vkey_table[Key_Numpad0] 					= VK_NUMPAD0;
+						vkey_table[Key_Numpad1] 					= VK_NUMPAD1;
+						vkey_table[Key_Numpad2] 					= VK_NUMPAD2;
+						vkey_table[Key_Numpad3] 					= VK_NUMPAD3;
+						vkey_table[Key_Numpad4] 					= VK_NUMPAD4;
+						vkey_table[Key_Numpad5] 					= VK_NUMPAD5;
+						vkey_table[Key_Numpad6] 					= VK_NUMPAD6;
+						vkey_table[Key_Numpad7] 					= VK_NUMPAD7;
+						vkey_table[Key_Numpad8] 					= VK_NUMPAD8;
+						vkey_table[Key_Numpad9] 					= VK_NUMPAD9;
+						vkey_table[Key_NumpadDivide] 			= VK_DIVIDE;
+						vkey_table[Key_NumpadMultiply]		= VK_MULTIPLY;
+						vkey_table[Key_NumpadMinus] 			= VK_SUBTRACT;
+						vkey_table[Key_NumpadPlus] 				= VK_ADD;
+						vkey_table[Key_NumpadDecimal] 		= VK_DECIMAL;
+
+						// Mouse buttons
+						vkey_table[Key_LeftMouseButton] 	= VK_LBUTTON;
+						vkey_table[Key_RightMouseButton] 	= VK_RBUTTON;
+						vkey_table[Key_MiddleMouseButton] = VK_MBUTTON;
+						vkey_table[Key_MouseButton4]			= VK_XBUTTON1;
+						vkey_table[Key_MouseButton5]			= VK_XBUTTON2;
+
+						// Letters
+						vkey_table[Key_A] 								= 'A';
+						vkey_table[Key_B] 								= 'B';
+						vkey_table[Key_C] 								= 'C';
+						vkey_table[Key_D] 								= 'D';
+						vkey_table[Key_E] 								= 'E';
+						vkey_table[Key_F] 								= 'F';
+						vkey_table[Key_G] 								= 'G';
+						vkey_table[Key_H] 								= 'H';
+						vkey_table[Key_I] 								= 'I';
+						vkey_table[Key_J] 								= 'J';
+						vkey_table[Key_K] 								= 'K';
+						vkey_table[Key_L] 								= 'L';
+						vkey_table[Key_M] 								= 'M';
+						vkey_table[Key_N] 								= 'N';
+						vkey_table[Key_O] 								= 'O';
+						vkey_table[Key_P] 								= 'P';
+						vkey_table[Key_Q] 								= 'Q';
+						vkey_table[Key_R] 								= 'R';
+						vkey_table[Key_S] 								= 'S';
+						vkey_table[Key_T] 								= 'T';
+						vkey_table[Key_U] 								= 'U';
+						vkey_table[Key_V] 								= 'V';
+						vkey_table[Key_W] 								= 'W';
+						vkey_table[Key_X] 								= 'X';
+						vkey_table[Key_Y] 								= 'Y';
+						vkey_table[Key_Z] 								= 'Z';
+					}
+					res = vkey_table[key];
+				}
+				return res;
 			}
 
 			//////////////////////////////
 			// OS Events
-
 			EventList get_events(Arena* arena, b32 wait) {
 				ProfBlock(0, profDebug_darkmagenta);
 
