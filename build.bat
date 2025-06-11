@@ -32,7 +32,7 @@ set clang_link=     -fuse-ld=lld -Xlinker /MANIFEST:EMBED -Xlinker /pdbaltpath:%
 set clang_out=      -o
 
 :: --- MSVC
-set cl_common=     /I..\src\ /nologo /FC /Z7 /EHsc /W1
+set cl_common=     /I..\src\ /nologo /FC /Z7 /EHsc /W1 /GR-
 set cl_debug=      call cl /Od /DBUILD_DEBUG=1 %cl_common% %auto_compile_flags% %preprocessor_flags%
 set cl_release=    call cl /O2 /DBUILD_DEBUG=0 -DBUILD_RELEASE=1 %cl_common% %auto_compile_flags%
 set cl_link=       /link /MANIFEST:EMBED /DEBUG:FULL /PDBALTPATH:%%%%_PDB%%%% /ignore:4099
@@ -40,14 +40,7 @@ set cl_out=        /out:
 
 :: --- Build setting
 set link_resource=resource.res
-if "%msvc%"=="1" set only_compile=/c
-if "%msvc%"=="1" set EHsc=/EHsc
-if "%msvc%"=="1" set no_aslr=/DYNAMICBASE:NO
 if "%msvc%"=="1" set rc=call rc
-
-if "%clang%"=="1" set only_compile=-c
-if "%clang%"=="1" set EHsc=
-if "%clang%"=="1" set no_aslr=-Wl,/DYNAMICBASE:NO
 if "%clang%"=="1" set rc=call llvm-rc
 
 :: --- Compile/Link
@@ -80,15 +73,7 @@ for /f "tokens=2" %%i in ('call svn info ^| findstr "Revision"') do set compile=
 
 :: --- Build Things 
 pushd run_tree
-	REM if "%manic%"=="1"		set didbuild=1 && %compile% ..\src\manic\main.cc %compile_link% %link_resource% %out%manic.exe || exit /b 1
 	%compile% ..\src\manic\main.cc %compile_link% %link_resource% %out%manic.exe || exit /b 1
-
 popd
-
-:: --- Warn On No Builds 
-REM if "%didbuild%"=="" (
-REM   echo [WARNING] no valid build target specified; must use build target names as arguments to this script, like `build manic` or `build tests`.
-REM   exit /b 1
-REM )
 
 endlocal
