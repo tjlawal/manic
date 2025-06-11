@@ -89,7 +89,18 @@
 #endif
 
 #if ASAN_ENABLED
-	#pragma comment(lib, "clang_rt.asan-x86_64.lib")
+	#if BUILD_RELEASE
+		#error "This is not supported nor does it make sense, do a debug build."
+	#endif
+	#if COMPILER_MSVC
+		// At the time of writing, Visual Studio Community Edition 2022 V17.14.4 prefers ASAN to be dynamically linked in but everything is statically linked including the C runtime because it is easy to deploy without hunting for VC++ redistributables. Until I can figure out how to make MSVC to play nice with the asan dll in run_tree it doesn't work. - Tijani 06/10/2025
+		#error "Please use clang." // Crash and burn!
+	#endif
+	#if COMPILER_CLANG
+		#if __clang_major__ <= 18
+			#pragma comment(lib, "clang_rt.asan-x86_64.lib")
+		#endif
+	#endif
 	C_LINKAGE void __asan_poison_memory_region(void const volatile *addr, size_t size);
 	C_LINKAGE void __asan_unpoison_memory_region(void const volatile *addr, size_t size);
   #define AsanPoisonMemoryRegion(addr, size)   __asan_poison_memory_region((addr), (size))

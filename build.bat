@@ -26,13 +26,14 @@ if "%preprocess%"=="1" (
 
 :: --- Clang 
 set clang_common=   -I..\src\ -Wall -std=c++11 -ferror-limit=200 -gcodeview -fdiagnostics-absolute-paths -fno-exceptions -Wno-initializer-overrides -Wno-unused-function -Wno-missing-braces -Wno-unused-variable -Wno-writable-strings -Wno-address-of-temporary -Wno-switch -Wno-return-type -Wno-unused-command-line-argument -Wno-unused-but-set-variable
+
 set clang_debug=    call clang -g -O0 -DBUILD_DEBUG=1 %clang_common% %auto_compile_flags% %preprocessor_flags%
 set clang_release=  call clang -g -O2 -DBUILD_DEBUG=0 -DBUILD_RELEASE=1 %clang_common% %auto_compile_flags%
 set clang_link=     -fuse-ld=lld -Xlinker /MANIFEST:EMBED -Xlinker /pdbaltpath:%%%%_PDB%%%% -Wl,/ignore:4099
 set clang_out=      -o
 
 :: --- MSVC
-set cl_common=     /I..\src\ /nologo /FC /Z7 /EHsc /W1 /GR-
+set cl_common=     /I..\src\ /nologo /FC /Z7 /EHsc /W1 /GR- /MT
 set cl_debug=      call cl /Od /DBUILD_DEBUG=1 %cl_common% %auto_compile_flags% %preprocessor_flags%
 set cl_release=    call cl /O2 /DBUILD_DEBUG=0 -DBUILD_RELEASE=1 %cl_common% %auto_compile_flags%
 set cl_link=       /link /MANIFEST:EMBED /DEBUG:FULL /PDBALTPATH:%%%%_PDB%%%% /ignore:4099
