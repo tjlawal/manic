@@ -14,6 +14,7 @@
 #include "render/render.h"
 #include "draw/draw.h"
 #include "resource_manager/resource_manager.h"
+#include "game/manic.h"
 
 // [.c]
 #include "foundation/foundation.cc"
@@ -31,11 +32,14 @@ using namespace Starlight::Draw;
 
 namespace Starlight {
 	
-	global Handle window_handle = {};
-	global Vec2s window_dimensions = {};
-	global HDC device_context = {};
-	global Renderer render_buffer = {};
-	global b32 quit = 0;
+	//global Handle window_handle = {};
+	//global Vec2s window_dimensions = {};
+	//global HDC device_context = {};
+	//global Renderer render_buffer = {};
+	//global b32 quit = 0;
+
+	global GameWindowState g_window_state = nullptr;
+	global GameState g_game_state = nullptr;
 
 
 	internal void system_setup() {
@@ -46,7 +50,7 @@ namespace Starlight {
 		window_first_paint(window_handle);
 		device_context = reinterpret_cast<HDC>(get_device_context(window_handle));
 
-		resize_buffer(scratch.arena, &render_buffer, window_dimensions.x, window_dimensions.y);
+		allocate_backbuffer(scratch.arena, &render_buffer, window_dimensions.x, window_dimensions.y);
 
 		scratch_end(scratch);
 	}
@@ -90,7 +94,7 @@ namespace Starlight {
 		copy_buffer_to_window(device_context, &render_buffer);
 	}
 
-	internal void Platform::MainLoop() {
+	internal void main_loop() {
 		system_setup();
 
 		while(!quit) {

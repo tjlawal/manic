@@ -3,6 +3,10 @@
 
 namespace Starlight {
 	namespace Render {
+
+		union RenderHandle {
+			u64 handle[1];
+		};
 		
 		union Vertex {
 			struct {

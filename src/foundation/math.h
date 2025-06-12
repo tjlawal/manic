@@ -272,7 +272,7 @@ namespace Starlight {
 
 		// Ranges
 
-		// 1-Dimension
+		// 1D
 		struct Rng1u64 {
 			u64 minimum;
 			u64 maximum;
@@ -281,6 +281,17 @@ namespace Starlight {
 			Rng1u64(u64 _min, u64 _max) : minimum(_min), maximum(_max) {}
 			
 			internal u64 rng_diff1u64(Rng1u64 rng);
+		};
+
+		// 2D
+		struct Rng2f32 {
+			f32 minimum;
+			f32 maximum;
+
+			Rng2f32() : minimum(0), maximum(0) {}
+			Rng2f32(f32 _min, f32 _max) : minimum(_min), maximum(_max) {}
+			
+			internal f32 rng_diff1u64(Rng2f32 rng);
 		};
 
 

@@ -74,7 +74,7 @@ for /f "tokens=2" %%i in ('call svn info ^| findstr "Revision"') do set compile=
 
 :: --- Build Things 
 pushd run_tree
-	%compile% ..\src\manic\main.cc %compile_link% %link_resource% %out%manic.exe || exit /b 1
+	%compile% ..\src\game\main.cc %compile_link% %link_resource% %out%manic.exe || exit /b 1
 popd
 
 endlocal
