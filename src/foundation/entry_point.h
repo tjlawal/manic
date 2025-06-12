@@ -6,5 +6,5 @@ namespace Starlight {
 	internal void process_input();
 	internal void update();
 	internal void render();
-
+	internal void main_loop();
 }

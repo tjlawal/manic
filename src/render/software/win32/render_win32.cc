@@ -4,7 +4,7 @@ using namespace Starlight::Foundation;
 namespace Starlight {
 	namespace Render {
 
-		void resize_buffer(Arena *arena, Renderer *buffer, s32 width, s32 height) {
+		void allocate_backbuffer(Arena *arena, Renderer *buffer, s32 width, s32 height) {
 			ProfBlock(0, profDebug_fuchsia);
 			buffer->sw.width = width;
 			buffer->sw.height = height;
@@ -24,10 +24,10 @@ namespace Starlight {
 			// One allocation
 			buffer->sw.memory_buffer = arena_push<u8>(arena, total_buffer_size);
 			u8* mem_block = static_cast<u8*>(buffer->sw.memory_buffer);
+
 			// Concerned parties get their share!
 			buffer->sw.colour_buffer = reinterpret_cast<u32*>(mem_block);
-			// Offset cause its stored contiguously alongside colour_buffer!
-			buffer->sw.z_buffer = reinterpret_cast<f32*>(mem_block + colour_buffer_size);
+			buffer->sw.z_buffer = reinterpret_cast<f32*>(mem_block + colour_buffer_size); // Offset cause its stored contiguously alongside colour_buffer!
 		}
 
 		void copy_buffer_to_window(HDC device_context, Renderer *buffer) {

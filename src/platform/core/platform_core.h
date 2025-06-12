@@ -39,10 +39,5 @@ namespace Starlight {
 
 		internal void  abort(s32 exit_code);
 		internal void  sleep(u64 ns);
-
-		// Platform agnostic entry point. See individual implemenation for the uglies.
-		#if BUILD_ENTRY_DEFINING_UNIT
-			internal void MainLoop();
-		#endif
 	}
 }
