@@ -151,8 +151,8 @@ namespace Starlight {
 						case WM_PAINT: {
 							PAINTSTRUCT paint_struct = {0};
 							BeginPaint(hwnd, &paint_struct);
-							update();
-							//render();
+							//update();
+							render();
 							EndPaint(hwnd, &paint_struct);
 						} break;
 

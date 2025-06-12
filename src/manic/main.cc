@@ -39,11 +39,16 @@ namespace Starlight {
 
 
 	internal void system_setup() {
+		Temp scratch = scratch_begin(0, 0);
 		ProfBlock(0, profDebug_cadetblue);
 
 		window_handle = window_open(Vec2s(1920, 1080), str8_lit(BUILD_TITLE_STRING_LITERAL));
 		window_first_paint(window_handle);
 		device_context = reinterpret_cast<HDC>(get_device_context(window_handle));
+
+		resize_buffer(scratch.arena, &render_buffer, window_dimensions.x, window_dimensions.y);
+
+		scratch_end(scratch);
 	}
 
 	internal void process_input() {
@@ -65,7 +70,7 @@ namespace Starlight {
 
 						default:
 							break;
-					}
+					} break;
 				}
 
 				default:
@@ -76,23 +81,13 @@ namespace Starlight {
 		scratch_end(scratch);
 	}
 
-	internal void update() {
-		Temp scratch = scratch_begin(0, 0);
-		ProfBlock(0, profDebug_hotpink);
-
-		// Handle window resize
-		window_dimensions = get_window_dimension(window_handle);
-		r_resize_buffer(scratch.arena, &render_buffer, window_dimensions.x, window_dimensions.y);
-
-
-		scratch_end(scratch);
-	}
+	internal void update() {}
 
 	internal void render() {
 		ProfBlock(0, profDebug_darkblue);
-		r_clear_colour_buffer(&render_buffer, 0xFF420420);
+		clear_colour_buffer(&render_buffer, 0xFF420420);
 
-		r_copy_buffer_to_window(device_context, &render_buffer);
+		copy_buffer_to_window(device_context, &render_buffer);
 	}
 
 	internal void Platform::MainLoop() {
@@ -103,7 +98,7 @@ namespace Starlight {
 			update();
 			render();
 
-			sleep(300);
+			sleep(16);
 		}
 	}
 

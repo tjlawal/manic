@@ -18,15 +18,15 @@
 #endif
 
 #if COMPILER_MSVC
-	#define DEBUG_BREAK __debugbreak()
+	#define DEBUGBREAK __debugbreak()
 #elif COMPILER_CLANG || COMPILER_GCC
-	#define DEBUG_BREAK __builtin_trap()
+	#define DEBUGBREAK __builtin_trap()
 #else
 	#error "Unknown debug break intrinsic for this compiler."
 #endif
 
 // @TODO: Pass message to assertion
-#define AssertAlways(x)	do { if (!(x)) { DEBUG_BREAK; } } while (0)
+#define AssertAlways(x)	do { if (!(x)) { DEBUGBREAK; } } while (0)
 #if BUILD_DEBUG
 	#define Assert(x) AssertAlways(x)
 #else

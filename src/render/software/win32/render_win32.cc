@@ -4,7 +4,7 @@ using namespace Starlight::Foundation;
 namespace Starlight {
 	namespace Render {
 
-		void r_resize_buffer(Arena *arena, Renderer *buffer, s32 width, s32 height) {
+		void resize_buffer(Arena *arena, Renderer *buffer, s32 width, s32 height) {
 			ProfBlock(0, profDebug_fuchsia);
 			buffer->sw.width = width;
 			buffer->sw.height = height;
@@ -30,7 +30,7 @@ namespace Starlight {
 			buffer->sw.z_buffer = reinterpret_cast<f32*>(mem_block + colour_buffer_size);
 		}
 
-		void r_copy_buffer_to_window(HDC device_context, Renderer *buffer) {
+		void copy_buffer_to_window(HDC device_context, Renderer *buffer) {
 			ProfBlock(0, profDebug_indianred);
 			StretchDIBits(device_context, 0, 0, buffer->sw.width, buffer->sw.height, 0, 0, 
 										buffer->sw.width, buffer->sw.height, buffer->sw.colour_buffer, 
@@ -38,7 +38,7 @@ namespace Starlight {
 		}
 
 		// REVISE: Could this be faster?
-		void r_clear_colour_buffer(Renderer *buffer, u32 colour) {
+		void clear_colour_buffer(Renderer *buffer, u32 colour) {
 			ProfBlock(0, profDebug_deepskyblue);
 			for (s32 y = 0; y < buffer->sw.height; y++) {
 				for (s32 x = 0; x < buffer->sw.width; x++) {
@@ -48,7 +48,7 @@ namespace Starlight {
 		}
 
 		// REVISE: Could this be faster?
-		void r_clear_z_buffer(Renderer *buffer) {
+		void clear_z_buffer(Renderer *buffer) {
 			ProfBlock(0, profDebug_darkred);
 			for (s32 y = 0; y < buffer->sw.height; ++y) {
 				for (s32 x = 0; x < buffer->sw.width; ++x) {

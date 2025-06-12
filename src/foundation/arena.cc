@@ -14,7 +14,9 @@ namespace Starlight {
 
 			// Panic on failure, very very unlikely
 			if(UNLIKELY(base == nullptr)) {
+				// @IMPROVEMENT: It'd be nice to have a crash dump of what caused the error in prod.
 				Platform::Gfx::graphical_message(1, str8_lit("Fatal Allocation Failure!"), str8_lit("Unexpected memory allocation failure."));
+				DEBUGBREAK;
 				abort(1);
 			}
 
@@ -57,14 +59,14 @@ namespace Starlight {
 				u64 n_commit_size = current_arena->commit_size;
 				
 				if(size_to_push + ARENA_HEADER_SIZE > n_reserve_size) {
-					n_reserve_size = AlignPow2(size_to_push + ARENA_HEADER_SIZE, alignment);
-					n_commit_size = AlignPow2(size_to_push + ARENA_HEADER_SIZE, alignment);
+					n_reserve_size = align_pow2(size_to_push + ARENA_HEADER_SIZE, alignment);
+					n_commit_size = align_pow2(size_to_push + ARENA_HEADER_SIZE, alignment);
 				}
 				
 				new_block = arena_alloc(n_reserve_size, n_commit_size);
 				_SLLPush(arena->current, new_block, previous);
 				current_arena = new_block;
-				pos_pre_push = AlignPow2(current_arena->position, alignment);
+				pos_pre_push = align_pow2(current_arena->position, alignment);
 				pos_pre_push = pos_pre_push + size_to_push;
 			}
 
@@ -90,7 +92,9 @@ namespace Starlight {
 
 			// Panic on failure, very very unlikely
 			if(UNLIKELY(result == nullptr)) {
+				// @IMPROVEMENT: It'd be nice to have a crash dump of what caused the error in prod.
 				Platform::Gfx::graphical_message(1, str8_lit("Fatal Allocation Failure!"), str8_lit("Unexpected memory allocation failure."));
+				DEBUGBREAK;
 				abort(1);
 			}
 			

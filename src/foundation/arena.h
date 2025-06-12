@@ -5,7 +5,7 @@
 namespace Starlight {
 	namespace Foundation {
 
-		global u64 g_default_reserve_size = MB(512); // Maximum memory that would be used throughout its entire lifetime.
+		global u64 g_default_reserve_size = GB(1); // Maximum memory that would be used throughout its entire lifetime.
 		global u64 g_default_commit_size = KB(64);   // Size of each arena block allocated.
 
 		// Chained arena allocator
@@ -44,19 +44,31 @@ namespace Starlight {
 		//}
 
 		template<typename T>
-		internal T* arena_push_non_zeroed_aligned(Arena* arena, u64 count, u64 alignment) {
-			return reinterpret_cast<T*>(arena_push_internal(arena, (sizeof(T) * count), alignment));
-		}
-
-		template<typename T>
 		internal T* arena_push_non_zeroed(Arena* arena, u64 count) {
-			return reinterpret_cast<T*>(MemoryZero(arena_push_internal(arena, count, max(8, alignof(T))), (sizeof(T) * count)));
+			return reinterpret_cast<T*>(
+				arena_push_internal(arena, (sizeof(T) * count), max(8, alignof(T)))
+			);
 		}
 
 		template<typename T>
 		internal T* arena_push(Arena* arena, u64 count) {
-			return reinterpret_cast<T*>(MemoryZero(arena_push_internal(arena, count, max(8, alignof(T))), (sizeof(T) * count)));
+			return reinterpret_cast<T*>(
+				MemoryZero(
+					arena_push_internal(arena, (sizeof(T) * count), max(8, alignof(T))),
+					(sizeof(T) * count)
+				)
+			);
 		}
+
+		//template<typename T>
+		//internal T* arena_push_non_zeroed(Arena* arena, u64 count) {
+		//	return reinterpret_cast<T*>(MemoryZero(arena_push_internal(arena, count, max(8, alignof(T))), (sizeof(T) * count)));
+		//}
+
+		//template<typename T>
+		//internal T* arena_push(Arena* arena, u64 count) {
+		//	return reinterpret_cast<T*>(MemoryZero(arena_push_internal(arena, count, max(8, alignof(T))), (sizeof(T) * count)));
+		//}
 
 		struct Temp{
 			Arena* arena;

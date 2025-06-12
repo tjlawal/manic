@@ -44,10 +44,10 @@ namespace Starlight {
 
 		};
 
-		internal void r_resize_buffer(Arena *arena, Renderer *buffer, s32 width, s32 height);
-		internal void r_copy_buffer_to_window(HDC device_context, Renderer *buffer);
-		internal void r_clear_colour_buffer(Renderer *buffer, u32 colour);
-		internal void r_clear_z_buffer(Renderer *buffer);
+		internal void resize_buffer(Arena *arena, Renderer *buffer, s32 width, s32 height);
+		internal void copy_buffer_to_window(HDC device_context, Renderer *buffer);
+		internal void clear_colour_buffer(Renderer *buffer, u32 colour);
+		internal void clear_z_buffer(Renderer *buffer);
 
 	}
 }
