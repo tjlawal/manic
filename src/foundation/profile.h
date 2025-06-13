@@ -5,23 +5,25 @@
 #define _R(rgba) 	(((rgba) >> 16) & 0xFF)
 #define _G(rgba)	(((rgba) >> 8) & 0xFF)
 #define _B(rgba)	((rgba) & 0xFF)		
-//#define _B(rgba) 										(((rgba) & 0xFF))
-//#define _A(rgba) 										((rgba) & 0xFF)
 
 #define MakeColourFromRGB(R, G, B)	((((u32)(R)) << 24) | (((u32)(G)) << 16) | (((u32)(B)) << 8) | (u32)0xFF)
 #define MakeRGBFromHex(hex)					MakeColourFromRGB(_R(hex), _G(hex), _B(hex))
 
 #if BUILD_PROFILE
 	#if PROFILER_SUPERLUMINAL
-		#define ProfBlock(ctxt_data, colour) 	PERFORMANCEAPI_INSTRUMENT_DATA_COLOR(__func__, ctxt_data, MakeRGBFromHex(colour))
-		#define ProfThreadName(name)					PerformanceAPI_SetCurrentThreadName(name)
+		#define ProfFunction()				PERFORMANCEAPI_INSTRUMENT_FUNCTION()
+		#define ProfBlock(id, c) 			PERFORMANCEAPI_INSTRUMENT_COLOR(id, MakeRGBFromHex(c))
+		#define ProfBlockData(id, d)	PERFORMANCEAPI_INSTRUMENT_DATA(id, d)
+		#define ProfThreadName(name)	PerformanceAPI_SetCurrentThreadName(name)
 	#elif PROFILER_TRACY
 	#else
 		#error "Profiler not recognized, are you using the correct profiler flag?"
 	#endif
 #else // Zero out defines
-	#define ProfBlock(ctx_data, colour)  			(0)
-	#define ProfThreadName(name)							(0)
+	#define ProfFunction()						(0)
+	#define ProfBlock(id, c)					(0)
+	#define ProfBlockData(id, d)			(0)
+	#define ProfThreadName(name)			(0)
 #endif
 
 // Profiler Debug Colours

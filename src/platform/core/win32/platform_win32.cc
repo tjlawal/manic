@@ -7,11 +7,11 @@ namespace Starlight {
 		internal SystemInfo*  get_system_info(void) { return &w32_state.system_info; }
 		internal ProcessInfo* get_process_info(void) { return &w32_state.process_info; }
 
-		internal void sleep(u64 ns) { ProfBlock(0, profDebug_darkmagenta); Sleep(ns); }
+		internal void sleep(u64 ns) { Sleep(ns); }
 
 		// Memory allocation
 		internal void* mem_reserve(u64 size) {
-			ProfBlock(0, profDebug_darkmagenta);
+			ProfFunction();
 			
 			void *result = VirtualAlloc(0, size, MEM_RESERVE, PAGE_READWRITE);
 
@@ -24,14 +24,14 @@ namespace Starlight {
 		}
 
 		internal b32 mem_commit(void *ptr, u64 size) {
-			ProfBlock(0, profDebug_darkmagenta);
+			ProfFunction();
 			
 			b32 result = (VirtualAlloc(ptr, size, MEM_COMMIT, PAGE_READWRITE) != 0);
 			return result;
 		}
 
 		internal void mem_decommit(void *ptr, u64 size) { 
-			ProfBlock(0, profDebug_darkmagenta); 
+			ProfFunction();
 			VirtualFree(ptr, size, MEM_DECOMMIT); 
 		}
 
@@ -321,7 +321,7 @@ namespace Starlight {
 
 		// @todo: Add argc and argv
 		internal void w32_entry_point_caller() {
-			ProfBlock(0, profDebug_darkmagenta);
+			ProfFunction();
 		
 			SetUnhandledExceptionFilter(&win32_exception_filter);
 

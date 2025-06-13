@@ -30,7 +30,7 @@ namespace Starlight {
 			HWND w32_hwnd_from_window(Window* window) { return window->hwnd; }
 
 			Window *w32_window_alloc(void) {
-				ProfBlock(0, profDebug_darkmagenta);
+				ProfFunction();
 
 				Window *result = w32_gfx_state->free_window;
 				if (result)
@@ -53,7 +53,7 @@ namespace Starlight {
 
 			
 			Handle window_open(Vec2s window_size, string8 title) {
-				ProfBlock(0, profDebug_darkmagenta);
+				ProfFunction();
 				HWND hwnd = 0;
 
 				{
@@ -90,8 +90,7 @@ namespace Starlight {
 			}
 
 			void window_first_paint(Handle window_handle) {
-				ProfBlock(0, profDebug_darkmagenta);
-
+				ProfFunction();
 				Window *window = w32_window_from_handle(window_handle);
 				window->first_paint = 1;
 				ShowWindow(window->hwnd, SW_SHOW);
@@ -102,8 +101,7 @@ namespace Starlight {
 
 			// TODO: Delete me
 			Vec2s get_window_dimension(Handle handle) {
-				ProfBlock(0, profDebug_darkmagenta);
-
+				ProfFunction();
 				Window *window = w32_window_from_handle(handle);
 				Vec2s result = {};
 				RECT rect;
@@ -116,7 +114,7 @@ namespace Starlight {
 			}
 
 			void *get_device_context(Handle handle) {
-				ProfBlock(0, profDebug_darkmagenta);
+				ProfFunction();
 
 				Window *window = w32_window_from_handle(handle);
 				return GetDC(window->hwnd);
@@ -128,7 +126,7 @@ namespace Starlight {
 			}
 
 			LRESULT w32_window_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-				ProfBlock(0, profDebug_darkmagenta);
+				ProfFunction();
 
 				LRESULT result = 0;
 				b32 good = 1;
@@ -151,8 +149,8 @@ namespace Starlight {
 						case WM_PAINT: {
 							PAINTSTRUCT paint_struct = {0};
 							BeginPaint(hwnd, &paint_struct);
-							//update();
-							render();
+							update();
+							//render();
 							EndPaint(hwnd, &paint_struct);
 						} break;
 
@@ -230,7 +228,7 @@ namespace Starlight {
 			}
 
 			Event *w32_push_event(EventKind kind, Window *window) {
-				ProfBlock(0, profDebug_darkmagenta);
+				ProfFunction();
 
 				Event *result = event_list_push_new(w32_event_arena, &w32_event_list, kind);
 				result->window = w32_handle_from_window(window);
@@ -239,7 +237,7 @@ namespace Starlight {
 			}
 
 			Key key_from_w32_vkey(WPARAM virtual_key) {
-				ProfBlock(0, profDebug_darkmagenta);
+				ProfFunction();
 
 				local b32 first = 1;
 				local Key key_table[256];
@@ -490,8 +488,7 @@ namespace Starlight {
 			//////////////////////////////
 			// OS Events
 			EventList get_events(Arena* arena, b32 wait) {
-				ProfBlock(0, profDebug_darkmagenta);
-
+				ProfFunction();
 				w32_event_arena = arena;
 				MemoryZeroStruct(&w32_event_list);
 				MSG msg = {0};
@@ -511,7 +508,7 @@ namespace Starlight {
 			}
 
 			KeyModifiers get_modifiers(void) {
-				ProfBlock(0, profDebug_darkmagenta);
+				ProfFunction();
 
 				KeyModifiers modifiers = {};
 				if (GetKeyState(VK_CONTROL) & 0x8000) {
@@ -541,7 +538,7 @@ namespace Starlight {
 
 			// Main gfx initialization (Implemented per-os)
 			void gfx_init(void) {
-				ProfBlock(0, profDebug_darkmagenta);
+				ProfFunction();
 
 				Arena *arena = arena_alloc();
 				w32_gfx_state = arena_push<GfxState>(arena, 1);

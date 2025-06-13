@@ -1,6 +1,7 @@
 #pragma once
 
 using namespace Starlight::Foundation;
+using namespace Starlight::Platform;
 
 namespace Starlight {
 	namespace Render {
@@ -12,7 +13,6 @@ namespace Starlight {
 			RendererType_Vulkan,
 			RendererType_OpenGL,
 			RendererType_Metal,
-
 			RendererType_Count
 		};
 		
@@ -41,13 +41,14 @@ namespace Starlight {
 					#endif
 				} sw;
 			};
-
 		};
 
+		// OS - Renderer Association
 		internal void allocate_backbuffer(Arena *arena, Renderer *buffer, s32 width, s32 height);
-		internal void copy_buffer_to_window(HDC device_context, Renderer *buffer);
+		internal void copy_buffer_to_window(Handle window_handle, Renderer *buffer);
 		internal void clear_colour_buffer(Renderer *buffer, u32 colour);
 		internal void clear_z_buffer(Renderer *buffer);
 
+		//internal RenderHandle window_equip(Handle window);
 	}
 }

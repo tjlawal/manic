@@ -284,41 +284,28 @@ namespace Starlight {
 		};
 
 		// 2D
-		struct Rng2f32 {
-			f32 minimum;
-			f32 maximum;
+		union Rng2f32 {
+			struct {
+				Vec2f p0;
+				Vec2f p1;
+			};
 
-			Rng2f32() : minimum(0), maximum(0) {}
-			Rng2f32(f32 _min, f32 _max) : minimum(_min), maximum(_max) {}
-			
-			internal f32 rng_diff1u64(Rng2f32 rng);
+			struct {
+				Vec2f minimum;
+				Vec2f maximum;
+			};
+
+			struct {
+				f32 x0;
+				f32 y0;
+				f32 x1;
+				f32 y1;
+			};
+
+			Vec2f v[2];
 		};
 
-
-		// Find a betteer place to store these!
-		// Textures, Triangles, Faces
-		struct Texture2F32 {
-			f32 u;
-			f32 v;
-		};
-
-		struct Triangle2F32 {
-			Vec4 points[3];
-			Texture2F32 texture_coords[3];
-			u32 colour;
-		};
-
-		// Faces are the surfaces formed by connecting those points.
-		struct Face3S32 {
-			Texture2F32 a_uv;
-			Texture2F32 b_uv;
-			Texture2F32 c_uv;
-			u32 colour;
-			s32 a;
-			s32 b;
-			s32 c;
-		};
-
+		//3
 	}
 }
 

@@ -6,14 +6,14 @@ using namespace Starlight::Render;
 
 namespace Starlight {
 	
-	struct GameWindowState {
-		Arena* 			 arena;
-		Handle 			 os_handle;
-		RenderHandle render_handle;
-		Rng2f32 		 window_rect;
+	struct GameState {
+		Arena*   arena; // Do I actually need this??
+		Arena* 	 per_frame_memory;
+		Renderer render_buffer;
+		Handle 	 os_handle;
+		Rng2f32  window_rect;
 	};
 
-	struct GameState {
-		Arena* per_frame_memory;
-	};
+	//RenderHandle render_handle;
+	//struct GameState {};
 }

@@ -1,11 +1,12 @@
 
 using namespace Starlight::Foundation;
+using namespace Starlight::Platform::Gfx;
 
 namespace Starlight {
 	namespace Render {
 
 		void allocate_backbuffer(Arena *arena, Renderer *buffer, s32 width, s32 height) {
-			ProfBlock(0, profDebug_fuchsia);
+			ProfFunction();
 			buffer->sw.width = width;
 			buffer->sw.height = height;
 			buffer->sw.bytes_per_pixel = 4;
@@ -30,16 +31,18 @@ namespace Starlight {
 			buffer->sw.z_buffer = reinterpret_cast<f32*>(mem_block + colour_buffer_size); // Offset cause its stored contiguously alongside colour_buffer!
 		}
 
-		void copy_buffer_to_window(HDC device_context, Renderer *buffer) {
-			ProfBlock(0, profDebug_indianred);
-			StretchDIBits(device_context, 0, 0, buffer->sw.width, buffer->sw.height, 0, 0, 
+		void copy_buffer_to_window(Handle window_handle, Renderer *buffer) {
+			ProfFunction();
+			Window* window = w32_window_from_handle(window_handle);
+			HDC hdc = window->hdc;
+			StretchDIBits(hdc, 0, 0, buffer->sw.width, buffer->sw.height, 0, 0, 
 										buffer->sw.width, buffer->sw.height, buffer->sw.colour_buffer, 
 										&buffer->sw.win32_bitmapinfo, DIB_RGB_COLORS, SRCCOPY);
 		}
 
 		// REVISE: Could this be faster?
 		void clear_colour_buffer(Renderer *buffer, u32 colour) {
-			ProfBlock(0, profDebug_deepskyblue);
+			ProfFunction();
 			for (s32 y = 0; y < buffer->sw.height; y++) {
 				for (s32 x = 0; x < buffer->sw.width; x++) {
 					buffer->sw.colour_buffer[(buffer->sw.width * y) + x] = colour;
@@ -49,7 +52,7 @@ namespace Starlight {
 
 		// REVISE: Could this be faster?
 		void clear_z_buffer(Renderer *buffer) {
-			ProfBlock(0, profDebug_darkred);
+			ProfFunction();
 			for (s32 y = 0; y < buffer->sw.height; ++y) {
 				for (s32 x = 0; x < buffer->sw.width; ++x) {
 					buffer->sw.z_buffer[(buffer->sw.width * y) + x] = 1.0f;
