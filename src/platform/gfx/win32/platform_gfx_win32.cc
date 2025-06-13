@@ -5,6 +5,8 @@ namespace Starlight {
 	namespace Platform {
 		namespace Gfx {
 
+			///////////
+			// Helpers
 			// WIN32 to/from platform layer windowing functions
 			Handle w32_handle_from_window(Window *window) {
 				Handle handle = {(u64)window};
@@ -29,6 +31,15 @@ namespace Starlight {
 
 			HWND w32_hwnd_from_window(Window* window) { return window->hwnd; }
 
+			Rng2f32 w32_rng_from_rect(RECT rect){
+				Rng2f32	r = {};
+				r.x0 = static_cast<f32>(rect.left);
+				r.x1 = static_cast<f32>(rect.right);
+				r.y0 = static_cast<f32>(rect.top);
+				r.y1 = static_cast<f32>(rect.bottom);
+				return r;
+			}
+
 			Window *w32_window_alloc(void) {
 				ProfFunction();
 
@@ -52,16 +63,18 @@ namespace Starlight {
 			}
 
 			
-			Handle window_open(Vec2s window_size, string8 title) {
+			Handle window_open(Rng2f32 window_size, string8 title) {
 				ProfFunction();
 				HWND hwnd = 0;
+				Vec2f window_dim = dim2f32(window_size);
 
 				{
 					Temp scratch = scratch_begin(0, 0);
 					string16 title16 = str16_from_8(scratch.arena, title);
 					hwnd = CreateWindowExW(WS_EX_APPWINDOW, L"graphical-window", (WCHAR *)title16.str, 
 																 WS_OVERLAPPEDWINDOW | WS_SIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, 
-																 (s32)window_size.x, (s32)window_size.y, 0, 0, w32_gfx_state->hInstance, 0);
+																 static_cast<s32>(window_dim.x), static_cast<s32>(window_dim.y), 0, 0, 
+																 w32_gfx_state->hInstance, 0);
 
 					if (hwnd == NULL) {
 						DWORD error = GetLastError();
@@ -99,30 +112,15 @@ namespace Starlight {
 				}
 			}
 
-			// TODO: Delete me
-			Vec2s get_window_dimension(Handle handle) {
-				ProfFunction();
-				Window *window = w32_window_from_handle(handle);
-				Vec2s result = {};
-				RECT rect;
-
-				GetWindowRect(window->hwnd, &rect);
-				result.x = (rect.right - rect.left);
-				result.y = (rect.bottom - rect.top); // windows start from the top left (0,0) - (x, y).
-
-				return result;
-			}
-
-			void *get_device_context(Handle handle) {
-				ProfFunction();
-
-				Window *window = w32_window_from_handle(handle);
-				return GetDC(window->hwnd);
-			}
-
-			void release_device_context(Handle handle, void *device_context) {
-				Window *window = w32_window_from_handle(handle);
-				ReleaseDC(window->hwnd, static_cast<HDC>(device_context));
+			Rng2f32 client_rect_from_window(Handle window_handle) {
+				Rng2f32 range = {};
+				Window *w = w32_window_from_handle(window_handle);
+				if(w) {
+					RECT rect = {};
+					GetClientRect(w->hwnd, &rect);
+					range = w32_rng_from_rect(rect);
+				}
+				return range;
 			}
 
 			LRESULT w32_window_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {

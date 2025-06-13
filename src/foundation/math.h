@@ -265,7 +265,6 @@ namespace Starlight {
 					result.y /= result.w;
 					result.z /= result.w;
 				}
-
 				return result;	
 			}
 		};
@@ -303,9 +302,15 @@ namespace Starlight {
 			};
 
 			Vec2f v[2];
+
+			// Constructor
+			Rng2f32() {}
+			Rng2f32(Vec2f _p0, Vec2f _p1) : p0(_p0), p1(_p1) {}
+			Rng2f32(f32 _x0, f32 _y0, f32 _x1, f32 _y1) : x0(_x0), y0(_y0), x1(_x1), y1(_y1) {}
 		};
 
-		//3
+		internal Vec2f dim2f32(Rng2f32 r);
+
 	}
 }
 

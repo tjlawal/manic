@@ -5,6 +5,16 @@ using namespace Starlight::Render;
 
 namespace Starlight {
 	namespace Draw {
+
+		internal void draw_grid(Renderer *buffer, s32 width, s32 height, u32 colour) {
+			for(s32 y = 0; y < height; y++) {
+				for(s32 x = 0; x < width; x++) {
+					if(x % 15 == 0 || y % 10 == 0) {
+						buffer->sw.colour_buffer[(buffer->sw.width * y) + x] = colour;
+					}
+				}
+			}
+		}
 	
 		void draw_rect(Renderer *buffer, s32 x, s32 y, s32 width, s32 height, u32 colour) {
 			for (s32 row = 0; row < width; ++row) {

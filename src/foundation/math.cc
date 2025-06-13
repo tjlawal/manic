@@ -54,5 +54,13 @@ namespace Starlight {
 			return r;
 		}
 
+		Vec2f dim2f32(Rng2f32 rng) {
+			Vec2f dim = {
+				((rng.maximum.x > rng.minimum.x) ? (rng.maximum.x - rng.minimum.x) : 0),
+				((rng.maximum.y > rng.minimum.y) ? (rng.maximum.y - rng.minimum.y) : 0),
+			};
+			return dim;
+		}
+
 	}
 }

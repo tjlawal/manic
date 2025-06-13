@@ -20,7 +20,6 @@ namespace Starlight {
 				abort(1);
 			}
 
-			//Arena *arena = (Arena*)base;
 			Arena* arena = reinterpret_cast<Arena*>(base);
 			arena->base_position = 0;
 			arena->position = ARENA_HEADER_SIZE;

@@ -50,10 +50,11 @@ namespace Starlight {
 			internal GfxInfo* get_gfx_info(void);
 
 			// Windowing function
-			internal Handle  	window_open(Vec2s window_size, string8 title);
-			internal void     window_close(Handle window);
-			internal void    	window_first_paint(Handle window);
-			internal void 	 	window_set_fullscreen(Handle window);
+			internal Handle  	window_open(Rng2f32 window_size, string8 title);
+			internal void     window_close(Handle window_handle);
+			internal void    	window_first_paint(Handle window_handle);
+			internal void 	 	window_set_fullscreen(Handle window_handle);
+			internal Rng2f32  client_rect_from_window(Handle window_handle);
 
 			// TODO: Delete me
 			internal Vec2s 		get_window_dimension(Handle handle);
