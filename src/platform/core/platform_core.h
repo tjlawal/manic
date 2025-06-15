@@ -37,6 +37,10 @@ namespace Starlight {
 		internal void  mem_decommit(void *ptr, u64 size);
 		internal void  mem_release(void *ptr, u64 size);
 
+		// OS I/O primitives
+		internal Handle open_file(AccessFlags flags, string8 path);
+
+		// OS halting
 		internal void  abort(s32 exit_code);
 		internal void  sleep(u64 ns);
 	}

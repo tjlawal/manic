@@ -5,7 +5,7 @@
 #include "platform/gfx/platform_gfx.h"
 
 #if OS_WINDOWS 
-	#include "platform/core/win32/platform_win32.h"
+	#include "platform/core/win32/platform_core_win32.h"
 	#include "platform/gfx/win32/platform_gfx_win32.h"
 #else
 	#error "This platform is not supported."

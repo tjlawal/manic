@@ -1,37 +1,29 @@
-
 #pragma once
 
 namespace Starlight {
 	namespace ResourceManager {
 		namespace Parser {
 			
-			// Parser token types, just add future file formats here, it shouldn't be a problem, I hope. Tijani - 06/08/2025
-			enum ParserTokenType : u32 {
-				ParserTokenType_Unknown,
+			enum FormatTokenType : u32 {
+				FormatTokenType_Unknown,
 
-				// Wavefront Obj token types
-				ParserTokenType_Grouping,
-				ParserTokenType_SmootingGroup,
-				ParserTokenType_ObjectName,
+				FormatTokenType_Grouping,
+				FormatTokenType_SmootingGroup,
+				FormatTokenType_ObjectName,
+				FormatTokenType_Line, 
+				FormatTokenType_Point,
+				FormatTokenType_Face,
+				FormatTokenType_GeometricVertices,
+				FormatTokenType_TextureVertices,
+				FormatTokenType_VertexNormals,
+				FormatTokenType_MaterialName,
+				FormatTokenType_MaterialLibrary,
+				FormatTokenType_Float,
+				FormatTokenType_Int,
+				FormatTokenType_Slash,
+				FormatTokenType_Minus,
 
-				ParserTokenType_Line, 
-				ParserTokenType_Point,
-				ParserTokenType_Face,
-
-				ParserTokenType_GeometricVertices,
-				ParserTokenType_TextureVertices,
-				ParserTokenType_VertexNormals,
-	
-				ParserTokenType_MaterialName,
-				ParserTokenType_MaterialLibrary,
-
-				ParserTokenType_Float,
-				ParserTokenType_Int,
-
-				ParserTokenType_Slash,
-				ParserTokenType_Minus,
-
-				ParserTokenType_EOF,
+				FormatTokenType_EOF,
 			};
 
 

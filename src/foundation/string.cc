@@ -164,5 +164,41 @@ namespace Starlight {
 			return (result);
 		}
 
+		// CString length, concatenation, etc.
+
+		internal u64 cstr8_len(u8 *c) {
+			// This assumes the string passed to it is null terminated.
+			u8 *r = c;
+			for(; *r != 0; r++);
+			return (r-c);
+		}
+
+		internal u8 *cstr8_concat(Arena *arena, u8 *first, u8 *second) {
+			u64 first_len = cstr8_len(first);
+			u64 second_len = cstr8_len(second);
+			u8 *new_string;
+			u64 new_string_size = first_len + second_len;
+			//new_string = push_array_no_zero(arena, u8, new_string_size);
+			new_string = arena_push_non_zeroed<u8>(arena, new_string_size);
+			MemoryCopy(new_string, first, first_len);
+			MemoryCopy((new_string + first_len), second, second_len);
+			new_string[new_string_size] = 0;
+	
+			return new_string;
+		}
+
+		internal u8 *cstr8_substr(Arena *arena, u8 *str, Rng1u64 range) {
+			range.minimum = clamp_min(range.minimum, cstr8_len(str));
+			range.maximum = clamp_min(range.maximum, cstr8_len(str));
+			u64 substr_len = (range.maximum - range.minimum) + 1;
+
+			u8 *new_str = arena_push_non_zeroed<u8>(arena, substr_len);
+			//u8 *new_str = push_array_no_zero(arena, u8, substr_len);
+			MemoryCopy(new_str, str + range.minimum, substr_len);
+			new_str[substr_len - 1] = '\0';
+			return new_str;
+		}
+
+
 	}
 }

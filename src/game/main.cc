@@ -67,14 +67,24 @@ namespace Starlight {
 	internal void initialize_system() {
 		ProfFunction();
 
-		// Initialize GameWindowState
-		Arena* arena = arena_alloc();
-		g_window_state = arena_push<GameState>(arena, 1);
-		g_window_state->per_frame_memory = arena;
-		g_window_state->os_handle = window_open(Rng2f32(0, 0, 1280, 960), str8_lit(BUILD_TITLE_STRING_LITERAL));
-		g_window_state->window_dim = client_rect_from_window(g_window_state->os_handle);
-		window_first_paint(g_window_state->os_handle);
-		allocate_backbuffer(g_window_state->per_frame_memory, &g_window_state->render_buffer, g_window_state->window_dim.x1, g_window_state->window_dim.y1);
+		// Initialize window and paint into it
+		ProfBlock("init window, paint to it", 0);
+		{
+			Arena* arena = arena_alloc();
+			g_window_state = arena_push<GameState>(arena, 1);
+			g_window_state->per_frame_memory = arena;
+			g_window_state->os_handle = window_open(Rng2f32(0, 0, 1920, 1080), str8_lit(BUILD_TITLE_STRING_LITERAL));
+			g_window_state->window_dim = client_rect_from_window(g_window_state->os_handle);
+			window_first_paint(g_window_state->os_handle);
+			allocate_backbuffer(g_window_state->per_frame_memory, &g_window_state->render_buffer, g_window_state->window_dim.x1, g_window_state->window_dim.y1);
+		}
+
+		// Initialize resoure manager
+		ProfBlock("init resource manager", 0);
+		{
+			
+		}
+		
 	}
 
 	

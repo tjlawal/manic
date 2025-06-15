@@ -3,6 +3,67 @@
 namespace Starlight {
 	namespace Foundation {
 
+		union Vertex {
+			struct {
+				f32 x;
+				f32 y;
+				f32 z;
+				f32 w;
+			};
+
+			f32 v[4];
+		};
+
+		union TextureCoord {
+			struct {
+				f32 u;
+				f32 v;
+				f32 w;
+			};
+			
+			f32 texture_coord[3];
+		};
+
+		union Normal {
+			struct {
+				f32 x;
+				f32 y;
+				f32 z;
+			};
+			
+			f32 n[3];
+		};
+
+		struct Face{
+			s32 vertex_idx[3];
+			s32 texture_idx[3];
+			s32 normal_idx[3];
+		};
+
+		// Find a betteer place to store these!
+		// Textures, Triangles, Faces
+		struct Texture2F32 {
+			f32 u;
+			f32 v;
+		};
+
+		struct Triangle2F32 {
+			Vec4 points[3];
+			Texture2F32 texture_coords[3];
+			u32 colour;
+		};
+
+		// Faces are the surfaces formed by connecting those points.
+		struct Face3S32 {
+			Texture2F32 a_uv;
+			Texture2F32 b_uv;
+			Texture2F32 c_uv;
+			u32 colour;
+			s32 a;
+			s32 b;
+			s32 c;
+		};
+
 		// Calculate the barycentric weights of alpha, beta and gamma for point p;
 		// REVISE: This function is slow, it could definitely be faster just have to find out how!!
 		FORCE_INLINE internal Vec3 barycentric_weights(Vec2f a, Vec2f b, Vec2f c, Vec2f p) {

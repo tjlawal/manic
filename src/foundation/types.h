@@ -4,9 +4,9 @@
 #include <stdint.h> // For integer types
 #include <math.h>   // sin, cos, tan, round
 #include <stdio.h>  // printf
+#include <stdlib.h> // strof
 
 //#include <stdarg.h>
-//#include <stdlib.h>
 //#include <string.h>
 
 // Keywords Macros
