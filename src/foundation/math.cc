@@ -49,8 +49,8 @@ namespace Starlight {
 			return r;
 		}
 
-		u64 rng_diff1u64(Rng1u64 rng) {
-			u64 r = rng.maximum - rng.minimum;
+		u64 sizeof_rng1u(Rng1u64 rng) {
+			u64 r = ((rng.maximum > rng.minimum) ? (rng.maximum - rng.minimum) : 0);
 			return r;
 		}
 

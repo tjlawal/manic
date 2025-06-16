@@ -11,7 +11,7 @@
 #include "parsers/wavefrontobj/wavefrontobj.h"
 
 namespace Starlight {
-	namespace ResourcesManager {
+	namespace ResourceManager {
 		
 		internal void* load_model(Arena* arena, string8 file);
 	}

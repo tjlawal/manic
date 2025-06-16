@@ -31,6 +31,7 @@ namespace Starlight {
 		internal void  arena_pop_off(Arena* arena, u64 amount);
 		internal void  arena_clear(Arena* arena);
 
+		// Non-zeroed memory but aligned to an 8-byte boundary
 		template<typename T>
 		internal T* arena_push_non_zeroed(Arena* arena, u64 count) {
 			return reinterpret_cast<T*>(
@@ -38,6 +39,7 @@ namespace Starlight {
 			);
 		}
 
+		// Zeroed out memory and aligned to an 8-byte boundary
 		template<typename T>
 		internal T* arena_push(Arena* arena, u64 count) {
 			return reinterpret_cast<T*>(

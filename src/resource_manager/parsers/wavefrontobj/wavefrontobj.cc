@@ -5,6 +5,7 @@ namespace Starlight {
 			void* rm_parse_data_from_file(Arena* arena, string8 data) {
 				Token token = {};
 				Lexer lexer(data);
+				void* parsed_data = nullptr;
 
 				// start lexing
 				while(token.type != FormatTokenType_EOF) {
@@ -16,7 +17,7 @@ namespace Starlight {
 						} break;
 
 						case(FormatTokenType_TextureVertices): {
-							parse_textutre_vertices(&lexer);
+							parse_texture_vertices(&lexer);
 						} break;
 
 						case(FormatTokenType_VertexNormals): {
@@ -31,7 +32,8 @@ namespace Starlight {
 					}
 				}
 
-				// Return the parsed data 
+				// Return the parsed data
+				return parsed_data;
 			}
 
 			internal Token get_token(Lexer* lexer) {
@@ -39,6 +41,7 @@ namespace Starlight {
 				Token token = {};
 				read_char(lexer);
 				eat_all_whitespace(lexer);
+				eat_comments(lexer);
 
 				// Maybe skip comments??
 
@@ -46,10 +49,11 @@ namespace Starlight {
 					// Materials
 					case('m'): {
 						if(peek_ahead(lexer) == 't'){
-							token.type = FormatTokenType_MaterialLibrary;
-							token.literal = reinterpret_cast<u8*>("mtli");
+							// @TODO: Handles this
+							//token.type = FormatTokenType_MaterialLibrary;
+							//token.literal = reinterpret_cast<const u8*>("mtli");
 						}
-					}
+					} break;
 					// Vertex Data
 
 					// Format: `v x y z w`
@@ -159,7 +163,7 @@ namespace Starlight {
 			}
 
 			// Format: `vt u v w`
-			internal Vec3 parse_textutre_vertices(Lexer *lexer) {
+			internal Vec3 parse_texture_vertices(Lexer *lexer) {
 				Vec3 vertices = {};
 				parse_float(lexer, &vertices.x);
 				parse_float(lexer, &vertices.y);

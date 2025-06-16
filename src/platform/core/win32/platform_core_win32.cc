@@ -2,6 +2,40 @@ using namespace Starlight::Foundation;
 
 namespace Starlight {
 	namespace Platform {
+
+		// Win32 file information retrieval helpers
+		internal FilePropertyFlag w32_file_property_flags_from_dwFileAttributes(DWORD file_attributes) {
+			FilePropertyFlag flags = {};
+			if(file_attributes & FILE_ATTRIBUTE_DIRECTORY) {
+				//flags |= FilePropertyFlag_IsFolder;
+				//flags = (FilePropertyFlag)(static_cast<u32>(flags) | static_cast<u32>(FilePropertyFlag_IsFolder));
+				flags = FilePropertyFlag_IsFolder; // @WARN This could be a problem?? Not sure.
+			}
+			return flags;
+		}
+
+		// Win32 time conversion helpers
+		internal void w32_date_time_from_system_time(DateTime *output, SYSTEMTIME *input) {
+			output->year = input->wYear;
+			output->mon = input->wMonth - 1;
+			output->wday = input->wDayOfWeek;
+			output->day = input->wDay;
+			output->hour = input->wHour;
+			output->minute = input->wMinute;
+			output->second = input->wSecond;
+			output->milli_second = input->wMilliseconds;
+		}
+
+		internal void w32_dense_time_from_file_time(DenseTime *output, FILETIME *input) {
+			SYSTEMTIME system_time = {0};
+			FileTimeToSystemTime(input, &system_time);
+			DateTime date_time = {0};
+			w32_date_time_from_system_time(&date_time, &system_time);
+			*output = dense_time_from_date_time(date_time);
+		}
+
+
+		internal void w32_system_time_from_date_time(SYSTEMTIME *output, DateTime *input) {}
 	
 		// System info
 		internal SystemInfo*  get_system_info(void) { return &w32_state.system_info; }
@@ -10,6 +44,7 @@ namespace Starlight {
 		internal void sleep(u64 ns) { Sleep(ns); }
 
 		// Memory allocation
+		// @REVISE: Should errors be handled here? what is the best way to do it?
 		internal void* mem_reserve(u64 size) {
 			ProfFunction();
 			
@@ -41,60 +76,70 @@ namespace Starlight {
 			VirtualFree(ptr, 0, MEM_RELEASE);
 		}
 
-		internal void* mem_reserve_large(u64 size) {
-			// LargepPages on windows must be reserved and commited as a single operation!
-			return VirtualAlloc(0, size, MEM_RESERVE | MEM_COMMIT | MEM_LARGE_PAGES, PAGE_READWRITE);
-		}
-
-		internal b32 mem_commit_large(void *ptr, u64 size) {
-			// Not applicable in Win32
-			return 1;
-		}
-
 		// Aborting (implemented per-os)
 		internal void abort(s32 exit_code) { ExitProcess(exit_code); }
 
 		// File system (implemented per-os)
-		internal Handle file_open(AccessFlags flags, string8 path) {
+		internal FileProperty properties_from_file(Handle file) {
+			if(handle_match(file, handle_zero())) { 
+				FileProperty r = {0};
+				return r;
+			}
+
+			FileProperty properties = {0};
+			HANDLE file_handle = reinterpret_cast<HANDLE>(file.handle[0]);
+			BY_HANDLE_FILE_INFORMATION file_info;
+			BOOL file_good = GetFileInformationByHandle(file_handle, &file_info);
+			if(file_good) {
+				u32 _lo = file_info.nFileSizeLow;
+				u32 _hi = file_info.nFileSizeHigh;
+				properties.size = static_cast<u64>(_lo) | (static_cast<u64>(_hi) << 32);
+				w32_dense_time_from_file_time(&properties.modified, &file_info.ftLastWriteTime);
+				w32_dense_time_from_file_time(&properties.created, &file_info.ftCreationTime);
+				properties.flags = w32_file_property_flags_from_dwFileAttributes(file_info.dwFileAttributes);
+			}
+
+			return properties;
+		}
+
+		internal Handle open_file(AccessFlags flags, string8 path) {
 			Handle result = {0};
 			Temp scratch = scratch_begin(0, 0);
 			string16 path16 = str16_from_8(scratch.arena, path);
 			DWORD access_flags = 0;
-			DWORD disposition = OPEN_EXISTING;
+			DWORD share_mode = 0;
+			DWORD creation_disposition = OPEN_EXISTING;
+			SECURITY_ATTRIBUTES security_attributes = { sizeof(security_attributes), 0, 0};
 
-			if (flags & AccessFlag_Read) {
-				access_flags |= GENERIC_READ;
-			}
-
-			if (flags & AccessFlag_Write) {
+			if(flags & AccessFlag_Read) access_flags |= GENERIC_READ;
+			if(flags & AccessFlag_Write) {
 				access_flags |= GENERIC_WRITE;
+				creation_disposition = CREATE_ALWAYS;
 			}
-
 			if (flags & AccessFlag_Append) {
-				disposition = OPEN_ALWAYS;
+				creation_disposition = OPEN_ALWAYS;
 				access_flags = FILE_APPEND_DATA;
 			}
+			if(flags & AccessFlag_ShareRead) share_mode |= FILE_SHARE_READ;
+			if(flags & AccessFlag_ShareWrite) share_mode |= FILE_SHARE_WRITE | FILE_SHARE_READ;
 
-			HANDLE file = CreateFileW((WCHAR *)path16.str, access_flags, 0, 0, DISPATCH_LEVEL, FILE_ATTRIBUTE_NORMAL, 0);
+			HANDLE file = CreateFileW(reinterpret_cast<WCHAR *>(path16.str), access_flags, share_mode, &security_attributes, creation_disposition, FILE_ATTRIBUTE_NORMAL, 0);
 
 			if (file != INVALID_HANDLE_VALUE) {
 				result.handle[0] = (u64)file;
 			}
-
 			scratch_end(scratch);
 			return result;
 		}
 
-		internal void file_close(Handle file) {
-			if (handle_match(file, Platform::handle_zero())) {
-				return;
-			}
-			HANDLE handle = (HANDLE)file.handle[0];
+		internal void close_file(Handle file) {
+			if (handle_match(file, handle_zero())) return;
+			HANDLE handle = reinterpret_cast<HANDLE>(file.handle[0]);
 			BOOL result = CloseHandle(handle);
 			(void)result;
 		}
 
-		internal u64 file_read(Handle file, Rng1u64 rng, void *data_dest) {
+		internal u64 read_file(Handle file, Rng1u64 rng, void *data_dest) {
 			if (handle_match(file, handle_zero())) {
 				return 0;
 			}
@@ -105,11 +150,11 @@ namespace Starlight {
 			Rng1u64 clamped_range = rng1u64(clamp_min(rng.minimum, size), clamp_min(rng.maximum, size));
 			u64 total_read_size = 0;
 
-			// NOTE(tijani): This is equivalent to reading the entire file, but it is done in a chunked manner.
+			// This is equivalent to reading the entire file, but it is done in a chunked manner.
 			// Reason is cause WIN32 only allows reading a max of 32-bit(4GB) at once so this reads the file
 			// that is bigger than that in 32-bit chunks but all at once.
 			{
-				u64 bytes_to_read = rng_diff1u64(clamped_range);
+				u64 bytes_to_read = sizeof_rng1u(clamped_range);
 				for (u64 offset = rng.minimum; total_read_size < bytes_to_read;) {
 					u64 amt64 = bytes_to_read - total_read_size;
 					u32 amt32 = saturate_u32_from_u64(amt64);
@@ -118,7 +163,7 @@ namespace Starlight {
 					OVERLAPPED overlapped = {0};
 					overlapped.Offset = (offset & 0x00000000ffffffff);
 					overlapped.OffsetHigh = (offset & 0xffffffff00000000) >> 32;
-					ReadFile(file_handle, (u8 *)data_dest + total_read_size, amt32, &read_size, &overlapped);
+					ReadFile(file_handle, static_cast<u8*>(data_dest) + total_read_size, amt32, &read_size, &overlapped);
 					offset += read_size;
 					total_read_size += read_size;
 					if (read_size != amt32) {
@@ -129,7 +174,35 @@ namespace Starlight {
 			return total_read_size;
 		}
 
-		internal u64 file_write(Handle file, Rng1u64 rng, void *data) {}
+		internal b32 write_file(Handle file, Rng1u64 range, void* data) {
+			ProfFunction();
+			if(handle_match(file, handle_zero())) return 0;
+
+			HANDLE handle = reinterpret_cast<HANDLE>(file.handle[0]);
+			u64 src_offset = 0;
+			u64 dst_offset = range.minimum;
+			u64 total_write_size = sizeof_rng1u(range);
+
+			for(;;) {
+				void* bytes_src = static_cast<u8*>(data) + src_offset;
+				u64 bytes_left = total_write_size - src_offset;
+				DWORD write_size = min(MB(1), bytes_left);
+				DWORD bytes_written = 0;
+				OVERLAPPED overlapped = {0};
+				overlapped.Offset = (dst_offset & 0x00000000ffffffff);
+				overlapped.OffsetHigh = (dst_offset & 0xffffffff00000000) >> 32;
+
+				BOOL success = WriteFile(handle, bytes_src, write_size, &bytes_written, &overlapped);
+
+				// @IMPROVE: Get the reason why the file write failed and provide to the caller.
+				if(success == 0) break;
+				src_offset += bytes_written;
+				dst_offset += bytes_written;
+				
+				if(bytes_left == 0) break;
+				return src_offset;
+			}
+		}
 
 		// Win32 entry point
 		#include <dbghelp.h>

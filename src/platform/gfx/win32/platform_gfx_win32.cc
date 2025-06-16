@@ -62,7 +62,6 @@ namespace Starlight {
 				SLLPush(w32_gfx_state->free_window, window);
 			}
 
-			
 			Handle window_open(Rng2f32 window_size, string8 title) {
 				ProfFunction();
 				HWND hwnd = 0;
@@ -522,7 +521,7 @@ namespace Starlight {
 				return modifiers;
 			}
 
-			// Native facing graphical message (implemented per-os)
+			// OS gfx layer message box
 			void graphical_message(b32 error, string8 title, string8 message) {
 				Temp scratch = scratch_begin(0, 0);
 
@@ -534,7 +533,7 @@ namespace Starlight {
 				scratch_end(scratch);
 			}
 
-			// Main gfx initialization (Implemented per-os)
+			// Main gfx layer initialization
 			void gfx_init(void) {
 				ProfFunction();
 

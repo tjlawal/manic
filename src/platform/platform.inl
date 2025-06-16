@@ -199,7 +199,13 @@ namespace Starlight {
 		enum AccessFlags : u32 {
 			AccessFlag_Read = (1 << 0),
 			AccessFlag_Write = (1 << 1),
-			AccessFlag_Append = (1 << 2)
+			AccessFlag_Append = (1 << 2),
+			AccessFlag_ShareRead = (1 << 3),
+			AccessFlag_ShareWrite = (1 << 4),
+		};
+
+		enum FilePropertyFlag : u32 {
+			FilePropertyFlag_IsFolder = ( 1 << 0),
 		};
 
 		// Window types

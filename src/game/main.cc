@@ -25,9 +25,9 @@
 
 using namespace Starlight::Platform;
 using namespace Starlight::Platform::Gfx;
-
 using namespace Starlight::Render;
 using namespace Starlight::Draw;
+using namespace Starlight::ResourceManager;
 
 
 namespace Starlight {
@@ -82,29 +82,19 @@ namespace Starlight {
 		// Initialize resoure manager
 		ProfBlock("init resource manager", 0);
 		{
-			
+			Temp scratch = scratch_begin(0, 0);
+			void* mesh_info = load_model(scratch.arena, str8_lit("data/meshes/test.obj"));
+
+			scratch_end(scratch);
 		}
 		
 	}
-
-	
 
 	internal void update() {
 		ProfFunction();
 		arena_clear(g_window_state->per_frame_memory);
 
-		// @TODO: Handle resize so new space is painted on the next frame.
-		//ProfBlock("Resize Window", profDebug_yell); 
-		//{
-		//	Rng2f32 latest_dim = client_rect_from_window(g_window_state->os_handle);
-		//	if(latest_dim.x1 != g_window_state->window_dim.x1 || latest_dim.y1 != g_window_state->window_dim.y1) {
-		//		g_window_state->window_dim = latest_dim;
-		//		Arena* arena = arena_alloc();
-		//		g_window_state = arena_push<GameState>(arena, 1);
-		//		g_window_state->per_frame_memory = arena;
-		//		allocate_backbuffer(g_window_state->per_frame_memory, &g_window_state->render_buffer, g_window_state->window_dim.x1, g_window_state->window_dim.y1);
-		//	}
-		//}
+		// @TODO Handle window resize
 	}
 
 	internal void render() {

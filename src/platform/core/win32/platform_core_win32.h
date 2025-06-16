@@ -32,6 +32,15 @@ namespace Starlight {
 			u64 us_resolution;
 		};
 
+		// Global
 		global Win32State w32_state = {};
+
+		// Win32 file information retrieval helpers
+		internal FilePropertyFlag w32_file_property_flags_from_dwFileAttributes(DWORD file_attributes);
+
+		// Win32 time conversion helpers
+		internal void w32_dense_time_from_file_time(DenseTime *output, FILETIME *input);
+		internal void w32_date_time_from_system_time(DateTime *output, SYSTEMTIME *input);
+		internal void w32_system_time_from_date_time(SYSTEMTIME *output, DateTime *input);
 	}
 }

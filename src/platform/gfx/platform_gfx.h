@@ -1,7 +1,5 @@
 #pragma once
 
-#include "platform_gfx.inl"
-
 using namespace Starlight::Foundation;
 
 namespace Starlight {

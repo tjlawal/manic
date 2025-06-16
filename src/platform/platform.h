@@ -1,6 +1,7 @@
 #ifndef PLATFORM_INC_H
 #define PLATFORM_INC_H
 
+#include "platform/platform.inl"
 #include "platform/core/platform_core.h"
 #include "platform/gfx/platform_gfx.h"
 

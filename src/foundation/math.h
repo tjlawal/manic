@@ -279,7 +279,7 @@ namespace Starlight {
 			Rng1u64() : minimum(0), maximum(0) {}
 			Rng1u64(u64 _min, u64 _max) : minimum(_min), maximum(_max) {}
 			
-			internal u64 rng_diff1u64(Rng1u64 rng);
+			internal u64 sizeof_rng1u(Rng1u64 rng);
 		};
 
 		// 2D

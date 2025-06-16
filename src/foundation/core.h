@@ -17,6 +17,7 @@
 	#endif
 #endif
 
+// Debugger trap
 #if COMPILER_MSVC
 	#define DEBUGBREAK __debugbreak()
 #elif COMPILER_CLANG || COMPILER_GCC
@@ -24,6 +25,60 @@
 #else
 	#error "Unknown debug break intrinsic for this compiler."
 #endif
+
+// DateTime, DenseTime stuff
+typedef u64 DenseTime;
+
+enum WeekDay : u8 {
+	WeekDay_Sun,
+	WeekDay_Mon,
+	WeekDay_Tue,
+	WeekDay_Wed,
+	WeekDay_Thu,
+	WeekDay_Fri,
+	WeekDay_Sat,
+
+	WeekDay_COUNT,
+};
+
+enum Month : u8{
+  Month_Jan,
+  Month_Feb,
+  Month_Mar,
+  Month_Apr,
+  Month_May,
+  Month_Jun,
+  Month_Jul,
+  Month_Aug,
+  Month_Sep,
+  Month_Oct,
+  Month_Nov,
+  Month_Dec,
+
+  Month_COUNT,
+};
+
+struct DateTime {
+	u16 micro_second; // 10^-6
+	u16 milli_second; // 10^-3
+	u16 second; 			// [0-60]
+	u16 minute; 			// [0-59]
+	u16 hour;					// [0-24]
+	u16 day;					// [0-30]
+
+	union {
+		WeekDay week_day;
+		u32 wday;
+	};
+
+	union {
+		Month month;
+		u32 mon;
+	};
+
+	u32 year; // 1 = 1 CE, 0 = 1 BCE
+};
+
 
 // @TODO: Pass message to assertion
 #define AssertAlways(x)	do { if (!(x)) { DEBUGBREAK; } } while (0)
@@ -192,6 +247,10 @@ namespace Starlight {
 
 		internal u16 cast_u16_from_u32(u32 x);
 		internal u32 saturate_u32_from_u64(u64 x); // Fill a u32 to the brim with infromation from a u64.
+
+		// Time functions
+		internal DateTime date_time_from_dense_time(DenseTime time);
+		internal DenseTime dense_time_from_date_time(DateTime time);
 
 	}
 } 

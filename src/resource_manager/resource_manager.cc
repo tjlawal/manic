@@ -6,11 +6,18 @@ using namespace Starlight::Platform;
 using namespace Starlight::ResourceManager::Parser;
 
 namespace Starlight {
-	namespace ResourcesManager {
+	namespace ResourceManager {
 		
-		internal void* load_model(Arena* arena, string8 file) {
+		internal void* load_model(Arena* arena, string8 file_path) {
+			// Read data from file
+			// Parse data in to a MeshInfo
+			// return MeshInfo to renderer
 			
-			//Handle file_handle = open_file();
+			string8 data = read_data_from_file(arena, file_path);
+			void* parsed_data = rm_parse_data_from_file(arena, data);
+
+			return parsed_data;
+			
 		}
 
 
