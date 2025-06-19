@@ -1,23 +1,33 @@
 namespace Starlight {
 	namespace Foundation {
-			
-		// String construction
-		internal string8 str8(u8 *str, u64 size) {
-			string8 result = {str, size};
-			return (result);
+
+		/////////////////////////////////////////////////////////////
+		// String8 Operations
+
+		internal string8 str8_concat(Arena* arena, string8 str1, string8 str2) {
+			string8 result;
+			result.size = str1.size + str2.size;
+			result.str = arena_push_non_zeroed<u8>(arena, result.size);
+			MemoryCopy(result.str, str1.str, str1.size);
+			MemoryCopy(result.str + str1.size, str2.str, str2.size);
+			result.str[result.size] = 0; // Set null terminator
+			return result;
 		}
 
-		internal string16 str16(u16 *str, u64 size) {
-			string16 result = {str, size};
-			return (result);
+		internal string8 str8_copy(Arena* arena, string8 src) {
+			string8 result;
+			result.size = src.size;
+			result.str = arena_push_non_zeroed<u8>(arena, result.size +1);
+			MemoryCopy(result.str, src.str, src.size);
+			result.str[result.size] = 0; // Set null terminator
+			return result;
 		}
 
-		// String formatting
-		internal string8 push_str8fv(Arena* arena, char *format, va_list args) {
+		internal string8 str8_format_va(Arena* arena, char* format, va_list args) {
 			va_list l_args;
 			va_copy(l_args, args);
 			u32 needed_bytes = starlight_vsnprintf(0, 0, format, args) + 1;
-			string8 result = {0};
+			string8 result;
 			result.str = arena_push_non_zeroed<u8>(arena, needed_bytes);
 			result.size = starlight_vsnprintf((char *)result.str, needed_bytes, format, l_args);
 			result.str[result.size] = 0;
@@ -25,37 +35,15 @@ namespace Starlight {
 			return (result);
 		}
 
-		// String copying
-		internal string8 push_str8_copy(Arena *arena, string8 string) {
-			string8 l_string;
-			l_string.size = string.size;
-			l_string.str = arena_push_non_zeroed<u8>(arena, l_string.size +1);
-			MemoryCopy(l_string.str, string.str, string.size);
-			l_string.str[l_string.size] = 0; // Set null terminator
-			return (l_string);
-		}
-
-		internal string16 str16_from_8(Arena* arena, string8 input) {
-			string16 result = {};
-			if(input.size) {
-				u64 capacity = input.size * 2;
-				u16* l_str = arena_push_non_zeroed<u16>(arena, capacity + 1);
-				u8* l_ptr = input.str;
-				u8* one_past_last = l_ptr + input.size;
-				u64 new_size = 0;
-				UnicodeDecode consume;
-				for(; l_ptr < one_past_last; l_ptr += consume.increment) {
-					consume = utf8_decode(l_ptr, one_past_last - l_ptr);
-					new_size += utf16_encode(l_str + new_size, consume.codepoint);
-				}
-
-				l_str[new_size] = 0;
-				arena_pop_off(arena, (capacity - new_size)*2);
-				result = str16(l_str, new_size);
-			}
-
+		internal string8 str8_format(Arena* arena, char* format, ...) {
+			va_list args;
+			va_start(args, format);
+			string8 result = str8_format_va(arena, format, args);
+			va_end(args);
 			return result;
 		}
+
+		
 
 		// UTF Types - Encoding & Decoding
 
@@ -164,41 +152,64 @@ namespace Starlight {
 			return (result);
 		}
 
-		// CString length, concatenation, etc.
+		// Unicode string conversion
+		internal string16 str16_from_8(Arena* arena, string8 input) {
+			string16 result = {};
+			if(input.size) {
+				u64 capacity = input.size * 2;
+				u16* l_str = arena_push_non_zeroed<u16>(arena, capacity + 1);
+				u8* l_ptr = input.str;
+				u8* one_past_last = l_ptr + input.size;
+				u64 new_size = 0;
+				UnicodeDecode consume;
+				for(; l_ptr < one_past_last; l_ptr += consume.increment) {
+					consume = utf8_decode(l_ptr, one_past_last - l_ptr);
+					new_size += utf16_encode(l_str + new_size, consume.codepoint);
+				}
 
-		internal u64 cstr8_len(u8 *c) {
-			// This assumes the string passed to it is null terminated.
-			u8 *r = c;
-			for(; *r != 0; r++);
-			return (r-c);
+				l_str[new_size] = 0;
+				arena_pop_off(arena, (capacity - new_size)*2);
+				result = string16(l_str, new_size);
+			}
+
+			return result;
 		}
-
-		internal u8 *cstr8_concat(Arena *arena, u8 *first, u8 *second) {
-			u64 first_len = cstr8_len(first);
-			u64 second_len = cstr8_len(second);
-			u8 *new_string;
-			u64 new_string_size = first_len + second_len;
-			//new_string = push_array_no_zero(arena, u8, new_string_size);
-			new_string = arena_push_non_zeroed<u8>(arena, new_string_size);
-			MemoryCopy(new_string, first, first_len);
-			MemoryCopy((new_string + first_len), second, second_len);
-			new_string[new_string_size] = 0;
 	
-			return new_string;
-		}
-
-		internal u8 *cstr8_substr(Arena *arena, u8 *str, Rng1u64 range) {
-			range.minimum = clamp_min(range.minimum, cstr8_len(str));
-			range.maximum = clamp_min(range.maximum, cstr8_len(str));
-			u64 substr_len = (range.maximum - range.minimum) + 1;
-
-			u8 *new_str = arena_push_non_zeroed<u8>(arena, substr_len);
-			//u8 *new_str = push_array_no_zero(arena, u8, substr_len);
-			MemoryCopy(new_str, str + range.minimum, substr_len);
-			new_str[substr_len - 1] = '\0';
-			return new_str;
-		}
-
-
 	}
 }
+
+
+//// CString length, concatenation, etc.
+
+
+//internal u64 cstr8_len(u8 *c) {
+//	// This assumes the string passed to it is null terminated.
+//	u8 *r = c;
+//	for(; *r != 0; r+=1);
+//	return (r-c);
+//}
+
+//internal u8 *cstr8_concat(Arena *arena, u8 *first, u8 *second) {
+//	u64 first_len = cstr8_len(first);
+//	u64 second_len = cstr8_len(second);
+//	u8 *new_string;
+//	u64 new_string_size = first_len + second_len;
+//	new_string = arena_push_non_zeroed<u8>(arena, new_string_size);
+//	MemoryCopy(new_string, first, first_len);
+//	MemoryCopy((new_string + first_len), second, second_len);
+//	new_string[new_string_size] = 0;
+	
+//	return new_string;
+//}
+
+//internal u8 *cstr8_substr(Arena *arena, u8 *str, Rng1u64 range) {
+//	range.minimum = clamp_min(range.minimum, cstr8_len(str));
+//	range.maximum = clamp_min(range.maximum, cstr8_len(str));
+//	u64 substr_len = (range.maximum - range.minimum) + 1;
+
+//	u8 *new_str = arena_push_non_zeroed<u8>(arena, substr_len);
+//	//u8 *new_str = push_array_no_zero(arena, u8, substr_len);
+//	MemoryCopy(new_str, str + range.minimum, substr_len);
+//	new_str[substr_len - 1] = '\0';
+//	return new_str;
+////}
