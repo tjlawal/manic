@@ -14,7 +14,7 @@ if "%msvc%"=="1" 			  set clang=0		&& echo [compiling with msvc]
 :: --- Unpack command line build argument
 set auto_compile_flags=
 if "%asan%"=="1" 			set auto_compile_flags=%auto_compile_flags% -fsanitize=address && echo [asan enabled]
-if "%sp%"=="1" 				set auto_compile_flags=%auto_compile_flags% -DPROFILER_SUPERLUMINAL=1 && echo [profiler enabled, using SuperluminalPerfomance profiler]
+if "%sp%"=="1" 				set auto_compile_flags=%auto_compile_flags% -DBUILD_PROFILE=1 -DPROFILER_SUPERLUMINAL=1 && echo [profiler enabled, using Superluminal profiler]
 
 :: clang writes the result of getting only the preprocessed code to whatever is pointed to by '-o'.
 set preprocessor_flags=
@@ -27,7 +27,7 @@ if "%preprocess%"=="1" (
 :: --- Clang 
 set clang_common=   -I..\src\ -Wall -std=c++11 -ferror-limit=200 -gcodeview -fdiagnostics-absolute-paths -fno-exceptions -Wno-initializer-overrides -Wno-unused-function -Wno-missing-braces -Wno-unused-variable -Wno-writable-strings -Wno-address-of-temporary -Wno-switch -Wno-return-type -Wno-unused-command-line-argument -Wno-unused-but-set-variable
 
-set clang_debug=    call clang -g -O0 -DBUILD_DEBUG=1 %clang_common% %auto_compile_flags% %preprocessor_flags%
+set clang_debug=    call clang -g -O0 -DBUILD_DEBUG=1 %clang_common% %auto_compile_flags% %preprocessor_flags% 
 set clang_release=  call clang -g -O2 -DBUILD_DEBUG=0 -DBUILD_RELEASE=1 %clang_common% %auto_compile_flags%
 set clang_link=     -fuse-ld=lld -Xlinker /MANIFEST:EMBED -Xlinker /pdbaltpath:%%%%_PDB%%%% -Wl,/ignore:4099
 set clang_out=      -o

@@ -5,6 +5,7 @@ namespace Starlight {
 	namespace Foundation {
 
 		Arena* arena_alloc(u64 reserve_size, u64 commit_size){
+			ProfFunction();
 			u64 aligned_reserve = align_pow2(reserve_size, get_system_info()->page_size);	
 			u64 aligned_commit = align_pow2(commit_size, get_system_info()->page_size);	
 
@@ -36,6 +37,7 @@ namespace Starlight {
 		}
 
 		void arena_release(Arena* arena) {
+			ProfFunction();
 			for(Arena* current_arena = arena->current, *previous_arena = 0; current_arena != 0; current_arena = previous_arena) {
 				previous_arena = current_arena->previous;
 				mem_release(current_arena, current_arena->reserve_size);
@@ -44,6 +46,7 @@ namespace Starlight {
 
 		// Main core functions
 		void* arena_push_internal(Arena* arena, u64 size_to_push, u64 alignment) {
+			ProfFunction();
 			Arena* current_arena = arena->current;
 			u64 pos_pre_push = align_pow2(current_arena->position, alignment);
 			u64 pos_post_push = pos_pre_push + size_to_push;
@@ -70,15 +73,18 @@ namespace Starlight {
 			}
 
 			// Get new pages if needed.
-			if(current_arena->commit < pos_post_push) {
-				u64 commit_pos_aligned = pos_post_push + current_arena->commit_size - 1;
-				commit_pos_aligned -= commit_pos_aligned % current_arena->commit_size;
-				u64 commit_pos_clamped = clamp_min(commit_pos_aligned, current_arena->reserve);
-				u64 _commit_size = commit_pos_clamped - current_arena->commit;
-				u8* commit_ptr = (u8*)current_arena + current_arena->commit;
+			{
+				ProfBlock(0, profDebug_peru);
+				if(current_arena->commit < pos_post_push) {
+					u64 commit_pos_aligned = pos_post_push + current_arena->commit_size - 1;
+					commit_pos_aligned -= commit_pos_aligned % current_arena->commit_size;
+					u64 commit_pos_clamped = clamp_min(commit_pos_aligned, current_arena->reserve);
+					u64 _commit_size = commit_pos_clamped - current_arena->commit;
+					u8* commit_ptr = (u8*)current_arena + current_arena->commit;
 				
-				mem_commit(commit_ptr, _commit_size);
-				current_arena->commit = commit_pos_clamped;
+					mem_commit(commit_ptr, _commit_size);
+					current_arena->commit = commit_pos_clamped;
+				}
 			}
 
 			// Push to the current arena
@@ -101,12 +107,14 @@ namespace Starlight {
 		}
 
 		u64 arena_position(Arena* arena) {
+			ProfFunction();
 			Arena* current_arena = arena->current;
 			u64 current_pos = current_arena->base_position + current_arena->position;
 			return current_pos;
 		}
 
 		void arena_pop_to(Arena* arena, size_t position) {
+			ProfFunction();
 			size_t big_pos = clamp_max(ARENA_HEADER_SIZE, position);
 			Arena* current_arena = arena->current;
 
@@ -126,6 +134,7 @@ namespace Starlight {
 		void arena_clear(Arena* arena) { arena_pop_to(arena, 0); }
 
 		void arena_pop_off(Arena* arena, u64 amount) {
+			ProfFunction();
 			u64 old_pos = arena_position(arena);
 			u64 new_pos = old_pos;
 			if(amount < old_pos) 

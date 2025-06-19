@@ -5,8 +5,8 @@
 namespace Starlight {
 	namespace Foundation {
 
-		global u64 g_default_reserve_size = GB(1); // Memory budget, going over will cause a crash.
-		global u64 g_default_commit_size = KB(64); // Size of each arena block allocated.
+		global u64 g_default_reserve_size = MB(50); // Memory budget, go over and it'll crash and burn!
+		global u64 g_default_commit_size  = KB(64); // Size of each arena block allocated.
 
 		// Chained arena allocator
 		struct Arena {
