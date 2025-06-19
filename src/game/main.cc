@@ -68,41 +68,29 @@ namespace Starlight {
 		ProfFunction();
 
 		// Initialize window and paint into it
-		ProfBlock("init window, paint to it", 0);
-		{
+		ProfBlock("init window, paint to it", profDebug_aliceblue); {
 			Arena* arena = arena_alloc();
 			g_window_state = arena_push<GameState>(arena, 1);
 			g_window_state->per_frame_memory = arena;
-			g_window_state->os_handle = window_open(Rng2f32(0, 0, 1920, 1080), str8_lit(BUILD_TITLE_STRING_LITERAL));
+
+			// 16:9 aspect ratio, 518,400 pixels to process each frame.
+			g_window_state->os_handle = window_open(Rng2f32(0, 0, 960, 540), str8_lit(BUILD_TITLE_STRING_LITERAL)); 
 			g_window_state->window_dim = client_rect_from_window(g_window_state->os_handle);
 			window_first_paint(g_window_state->os_handle);
-			allocate_backbuffer(g_window_state->per_frame_memory, &g_window_state->render_buffer, g_window_state->window_dim.x1, g_window_state->window_dim.y1);
-		}
-
-		// Initialize resoure manager
-		ProfBlock("init resource manager", 0);
-		{
-			Temp scratch = scratch_begin(0, 0);
-			void* mesh_info = load_model(scratch.arena, str8_lit("data/meshes/test.obj"));
-
-			scratch_end(scratch);
-		}
-		
+			allocate_backbuffer(g_window_state->per_frame_memory, &g_window_state->render_buffer, 
+													g_window_state->window_dim.x1, g_window_state->window_dim.y1);
+		}	
 	}
 
 	internal void update() {
 		ProfFunction();
 		arena_clear(g_window_state->per_frame_memory);
-
-		// @TODO Handle window resize
 	}
 
 	internal void render() {
 		ProfFunction();
 		clear_colour_buffer(&g_window_state->render_buffer, 0xFF420420);
-
 		draw_grid(&g_window_state->render_buffer, g_window_state->window_dim.x1, g_window_state->window_dim.x1, 0xFFFFFFFF);
-
 		copy_buffer_to_window(g_window_state->os_handle, &g_window_state->render_buffer);
 	}
 
@@ -120,3 +108,5 @@ namespace Starlight {
 
 
 }
+
+
