@@ -180,7 +180,7 @@ namespace Starlight {
 		// Draw a textured pixel at position x and y using interpolation
 		// REVISE: Could this be done faster??
 		internal void draw_texel(Renderer *buffer, s32 x, s32 y, Vec4 point_a, Vec4 point_b, Vec4 point_c, 
-														 Texture2F32 a_uv, Texture2F32 b_uv, Texture2F32 c_uv, 
+														 TextureCoord a_uv, TextureCoord b_uv, TextureCoord c_uv, 
 														 u32 *texture, s32 texture_width, s32 texture_height) {
 			Assert(texture != NULL);
 			Vec2f point_p = {(f32)x, (f32)y};
@@ -319,9 +319,9 @@ namespace Starlight {
 				static_cast<f32>(z2), static_cast<f32>(w2)
 			};
 
-			Texture2F32 a_uv = {u0, v0};
-			Texture2F32 b_uv = {u1, v1};
-			Texture2F32 c_uv = {u2, v2};
+			TextureCoord a_uv = {u0, v0};
+			TextureCoord b_uv = {u1, v1};
+			TextureCoord c_uv = {u2, v2};
 
 			// Render the upper part of the triangle (the flat-bottom)
 			// This is the (delta x / delta y)

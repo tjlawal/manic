@@ -60,7 +60,6 @@ namespace Starlight {
 			internal Vec3 rotate_x(Vec3 vector, f32 angle);
 			internal Vec3 rotate_y(Vec3 vector, f32 angle);
 			internal Vec3 rotate_z(Vec3 vector, f32 angle);
-
 			internal Vec3 vec3_from_vec4(Vec4);
 		};
 
@@ -87,13 +86,6 @@ namespace Starlight {
 		FORCE_INLINE internal f32 dot(const Vec2f& a, const Vec2f& b) { return ((a.x * b.x) + (a.y * b.y)); }
 		FORCE_INLINE internal f32 dot(const Vec3& a, const Vec3& b) { return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z)); }
 		FORCE_INLINE internal f32 dot(const Vec4& a, const Vec4& b) { return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z) + (a.w * b.w)); }
-
-		//FORCE_INLINE internal length(Vec2f* v) { return }
-
-		//FORCE_INLINE internal length(Vec3* v) {}
-		
-		//FORCE_INLINE internal length(Vec4* v) {}
-
 
 		FORCE_INLINE internal void normalize(Vec2f* v) {
 			f32 length = sqrtf((v->x * v->x) + (v->y * v->y));
@@ -122,6 +114,10 @@ namespace Starlight {
 		FORCE_INLINE internal Vec3 cross(const Vec3& a, const Vec3& b) {
 			return Vec3 { (a.y * b.z) - (a.z * b.y), (a.z * b.x) - (a.x * b.z), (a.x * b.y) - (a.y * b.x) };
 		}
+
+		//FORCE_INLINE internal length(Vec2f* v) {}
+		//FORCE_INLINE internal length(Vec3* v) {}
+		//FORCE_INLINE internal length(Vec4* v) {}
 
 		// Matrices
 		// 4 x 4
@@ -307,9 +303,9 @@ namespace Starlight {
 			Rng2f32() {}
 			Rng2f32(Vec2f _p0, Vec2f _p1) : p0(_p0), p1(_p1) {}
 			Rng2f32(f32 _x0, f32 _y0, f32 _x1, f32 _y1) : x0(_x0), y0(_y0), x1(_x1), y1(_y1) {}
-		};
 
-		internal Vec2f dim2f32(Rng2f32 r);
+			internal Vec2f dim2f32(Rng2f32 r);
+		};
 
 	}
 }

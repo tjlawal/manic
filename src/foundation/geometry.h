@@ -8,30 +8,9 @@ namespace Starlight {
 				f32 x;
 				f32 y;
 				f32 z;
-				f32 w;
 			};
 
-			f32 v[4];
-		};
-
-		union TextureCoord {
-			struct {
-				f32 u;
-				f32 v;
-				f32 w;
-			};
-			
-			f32 texture_coord[3];
-		};
-
-		union Normal {
-			struct {
-				f32 x;
-				f32 y;
-				f32 z;
-			};
-			
-			f32 n[3];
+			f32 v[3];
 		};
 
 		struct Face{
@@ -40,28 +19,13 @@ namespace Starlight {
 			s32 normal_idx[3];
 		};
 
-		// Find a betteer place to store these!
-		// Textures, Triangles, Faces
-		struct Texture2F32 {
-			f32 u;
-			f32 v;
-		};
+		union TextureCoord {
+			struct {
+				f32 u;
+				f32 v;
+			};
 
-		struct Triangle2F32 {
-			Vec4 points[3];
-			Texture2F32 texture_coords[3];
-			u32 colour;
-		};
-
-		// Faces are the surfaces formed by connecting those points.
-		struct Face3S32 {
-			Texture2F32 a_uv;
-			Texture2F32 b_uv;
-			Texture2F32 c_uv;
-			u32 colour;
-			s32 a;
-			s32 b;
-			s32 c;
+			f32 uv[2];
 		};
 
 		// Calculate the barycentric weights of alpha, beta and gamma for point p;
@@ -74,7 +38,6 @@ namespace Starlight {
 			Vec2f pb = b - p;
 			Vec2f ap = p - a;
 
-
 			// Area of the parallelogram (triangle ABC) using cross product
 			f32 area_parallelogram_abc = ((ac.x * ab.y) - (ac.y * ab.x)); // || AC x AB ||
 
@@ -84,9 +47,7 @@ namespace Starlight {
 			// Beta is area of the parallelogram [APC] over the area of the
 			// full parallelogram [ABC]
 			f32 beta = ((ac.x * ap.y) - (ac.y * ap.x)) / area_parallelogram_abc;
-
 			f32 gamma = 1.0 - alpha - beta;
-
 			Vec3 weights = {alpha, beta, gamma};
 			return weights;
 		}
@@ -107,7 +68,40 @@ namespace Starlight {
 
 			return result;
 		}
-	
-	
 	}
 }
+
+
+//struct Face {
+//	Texture2F32 a_uv;
+//	Texture2F32 b_uv;
+//	Texture2F32 c_uv;
+//	u32 colour;
+//	s32 a;
+//	s32 b;
+//	s32 c;
+//};
+
+//// Find a betteer place to store these!
+//// Textures, Triangles, Faces
+//struct Texture2F32 {
+//	f32 u;
+//	f32 v;
+//};
+
+//struct Triangle2F32 {
+//	Vec4 points[3];
+//	Texture2F32 texture_coords[3];
+//	u32 colour;
+//};
+
+//// Faces are the surfaces formed by connecting those points.
+//struct Face3S32 {
+//	Texture2F32 a_uv;
+//	Texture2F32 b_uv;
+//	Texture2F32 c_uv;
+//	u32 colour;
+//	s32 a;
+//	s32 b;
+//	s32 c;
+//};

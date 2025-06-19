@@ -7,13 +7,13 @@
 
 #pragma once
 
+#include "mesh/mesh.h"
 #include "parsers/parser.h"
 #include "parsers/wavefrontobj/wavefrontobj.h"
 
 namespace Starlight {
 	namespace ResourceManager {
-		
-		internal void* load_model(Arena* arena, string8 file);
+		internal MeshInfo* load_model(Arena* arena, string8 file);
 	}
 }
 
