@@ -8,7 +8,7 @@ namespace Starlight {
 	namespace ResourceManager {
 		namespace Parser {
 
-			#define MAX_NUMERIC_BUFFER_SIZE 128 // Maximum number of precision allowed.
+			#define MAX_NUMERIC_BUFFER_SIZE 128 // Maximum number of floating point number precision.
 
 			struct Token {
 				u8* literal;
@@ -17,16 +17,17 @@ namespace Starlight {
 
 			struct Lexer {
 				string8 input;
-				u8 current_char;
 				u32 current_position; // current char position in the input stream
 				u32 future_position;  // next char position in the input stream
+				u8 current_char;
+				u8 padding[3]; 				// space for future improvements
 
-				Lexer() : input(), current_char(), current_position(), future_position() {}
+				Lexer() : input(), current_position(), future_position(), current_char() {}
 				Lexer(string8 _input, u8 _current_char = ' ', u32 _current_pos = 0, u32 _future_pos = 0)  : 
 				input(_input), 
-				current_char(_current_char), 
 				current_position(_current_pos), 
-				future_position(_future_pos) {}
+				future_position(_future_pos),
+				current_char(_current_char) {}
 			};
 
 			// ResourceManager interface

@@ -31,8 +31,8 @@ namespace Starlight {
 			return data;
 		}
 
-		internal b32 		 write_data_to_file(string8 file_path, string8 data) {}
-		internal b32 		 append_data_to_file(string8 file_path, string8 data) {}
+		internal b32 write_data_to_file(string8 file_path, string8 data) {}
+		internal b32 append_data_to_file(string8 file_path, string8 data) {}
 
 
 		

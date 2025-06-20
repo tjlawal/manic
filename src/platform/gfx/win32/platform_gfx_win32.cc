@@ -71,9 +71,9 @@ namespace Starlight {
 					Temp scratch = scratch_begin(0, 0);
 					string16 title16 = str16_from_8(scratch.arena, title);
 					hwnd = CreateWindowExW(WS_EX_APPWINDOW, L"graphical-window", (WCHAR *)title16.str, 
-																 (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX), CW_USEDEFAULT, CW_USEDEFAULT, 
-																 static_cast<s32>(window_dim.x), static_cast<s32>(window_dim.y), 0, 0, 
-																 w32_gfx_state->hInstance, 0);
+																 (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX), 
+																 CW_USEDEFAULT, CW_USEDEFAULT, static_cast<s32>(window_dim.x), 
+																 static_cast<s32>(window_dim.y), 0, 0, w32_gfx_state->hInstance, 0);
 
 					if (hwnd == NULL) {
 						DWORD error = GetLastError();

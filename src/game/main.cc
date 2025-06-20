@@ -67,12 +67,13 @@ namespace Starlight {
 	internal void initialize_system() {
 		ProfFunction();
 
-		// Initialize window and paint into it
-		ProfBlock("init window, paint to it", profDebug_aliceblue); {
-			Arena* arena = arena_alloc();
-			g_window_state = arena_push<GameState>(arena, 1);
-			g_window_state->per_frame_memory = arena;
+		Arena* arena = arena_alloc();
+		g_window_state = arena_push<GameState>(arena, 1);
+		g_window_state->per_frame_memory = arena;
 
+		// Initialize window and paint into it
+		ProfBlock("init window, paint to it", profDebug_aliceblue); 
+		{
 			// 16:9 aspect ratio, 518,400 pixels to process each frame.
 			g_window_state->os_handle = window_open(Rng2f32(0, 0, 960, 540), str8_lit(BUILD_TITLE_STRING_LITERAL)); 
 			g_window_state->window_dim = client_rect_from_window(g_window_state->os_handle);
@@ -80,6 +81,12 @@ namespace Starlight {
 			allocate_backbuffer(g_window_state->per_frame_memory, &g_window_state->render_buffer, 
 													g_window_state->window_dim.x1, g_window_state->window_dim.y1);
 		}	
+
+		// Init resource manager
+		ProfBlock("init resource manager", profDebug_fuchsia); 
+		{
+			MeshInfo* mesh_data = load_model(arena, str8_lit("data/meshes/drone.obj"));
+		}
 	}
 
 	internal void update() {
@@ -90,7 +97,8 @@ namespace Starlight {
 	internal void render() {
 		ProfFunction();
 		clear_colour_buffer(&g_window_state->render_buffer, 0xFF420420);
-		draw_grid(&g_window_state->render_buffer, g_window_state->window_dim.x1, g_window_state->window_dim.x1, 0xFFFFFFFF);
+		draw_grid(&g_window_state->render_buffer, g_window_state->window_dim.x1, 
+							g_window_state->window_dim.x1, 0xFFFFFFFF);
 		copy_buffer_to_window(g_window_state->os_handle, &g_window_state->render_buffer);
 	}
 
@@ -102,7 +110,7 @@ namespace Starlight {
 			update();
 			render();
 
-			sleep(16);
+			sleep(16); // This is sucky
 		}
 	}
 

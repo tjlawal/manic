@@ -6,9 +6,9 @@ namespace Starlight {
 		namespace Parser {
 
 			internal Vertex parse_vertices(Arena* arena, Lexer* lexer, MeshInfo* dst);
-			internal Vertex parse_textures(Arena* arena, Lexer* lexer, MeshInfo* dst);
+			internal TextureCoord parse_textures(Arena* arena, Lexer* lexer, MeshInfo* dst);
 			internal Vertex parse_normals(Arena* arena, Lexer* lexer, MeshInfo* dst);
-			internal Vertex parse_faces(Arena* arena, Lexer* lexer, MeshInfo* dst);
+			internal Face parse_faces(Arena* arena, Lexer* lexer, MeshInfo* dst);
 
 			// internal Vec4 parse_geom_vertices(Arena *arena, Lexer* lexer);
 			// internal Vec3 parse_texture_vertices(Lexer* lexer);

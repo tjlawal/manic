@@ -11,7 +11,8 @@ namespace Starlight {
 			u64 size;
 
 			string8() : str(nullptr), size(0) {}
-			string8(char *string, u64 str_size): str(reinterpret_cast<u8*>(string)), size(str_size) {}
+			string8(u8* string, u64 str_size) : str(string), size(str_size) {}
+			string8(const char* string, u64 str_size) : str(reinterpret_cast<u8*>(const_cast<char*>(string))), size(str_size) {}
 		};
 
 		// String8 Operations
