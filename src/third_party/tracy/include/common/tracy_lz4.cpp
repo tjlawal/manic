@@ -246,9 +246,9 @@ void  LZ4_free(void* p);
 #define FASTLOOP_SAFE_DISTANCE 64
 static const int LZ4_minLength = (MFLIMIT+1);
 
-#define KB *(1 <<10)
-#define MB *(1 <<20)
-#define GB *(1U<<30)
+#define _KB *(1 <<10)
+#define _MB *(1 <<20)
+#define _GB *(1U<<30)
 
 #define LZ4_DISTANCE_ABSOLUTE_MAX 65535
 #if (LZ4_DISTANCE_MAX > LZ4_DISTANCE_ABSOLUTE_MAX)   /* max supported by LZ4 format */
@@ -688,7 +688,7 @@ unsigned LZ4_count(const BYTE* pIn, const BYTE* pMatch, const BYTE* pInLimit)
 /*-************************************
 *  Local Constants
 **************************************/
-static const int LZ4_64Klimit = ((64 KB) + (MFLIMIT-1));
+static const int LZ4_64Klimit = ((64 _KB) + (MFLIMIT-1));
 static const U32 LZ4_skipTrigger = 6;  /* Increase this value ==> compression run slower on incompressible data */
 
 
@@ -868,9 +868,9 @@ LZ4_prepareTable(LZ4_stream_t_internal* const cctx,
         assert(inputSize >= 0);
         if ((tableType_t)cctx->tableType != tableType
           || ((tableType == byU16) && cctx->currentOffset + (unsigned)inputSize >= 0xFFFFU)
-          || ((tableType == byU32) && cctx->currentOffset > 1 GB)
+          || ((tableType == byU32) && cctx->currentOffset > 1 _GB)
           || tableType == byPtr
-          || inputSize >= 4 KB)
+          || inputSize >= 4 _KB)
         {
             DEBUGLOG(4, "LZ4_prepareTable: Resetting table in %p", cctx);
             MEM_INIT(cctx->hashTable, 0, LZ4_HASHTABLESIZE);
@@ -887,8 +887,8 @@ LZ4_prepareTable(LZ4_stream_t_internal* const cctx,
      * so we preserve that case.
      */
     if (cctx->currentOffset != 0 && tableType == byU32) {
-        DEBUGLOG(5, "LZ4_prepareTable: adding 64KB to currentOffset");
-        cctx->currentOffset += 64 KB;
+        DEBUGLOG(5, "LZ4_prepareTable: adding 64_KB to currentOffset");
+        cctx->currentOffset += 64 _KB;
     }
 
     /* Finally, clear history */
@@ -1017,7 +1017,7 @@ LZ4_FORCE_INLINE int LZ4_compress_generic_validated(
                 U32 const current = (U32)(forwardIp - base);
                 U32 matchIndex = LZ4_getIndexOnHash(h, cctx->hashTable, tableType);
                 assert(matchIndex <= current);
-                assert(forwardIp - base < (ptrdiff_t)(2 GB - 1));
+                assert(forwardIp - base < (ptrdiff_t)(2 _GB - 1));
                 ip = forwardIp;
                 forwardIp += step;
                 step = (searchMatchNb++ >> LZ4_skipTrigger);
@@ -1550,19 +1550,19 @@ int LZ4_loadDict (LZ4_stream_t* LZ4_dict, const char* dictionary, int dictSize)
      * when compressing using this dictionary */
     LZ4_resetStream(LZ4_dict);
 
-    /* We always increment the offset by 64 KB, since, if the dict is longer,
+    /* We always increment the offset by 64 _KB, since, if the dict is longer,
      * we truncate it to the last 64k, and if it's shorter, we still want to
      * advance by a whole window length so we can provide the guarantee that
      * there are only valid offsets in the window, which allows an optimization
      * in LZ4_compress_fast_continue() where it uses noDictIssue even when the
      * dictionary isn't a full 64k. */
-    dict->currentOffset += 64 KB;
+    dict->currentOffset += 64 _KB;
 
     if (dictSize < (int)HASH_UNIT) {
         return 0;
     }
 
-    if ((dictEnd - p) > 64 KB) p = dictEnd - 64 KB;
+    if ((dictEnd - p) > 64 _KB) p = dictEnd - 64 _KB;
     base = dictEnd - dict->currentOffset;
     dict->dictionary = p;
     dict->dictSize = (U32)(dictEnd - p);
@@ -1592,7 +1592,7 @@ void LZ4_attach_dictionary(LZ4_stream_t* workingStream, const LZ4_stream_t* dict
          * to bump the offset to something non-zero.
          */
         if (workingStream->internal_donotuse.currentOffset == 0) {
-            workingStream->internal_donotuse.currentOffset = 64 KB;
+            workingStream->internal_donotuse.currentOffset = 64 _KB;
         }
 
         /* Don't actually attach an empty dictionary.
@@ -1610,7 +1610,7 @@ static void LZ4_renormDictT(LZ4_stream_t_internal* LZ4_dict, int nextSize)
     assert(nextSize >= 0);
     if (LZ4_dict->currentOffset + (unsigned)nextSize > 0x80000000) {   /* potential ptrdiff_t overflow (32-bits mode) */
         /* rescale hash table */
-        U32 const delta = LZ4_dict->currentOffset - 64 KB;
+        U32 const delta = LZ4_dict->currentOffset - 64 _KB;
         const BYTE* dictEnd = LZ4_dict->dictionary + LZ4_dict->dictSize;
         int i;
         DEBUGLOG(4, "LZ4_renormDictT");
@@ -1618,8 +1618,8 @@ static void LZ4_renormDictT(LZ4_stream_t_internal* LZ4_dict, int nextSize)
             if (LZ4_dict->hashTable[i] < delta) LZ4_dict->hashTable[i]=0;
             else LZ4_dict->hashTable[i] -= delta;
         }
-        LZ4_dict->currentOffset = 64 KB;
-        if (LZ4_dict->dictSize > 64 KB) LZ4_dict->dictSize = 64 KB;
+        LZ4_dict->currentOffset = 64 _KB;
+        if (LZ4_dict->dictSize > 64 _KB) LZ4_dict->dictSize = 64 _KB;
         LZ4_dict->dictionary = dictEnd - LZ4_dict->dictSize;
     }
 }
@@ -1657,7 +1657,7 @@ int LZ4_compress_fast_continue (LZ4_stream_t* LZ4_stream,
     {   const char* const sourceEnd = source + inputSize;
         if ((sourceEnd > (const char*)streamPtr->dictionary) && (sourceEnd < dictEnd)) {
             streamPtr->dictSize = (U32)(dictEnd - sourceEnd);
-            if (streamPtr->dictSize > 64 KB) streamPtr->dictSize = 64 KB;
+            if (streamPtr->dictSize > 64 _KB) streamPtr->dictSize = 64 _KB;
             if (streamPtr->dictSize < 4) streamPtr->dictSize = 0;
             streamPtr->dictionary = (const BYTE*)dictEnd - streamPtr->dictSize;
         }
@@ -1665,7 +1665,7 @@ int LZ4_compress_fast_continue (LZ4_stream_t* LZ4_stream,
 
     /* prefix mode : source data follows dictionary */
     if (dictEnd == source) {
-        if ((streamPtr->dictSize < 64 KB) && (streamPtr->dictSize < streamPtr->currentOffset))
+        if ((streamPtr->dictSize < 64 _KB) && (streamPtr->dictSize < streamPtr->currentOffset))
             return LZ4_compress_generic(streamPtr, source, dest, inputSize, NULL, maxOutputSize, limitedOutput, tableType, withPrefix64k, dictSmall, acceleration);
         else
             return LZ4_compress_generic(streamPtr, source, dest, inputSize, NULL, maxOutputSize, limitedOutput, tableType, withPrefix64k, noDictIssue, acceleration);
@@ -1676,11 +1676,11 @@ int LZ4_compress_fast_continue (LZ4_stream_t* LZ4_stream,
         if (streamPtr->dictCtx) {
             /* We depend here on the fact that dictCtx'es (produced by
              * LZ4_loadDict) guarantee that their tables contain no references
-             * to offsets between dictCtx->currentOffset - 64 KB and
+             * to offsets between dictCtx->currentOffset - 64 _KB and
              * dictCtx->currentOffset - dictCtx->dictSize. This makes it safe
-             * to use noDictIssue even when the dict isn't a full 64 KB.
+             * to use noDictIssue even when the dict isn't a full 64 _KB.
              */
-            if (inputSize > 4 KB) {
+            if (inputSize > 4 _KB) {
                 /* For compressing large blobs, it is faster to pay the setup
                  * cost to copy the dictionary's tables into the active context,
                  * so that the compression loop is only looking into one table.
@@ -1690,8 +1690,8 @@ int LZ4_compress_fast_continue (LZ4_stream_t* LZ4_stream,
             } else {
                 result = LZ4_compress_generic(streamPtr, source, dest, inputSize, NULL, maxOutputSize, limitedOutput, tableType, usingDictCtx, noDictIssue, acceleration);
             }
-        } else {  /* small data <= 4 KB */
-            if ((streamPtr->dictSize < 64 KB) && (streamPtr->dictSize < streamPtr->currentOffset)) {
+        } else {  /* small data <= 4 _KB */
+            if ((streamPtr->dictSize < 64 _KB) && (streamPtr->dictSize < streamPtr->currentOffset)) {
                 result = LZ4_compress_generic(streamPtr, source, dest, inputSize, NULL, maxOutputSize, limitedOutput, tableType, usingExtDict, dictSmall, acceleration);
             } else {
                 result = LZ4_compress_generic(streamPtr, source, dest, inputSize, NULL, maxOutputSize, limitedOutput, tableType, usingExtDict, noDictIssue, acceleration);
@@ -1712,7 +1712,7 @@ int LZ4_compress_forceExtDict (LZ4_stream_t* LZ4_dict, const char* source, char*
 
     LZ4_renormDictT(streamPtr, srcSize);
 
-    if ((streamPtr->dictSize < 64 KB) && (streamPtr->dictSize < streamPtr->currentOffset)) {
+    if ((streamPtr->dictSize < 64 _KB) && (streamPtr->dictSize < streamPtr->currentOffset)) {
         result = LZ4_compress_generic(streamPtr, source, dest, srcSize, NULL, 0, notLimited, byU32, usingExtDict, dictSmall, 1);
     } else {
         result = LZ4_compress_generic(streamPtr, source, dest, srcSize, NULL, 0, notLimited, byU32, usingExtDict, noDictIssue, 1);
@@ -1738,7 +1738,7 @@ int LZ4_saveDict (LZ4_stream_t* LZ4_dict, char* safeBuffer, int dictSize)
 
     DEBUGLOG(5, "LZ4_saveDict : dictSize=%i, safeBuffer=%p", dictSize, safeBuffer);
 
-    if ((U32)dictSize > 64 KB) { dictSize = 64 KB; } /* useless to define a dictionary > 64 KB */
+    if ((U32)dictSize > 64 _KB) { dictSize = 64 _KB; } /* useless to define a dictionary > 64 _KB */
     if ((U32)dictSize > dict->dictSize) { dictSize = (int)dict->dictSize; }
 
     if (safeBuffer == NULL) assert(dictSize == 0);
@@ -1954,7 +1954,7 @@ LZ4_decompress_generic(
 
         const BYTE* const dictEnd = (dictStart == NULL) ? NULL : dictStart + dictSize;
 
-        const int checkOffset = (dictSize < (int)(64 KB));
+        const int checkOffset = (dictSize < (int)(64 _KB));
 
 
         /* Set up the "end" pointers for the shortcut. */
@@ -2370,7 +2370,7 @@ int LZ4_decompress_safe_withPrefix64k(const char* source, char* dest, int compre
 {
     return LZ4_decompress_generic(source, dest, compressedSize, maxOutputSize,
                                   decode_full_block, withPrefix64k,
-                                  (BYTE*)dest - 64 KB, NULL, 0);
+                                  (BYTE*)dest - 64 _KB, NULL, 0);
 }
 
 LZ4_FORCE_O2
@@ -2379,7 +2379,7 @@ static int LZ4_decompress_safe_partial_withPrefix64k(const char* source, char* d
     dstCapacity = MIN(targetOutputSize, dstCapacity);
     return LZ4_decompress_generic(source, dest, compressedSize, dstCapacity,
                                   partial_decode, withPrefix64k,
-                                  (BYTE*)dest - 64 KB, NULL, 0);
+                                  (BYTE*)dest - 64 _KB, NULL, 0);
 }
 
 /* Another obsolete API function, paired with the previous one. */
@@ -2387,7 +2387,7 @@ int LZ4_decompress_fast_withPrefix64k(const char* source, char* dest, int origin
 {
     return LZ4_decompress_unsafe_generic(
                 (const BYTE*)source, (BYTE*)dest, originalSize,
-                64 KB, NULL, 0);
+                64 _KB, NULL, 0);
 }
 
 LZ4_FORCE_O2
@@ -2531,7 +2531,7 @@ int LZ4_decompress_safe_continue (LZ4_streamDecode_t* LZ4_streamDecode, const ch
         lz4sd->prefixEnd = (BYTE*)dest + result;
     } else if (lz4sd->prefixEnd == (BYTE*)dest) {
         /* They're rolling the current segment. */
-        if (lz4sd->prefixSize >= 64 KB - 1)
+        if (lz4sd->prefixSize >= 64 _KB - 1)
             result = LZ4_decompress_safe_withPrefix64k(source, dest, compressedSize, maxOutputSize);
         else if (lz4sd->extDictSize == 0)
             result = LZ4_decompress_safe_withSmallPrefix(source, dest, compressedSize, maxOutputSize,
@@ -2610,7 +2610,7 @@ int LZ4_decompress_safe_usingDict(const char* source, char* dest, int compressed
     if (dictSize==0)
         return LZ4_decompress_safe(source, dest, compressedSize, maxOutputSize);
     if (dictStart+dictSize == dest) {
-        if (dictSize >= 64 KB - 1) {
+        if (dictSize >= 64 _KB - 1) {
             return LZ4_decompress_safe_withPrefix64k(source, dest, compressedSize, maxOutputSize);
         }
         assert(dictSize >= 0);
@@ -2625,7 +2625,7 @@ int LZ4_decompress_safe_partial_usingDict(const char* source, char* dest, int co
     if (dictSize==0)
         return LZ4_decompress_safe_partial(source, dest, compressedSize, targetOutputSize, dstCapacity);
     if (dictStart+dictSize == dest) {
-        if (dictSize >= 64 KB - 1) {
+        if (dictSize >= 64 _KB - 1) {
             return LZ4_decompress_safe_partial_withPrefix64k(source, dest, compressedSize, targetOutputSize, dstCapacity);
         }
         assert(dictSize >= 0);
