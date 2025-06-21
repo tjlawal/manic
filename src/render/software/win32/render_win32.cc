@@ -6,7 +6,7 @@ namespace Starlight {
 	namespace Render {
 
 		void allocate_backbuffer(Arena *arena, Renderer *buffer, s32 width, s32 height) {
-			ProfFunction();
+			ProfFunction(profDebug_steelblue);
 			buffer->sw.width = width;
 			buffer->sw.height = height;
 			buffer->sw.bytes_per_pixel = 4;
@@ -32,7 +32,7 @@ namespace Starlight {
 		}
 
 		void copy_buffer_to_window(Handle window_handle, Renderer *buffer) {
-			ProfFunction();
+			ProfFunction(profDebug_dodgerblue);
 			Window* window = w32_window_from_handle(window_handle);
 			HDC hdc = window->hdc;
 			StretchDIBits(hdc, 0, 0, buffer->sw.width, buffer->sw.height, 0, 0, 
@@ -42,7 +42,7 @@ namespace Starlight {
 
 		// REVISE: Could this be faster?
 		void clear_colour_buffer(Renderer *buffer, u32 colour) {
-			ProfFunction();
+			ProfFunction(profDebug_firebrick);
 			for (s32 y = 0; y < buffer->sw.height; y++) {
 				for (s32 x = 0; x < buffer->sw.width; x++) {
 					buffer->sw.colour_buffer[(buffer->sw.width * y) + x] = colour;
@@ -52,7 +52,7 @@ namespace Starlight {
 
 		// REVISE: Could this be faster?
 		void clear_z_buffer(Renderer *buffer) {
-			ProfFunction();
+			ProfFunction(profDebug_dimgrey);
 			for (s32 y = 0; y < buffer->sw.height; ++y) {
 				for (s32 x = 0; x < buffer->sw.width; ++x) {
 					buffer->sw.z_buffer[(buffer->sw.width * y) + x] = 1.0f;

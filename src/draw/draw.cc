@@ -7,6 +7,7 @@ namespace Starlight {
 	namespace Draw {
 
 		internal void draw_grid(Renderer *buffer, s32 width, s32 height, u32 colour) {
+			ProfFunction(profDebug_cyan);
 			for(s32 y = 0; y < height; y++) {
 				for(s32 x = 0; x < width; x++) {
 					if(x % 15 == 0 || y % 10 == 0) {

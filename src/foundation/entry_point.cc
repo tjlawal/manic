@@ -4,7 +4,7 @@ using namespace Starlight::Platform;
 namespace Starlight {
 
 	internal void main_thread_entry_point(){
-		ProfFunction();
+		ProfFunction(profDebug_orchid);
 		Temp scratch = scratch_begin(0, 0);
 		//ThreadNameF("[main thread]");
 

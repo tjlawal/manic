@@ -11,18 +11,21 @@
 
 #if BUILD_PROFILE
 	#if PROFILER_SUPERLUMINAL
-		#define ProfFunction()				PERFORMANCEAPI_INSTRUMENT_FUNCTION()
-		#define ProfBlock(id, c) 			PERFORMANCEAPI_INSTRUMENT_COLOR(id, MakeRGBFromHex(c))
-		#define ProfBlockData(id, d)	PERFORMANCEAPI_INSTRUMENT_DATA(id, d)
-		#define ProfThreadName(name)	PerformanceAPI_SetCurrentThreadName(name)
+#define ProfFunction(c)								PERFORMANCEAPI_INSTRUMENT_FUNCTION_COLOR(MakeRGBFromHex(c))
+		#define ProfThreadName(name)			PerformanceAPI_SetCurrentThreadName(name)
+		#define ProfMemAlloc(ptr, count)	(0)			
+		#define ProfMemFree(ptr)				  (0)
 	#elif PROFILER_TRACY
+		#define ProfFunction(c)					  ZoneScopedC(c)
+		#define ProfMemAlloc(ptr, count)	TracyAlloc(ptr, count)			
+		#define ProfMemFree(ptr)				  TracyFree(ptr)
 	#else
 		#error "Profiler not recognized, are you using the correct profiler flag?"
 	#endif
 #else // Zero out defines
-	#define ProfFunction()						(0)
-	#define ProfBlock(id, c)					(0)
-	#define ProfBlockData(id, d)			(0)
+	#define ProfFunction(c)						(0)
+	#define ProfMemAlloc(ptr, count)	(0)
+	#define ProfMemFree(ptr)					(0)
 	#define ProfThreadName(name)			(0)
 #endif
 

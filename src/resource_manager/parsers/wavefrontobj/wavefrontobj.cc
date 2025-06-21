@@ -132,7 +132,7 @@ namespace Starlight {
 				dst->normals_count += 1;
 
 				#if BUILD_DEBUG
-				printf("vn %g %g %g\n", normals.x, normals.y, normals.z);
+					printf("vn %g %g %g\n", normals.x, normals.y, normals.z);
 				#endif
 				return normals;
 			}
@@ -293,9 +293,13 @@ namespace Starlight {
 				// allocate and 
 
 				#if BUILD_DEBUG
-				printf("f %d/%d/%d %d/%d/%d %d/%d/%d\n", faces.vertex_idx[0], faces.texture_idx[0], faces.normal_idx[0], faces.vertex_idx[1], faces.texture_idx[1], faces.normal_idx[1], faces.vertex_idx[2], faces.texture_idx[2], faces.normal_idx[2]);
+				printf("f %d/%d/%d %d/%d/%d %d/%d/%d\n", faces.vertex_idx[0], faces.texture_idx[0], 
+							 faces.normal_idx[0], faces.vertex_idx[1], faces.texture_idx[1], 
+							 faces.normal_idx[1], faces.vertex_idx[2], faces.texture_idx[2], 
+							 faces.normal_idx[2]);
 
 				#endif
+				return faces;
 			}
 
 			

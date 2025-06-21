@@ -46,8 +46,6 @@ namespace Starlight {
 		// Memory allocation
 		// @REVISE: Should errors be handled here? what is the best way to do it?
 		internal void* mem_reserve(u64 size) {
-			ProfFunction();
-			
 			void *result = VirtualAlloc(0, size, MEM_RESERVE, PAGE_READWRITE);
 
 			if (result == NULL) {
@@ -59,22 +57,15 @@ namespace Starlight {
 		}
 
 		internal b32 mem_commit(void *ptr, u64 size) {
-			ProfFunction();
-			
 			b32 result = (VirtualAlloc(ptr, size, MEM_COMMIT, PAGE_READWRITE) != 0);
 			return result;
 		}
 
-		internal void mem_decommit(void *ptr, u64 size) { 
-			ProfFunction();
-			VirtualFree(ptr, size, MEM_DECOMMIT); 
-		}
+		internal void mem_decommit(void *ptr, u64 size) { VirtualFree(ptr, size, MEM_DECOMMIT);  }
 
-		internal void mem_release(void *ptr, u64 size) {
-			// On Win32, size is not used, but keeping since its harmless and very useful for in other OSes.
-			// VirtualFree must be 0 to release the specified page region back to windows.
-			VirtualFree(ptr, 0, MEM_RELEASE);
-		}
+		// On Win32, size is not used, but keeping since its harmless and very useful for in other OSes.
+		// VirtualFree must be 0 to release the specified page region back to windows.
+		internal void mem_release(void *ptr, u64 size) { VirtualFree(ptr, 0, MEM_RELEASE); }
 
 		// Aborting (implemented per-os)
 		internal void abort(s32 exit_code) { ExitProcess(exit_code); }
@@ -175,7 +166,7 @@ namespace Starlight {
 		}
 
 		internal b32 write_file(Handle file, Rng1u64 range, void* data) {
-			ProfFunction();
+			ProfFunction(profDebug_plum);
 			if(handle_match(file, handle_zero())) return 0;
 
 			HANDLE handle = reinterpret_cast<HANDLE>(file.handle[0]);
@@ -394,8 +385,8 @@ namespace Starlight {
 
 		// @todo: Add argc and argv
 		internal void w32_entry_point_caller() {
-			ProfFunction();
-		
+			ProfFunction(profDebug_plum);
+
 			SetUnhandledExceptionFilter(&win32_exception_filter);
 
 			// Do initialization stuff here before calling into the "real" entry point
