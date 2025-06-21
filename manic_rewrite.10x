@@ -13,6 +13,8 @@
 		<Configurations>
 			<Configuration>Debug</Configuration>
 			<Configuration>Release</Configuration>
+			<Configuration>Profile SP</Configuration>
+			<Configuration>Profile Tracy</Configuration>
 		</Configurations>
 		<Platforms>
 			<Platform>x64</Platform>
@@ -56,8 +58,68 @@
 				<Defines></Defines>
 				<ForceIncludes></ForceIncludes>
 			</ConfigAndPlatform>
+			<ConfigAndPlatform>
+				<Name>Profile SP:x64</Name>
+				<BuildCommand>build msvc sp</BuildCommand>
+				<RebuildCommand></RebuildCommand>
+				<BuildFileCommand></BuildFileCommand>
+				<CleanCommand></CleanCommand>
+				<BuildWorkingDirectory>C:\manic\branches\rewrite</BuildWorkingDirectory>
+				<CancelBuild></CancelBuild>
+				<Exe>C:\manic\branches\rewrite\run_tree\manic.exe</Exe>
+				<Args></Args>
+				<WorkingDirectory>C:\manic\branches\rewrite\run_tree</WorkingDirectory>
+				<DebugCommand></DebugCommand>
+				<DebugSln></DebugSln>
+				<Defines></Defines>
+				<ForceIncludes></ForceIncludes>
+			</ConfigAndPlatform>
+			<ConfigAndPlatform>
+				<Name>Profile Tracy:x64</Name>
+				<BuildCommand>build msvc tracy</BuildCommand>
+				<RebuildCommand></RebuildCommand>
+				<BuildFileCommand></BuildFileCommand>
+				<CleanCommand></CleanCommand>
+				<BuildWorkingDirectory>C:\manic\branches\rewrite\</BuildWorkingDirectory>
+				<CancelBuild></CancelBuild>
+				<Exe>C:\manic\branches\rewrite\run_tree\manic.exe</Exe>
+				<Args></Args>
+				<WorkingDirectory>C:\manic\branches\rewrite\run_tree</WorkingDirectory>
+				<DebugCommand></DebugCommand>
+				<DebugSln></DebugSln>
+				<Defines></Defines>
+				<ForceIncludes></ForceIncludes>
+			</ConfigAndPlatform>
+			<ConfigAndPlatform>
+				<Name>Release:x64</Name>
+				<BuildCommand>build clang release</BuildCommand>
+				<RebuildCommand></RebuildCommand>
+				<BuildFileCommand></BuildFileCommand>
+				<CleanCommand></CleanCommand>
+				<BuildWorkingDirectory>C:\manic\branches\rewrite</BuildWorkingDirectory>
+				<CancelBuild></CancelBuild>
+				<Exe>C:\manic\branches\rewrite\run_tree\manic.exe</Exe>
+				<Args></Args>
+				<WorkingDirectory>C:\manic\branches\rewrite\run_tree</WorkingDirectory>
+				<DebugCommand></DebugCommand>
+				<DebugSln></DebugSln>
+				<Defines></Defines>
+				<ForceIncludes></ForceIncludes>
+			</ConfigAndPlatform>
 			<Config>
 				<Name>Debug</Name>
+				<Defines></Defines>
+			</Config>
+			<Config>
+				<Name>Profile SP</Name>
+				<Defines></Defines>
+			</Config>
+			<Config>
+				<Name>Profile Tracy</Name>
+				<Defines></Defines>
+			</Config>
+			<Config>
+				<Name>Release</Name>
 				<Defines></Defines>
 			</Config>
 			<Platform>
