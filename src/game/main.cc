@@ -35,7 +35,7 @@ namespace Starlight {
 	global b32 quit = 0;
 
 	internal void process_input() {
-		ProfFunction();
+		ProfFunction(profDebug_lightgray);
 		Temp scratch = scratch_begin(0, 0);
 
 		EventList events = get_events(scratch.arena, 0);
@@ -65,37 +65,32 @@ namespace Starlight {
 	}
 
 	internal void initialize_system() {
-		ProfFunction();
+		ProfFunction(profDebug_hotpink);
 
-		Arena* arena = arena_alloc();
-		g_window_state = arena_push<GameState>(arena, 1);
-		g_window_state->per_frame_memory = arena;
+		Arena* big_daddy_arena = arena_alloc();
+		g_window_state = arena_push<GameState>(big_daddy_arena, 1);
+		g_window_state->game_memory = arena_alloc(); 
+		g_window_state->per_frame_memory = arena_alloc(); 
 
 		// Initialize window and paint into it
-		ProfBlock("init window, paint to it", profDebug_aliceblue); 
-		{
-			// 16:9 aspect ratio, 518,400 pixels to process each frame.
-			g_window_state->os_handle = window_open(Rng2f32(0, 0, 960, 540), str8_lit(BUILD_TITLE_STRING_LITERAL)); 
-			g_window_state->window_dim = client_rect_from_window(g_window_state->os_handle);
-			window_first_paint(g_window_state->os_handle);
-			allocate_backbuffer(g_window_state->per_frame_memory, &g_window_state->render_buffer, 
-													g_window_state->window_dim.x1, g_window_state->window_dim.y1);
-		}	
+		// 16:9 aspect ratio, 518,400 pixels to process each frame.
+		g_window_state->os_handle = window_open(Rng2f32(0, 0, 960, 540), str8_lit(BUILD_TITLE_STRING_LITERAL)); 
+		g_window_state->window_dim = client_rect_from_window(g_window_state->os_handle);
+		window_first_paint(g_window_state->os_handle);
+		allocate_backbuffer(g_window_state->per_frame_memory, &g_window_state->render_buffer, 
+												g_window_state->window_dim.x1, g_window_state->window_dim.y1);
+		// Initialize the resource manager.
+		MeshInfo* mesh_data = load_model(g_window_state->game_memory, str8_lit("data/meshes/drone.obj"));
 
-		// Init resource manager
-		ProfBlock("init resource manager", profDebug_fuchsia); 
-		{
-			MeshInfo* mesh_data = load_model(arena, str8_lit("data/meshes/drone.obj"));
-		}
 	}
 
 	internal void update() {
-		ProfFunction();
+		ProfFunction(profDebug_orangered);
 		arena_clear(g_window_state->per_frame_memory);
 	}
 
 	internal void render() {
-		ProfFunction();
+		ProfFunction(profDebug_red);
 		clear_colour_buffer(&g_window_state->render_buffer, 0xFF420420);
 		draw_grid(&g_window_state->render_buffer, g_window_state->window_dim.x1, 
 							g_window_state->window_dim.x1, 0xFFFFFFFF);

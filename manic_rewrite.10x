@@ -12,9 +12,9 @@
 		<CaptureExeOutput>true</CaptureExeOutput>
 		<Configurations>
 			<Configuration>Debug</Configuration>
-			<Configuration>Release</Configuration>
 			<Configuration>Profile SP</Configuration>
 			<Configuration>Profile Tracy</Configuration>
+			<Configuration>Release</Configuration>
 		</Configurations>
 		<Platforms>
 			<Platform>x64</Platform>

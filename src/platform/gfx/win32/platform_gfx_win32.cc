@@ -103,7 +103,7 @@ namespace Starlight {
 			}
 
 			void window_first_paint(Handle window_handle) {
-				//ProfBlock("window_first_paint", profDebug_hotpink);
+				ProfFunction(profDebug_indianred);
 				Window *window = w32_window_from_handle(window_handle);
 				window->first_paint = 1;
 				ShowWindow(window->hwnd, SW_SHOW);
