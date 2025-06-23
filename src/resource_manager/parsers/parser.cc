@@ -7,9 +7,13 @@ namespace Starlight {
 				if(lexer->current_position >= lexer->input.size) {
 					lexer->current_char = '\0';
 				} else {
+					lexer->previous_position = lexer->current_position;
 					lexer->current_position = lexer->future_position;
 					lexer->future_position += 1;
-					lexer->current_char = lexer->input.str[lexer->current_position];
+
+					lexer->previous_char = lexer->input.str[lexer->previous_position];
+					lexer->current_char  = lexer->input.str[lexer->current_position];
+					lexer->future_char   = lexer->input.str[lexer->future_position];
 				}
 			}
 

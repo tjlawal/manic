@@ -1,3 +1,16 @@
+/*
+ Todo List:
+- Some OBJ files include additional information like material name (usemtl), material library (mtlib) 
+	that is not relevant right now. just skip over them and continue. It'll be nice if those can be processed and just 
+	discarded for the sake of completeness but not absolutely necessary.
+- Currently if the parser comes across invalid OBJ files, it would be nice to report the error to the user then proceed to
+	crash and burn.
+- Currently mesh files that have faces certain vertices, textures or normals missing in the expected coordinates 
+	(see dragon.obj) just defaults to 0. It also doesn't handle obj files with negative `-` in the faces values.
+
+	
+*/
+
 namespace Starlight {
 	namespace ResourceManager {
 		namespace Parser {
@@ -29,7 +42,6 @@ namespace Starlight {
 
 						default: {
 							token.type = FormatTokenType_Unknown;
-							//token.literal = str8_lit("");
 						} break;
 					}
 				}
@@ -45,12 +57,16 @@ namespace Starlight {
 				eat_comments(lexer);
 
 				switch(lexer->current_char) {
+
+					// Format: o object_name
+					case('o'): {
+						read_char(lexer);
+					} break;
 					
 					// Format: `v x y z`
 					case('v'): {
 						if(peek_ahead(lexer) == ' ') {
 							token.type = FormatTokenType_GeometricVertices;
-							//token.literal = ;
 						} 
 						
 						// Format: `vt u v`
@@ -63,11 +79,9 @@ namespace Starlight {
 						else if(peek_ahead(lexer) == 'n') {
 							token.type = FormatTokenType_VertexNormals;
 							read_char(lexer);
-						} 
-
-						else {
-							// Invalid OBJ file, report error!
+						} else {
 							DEBUGBREAK;
+							//read_char(lexer);
 						}
 					} break;
 
@@ -76,9 +90,22 @@ namespace Starlight {
 						if(peek_ahead(lexer) == ' ') {
 							token.type = FormatTokenType_Face;
 						} else {
-							// Invalid OBJ file, report error!
-							DEBUGBREAK;
+							read_char(lexer);
 						}	
+					} break;
+
+					// Format: mtlib library_name.mtl
+					case('m'): {
+						if(peek_ahead(lexer) == 't') {
+							read_char(lexer);
+						}
+					} break;
+
+					// Format: usemtl: material_name
+					case('u'): {
+						if(peek_ahead(lexer) == 's') {
+							read_char(lexer);
+						}
 					} break;
 					
 					default: {

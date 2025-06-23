@@ -17,17 +17,27 @@ namespace Starlight {
 
 			struct Lexer {
 				string8 input;
-				u32 current_position; // current char position in the input stream
-				u32 future_position;  // next char position in the input stream
-				u8 current_char;
-				u8 padding[3]; 				// space for future improvements
+				u32 previous_position; // previous char position
+				u32 current_position;  // current char position 
+				u32 future_position;   // next char position
 
-				Lexer() : input(), current_position(), future_position(), current_char() {}
-				Lexer(string8 _input, u8 _current_char = ' ', u32 _current_pos = 0, u32 _future_pos = 0)  : 
-				input(_input), 
+				u8 previous_char;
+				u8 current_char;
+				u8 future_char;
+
+				Lexer() : input(), previous_position(), current_position(), 
+									future_position(), previous_char(), current_char(), future_char() {}
+
+				Lexer(string8 _input, 
+							u32 _previous_pos = 0, u32 _current_pos = 0, u32 _future_pos = 0, 
+							u8 _previous_char = ' ', u8 _current_char = ' ', u8 _future_char = ' ')  : 
+				input(_input),
+				previous_position(_previous_pos),
 				current_position(_current_pos), 
 				future_position(_future_pos),
-				current_char(_current_char) {}
+				previous_char(_previous_char),
+				current_char(_current_char),
+				future_char(_future_char) {}
 			};
 
 			// ResourceManager interface

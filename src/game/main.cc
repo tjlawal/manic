@@ -79,8 +79,9 @@ namespace Starlight {
 		window_first_paint(g_window_state->os_handle);
 		allocate_backbuffer(g_window_state->per_frame_memory, &g_window_state->render_buffer, 
 												g_window_state->window_dim.x1, g_window_state->window_dim.y1);
+
 		// Initialize the resource manager.
-		MeshInfo* mesh_data = load_model(g_window_state->game_memory, str8_lit("data/meshes/drone.obj"));
+		MeshInfo* mesh_data = load_model(g_window_state->game_memory, str8_lit("data/meshes/dragon.obj"));
 
 	}
 

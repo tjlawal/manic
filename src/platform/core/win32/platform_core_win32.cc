@@ -94,6 +94,7 @@ namespace Starlight {
 		}
 
 		internal Handle open_file(AccessFlags flags, string8 path) {
+			// @TODO: Make this robust!!!
 			Handle result = {0};
 			Temp scratch = scratch_begin(0, 0);
 			string16 path16 = str16_from_8(scratch.arena, path);
@@ -116,6 +117,10 @@ namespace Starlight {
 
 			HANDLE file = CreateFileW(reinterpret_cast<WCHAR *>(path16.str), access_flags, share_mode, &security_attributes, creation_disposition, FILE_ATTRIBUTE_NORMAL, 0);
 
+			if(file == INVALID_HANDLE_VALUE) {
+				DWORD error = GetLastError();
+				printf("Error occured opening file: %lu\n", error);
+			}
 			if (file != INVALID_HANDLE_VALUE) {
 				result.handle[0] = (u64)file;
 			}
@@ -131,6 +136,7 @@ namespace Starlight {
 		}
 
 		internal u64 read_file(Handle file, Rng1u64 rng, void *data_dest) {
+			// @TODO: Make this robust!!!
 			if (handle_match(file, handle_zero())) {
 				return 0;
 			}
@@ -166,6 +172,7 @@ namespace Starlight {
 		}
 
 		internal b32 write_file(Handle file, Rng1u64 range, void* data) {
+			// @TODO: Make this robust!!!
 			ProfFunction(profDebug_plum);
 			if(handle_match(file, handle_zero())) return 0;
 

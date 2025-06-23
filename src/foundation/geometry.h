@@ -13,7 +13,7 @@ namespace Starlight {
 			f32 v[3];
 		};
 
-		struct Face{
+		struct Face {
 			s32 vertex_idx[3];
 			s32 texture_idx[3];
 			s32 normal_idx[3];
@@ -70,38 +70,3 @@ namespace Starlight {
 		}
 	}
 }
-
-
-//struct Face {
-//	Texture2F32 a_uv;
-//	Texture2F32 b_uv;
-//	Texture2F32 c_uv;
-//	u32 colour;
-//	s32 a;
-//	s32 b;
-//	s32 c;
-//};
-
-//// Find a betteer place to store these!
-//// Textures, Triangles, Faces
-//struct Texture2F32 {
-//	f32 u;
-//	f32 v;
-//};
-
-//struct Triangle2F32 {
-//	Vec4 points[3];
-//	Texture2F32 texture_coords[3];
-//	u32 colour;
-//};
-
-//// Faces are the surfaces formed by connecting those points.
-//struct Face3S32 {
-//	Texture2F32 a_uv;
-//	Texture2F32 b_uv;
-//	Texture2F32 c_uv;
-//	u32 colour;
-//	s32 a;
-//	s32 b;
-//	s32 c;
-//};
