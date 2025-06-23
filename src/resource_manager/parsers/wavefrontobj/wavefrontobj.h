@@ -5,6 +5,7 @@ namespace Starlight {
 	namespace ResourceManager {
 		namespace Parser {
 
+			internal void count_mesh_elements(Token token, Lexer* lexer, u32 vert_count, u32 norm_count, u32 face_count, u32 texcoord_count);
 			internal Vertex parse_vertices(Arena* arena, Lexer* lexer, MeshInfo* dst);
 			internal TextureCoord parse_textures(Arena* arena, Lexer* lexer, MeshInfo* dst);
 			internal Vertex parse_normals(Arena* arena, Lexer* lexer, MeshInfo* dst);

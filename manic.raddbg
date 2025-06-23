@@ -1,9 +1,9 @@
-// raddbg 0.9.20 project file
+// raddbg 0.9.19 project file
 
-recent_file: path: "src/platform/core/platform_core.cc"
-recent_file: path: "src/platform/core/win32/platform_core_win32.cc"
 recent_file: path: "src/resource_manager/parsers/wavefrontobj/wavefrontobj.cc"
 recent_file: path: "src/resource_manager/parsers/parser.cc"
+recent_file: path: "src/platform/core/platform_core.cc"
+recent_file: path: "src/platform/core/win32/platform_core_win32.cc"
 recent_file: path: "src/resource_manager/resource_manager.cc"
 recent_file: path: "src/game/main.cc"
 recent_file: path: "src/foundation/arena.cc"
@@ -22,25 +22,11 @@ target:
 }
 breakpoint:
 {
-  source_location: "src/resource_manager/parsers/wavefrontobj/wavefrontobj.cc:12:1"
-  hit_count: 0
-  enabled: 0
-}
-breakpoint:
-{
-  source_location: "src/platform/core/platform_core.cc:29:1"
-  hit_count: 0
-  enabled: 0
-}
-breakpoint:
-{
-  source_location: "src/platform/core/platform_core.cc:26:1"
-  hit_count: 0
-  enabled: 0
-}
-breakpoint:
-{
-  source_location: "src/platform/core/win32/platform_core_win32.cc:137:1"
+  source_location: "src/resource_manager/parsers/wavefrontobj/wavefrontobj.cc:54:1"
   hit_count: 1
-  enabled: 0
+}
+breakpoint:
+{
+  source_location: "src/resource_manager/parsers/wavefrontobj/wavefrontobj.cc:18:1"
+  hit_count: 1
 }

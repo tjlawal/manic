@@ -44,7 +44,7 @@ namespace Starlight {
 			internal MeshInfo* rm_parse_data_from_file(Arena* arena, string8 data);
 
 			// Main parsing functions
-			internal Token 	next_token(Arena* arena, Lexer* lexer);
+			internal Token 	next_token(Lexer* lexer);
 			internal void 	read_char (Lexer* lexer);
 			internal u8 		peek_ahead(Lexer* lexer);
 

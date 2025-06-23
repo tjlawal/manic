@@ -48,11 +48,11 @@
 				<RebuildCommand></RebuildCommand>
 				<BuildFileCommand></BuildFileCommand>
 				<CleanCommand></CleanCommand>
-				<BuildWorkingDirectory>C:\manic\branches\rewrite</BuildWorkingDirectory>
+				<BuildWorkingDirectory>W:\manic\branches\rewrite</BuildWorkingDirectory>
 				<CancelBuild></CancelBuild>
-				<Exe>C:\manic\branches\rewrite\run_tree\manic.exe</Exe>
+				<Exe>W:\manic\branches\rewrite\run_tree\manic.exe</Exe>
 				<Args></Args>
-				<WorkingDirectory>C:\manic\branches\rewrite\run_tree</WorkingDirectory>
+				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
 				<DebugCommand>remedybg manic.exe</DebugCommand>
 				<DebugSln></DebugSln>
 				<Defines></Defines>
@@ -64,11 +64,11 @@
 				<RebuildCommand></RebuildCommand>
 				<BuildFileCommand></BuildFileCommand>
 				<CleanCommand></CleanCommand>
-				<BuildWorkingDirectory>C:\manic\branches\rewrite</BuildWorkingDirectory>
+				<BuildWorkingDirectory>W:\manic\branches\rewrite</BuildWorkingDirectory>
 				<CancelBuild></CancelBuild>
-				<Exe>C:\manic\branches\rewrite\run_tree\manic.exe</Exe>
+				<Exe>W:\manic\branches\rewrite\run_tree\manic.exe</Exe>
 				<Args></Args>
-				<WorkingDirectory>C:\manic\branches\rewrite\run_tree</WorkingDirectory>
+				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
 				<DebugCommand></DebugCommand>
 				<DebugSln></DebugSln>
 				<Defines></Defines>
@@ -80,11 +80,11 @@
 				<RebuildCommand></RebuildCommand>
 				<BuildFileCommand></BuildFileCommand>
 				<CleanCommand></CleanCommand>
-				<BuildWorkingDirectory>C:\manic\branches\rewrite\</BuildWorkingDirectory>
+				<BuildWorkingDirectory>W:\manic\branches\rewrite\</BuildWorkingDirectory>
 				<CancelBuild></CancelBuild>
-				<Exe>C:\manic\branches\rewrite\run_tree\manic.exe</Exe>
+				<Exe>W:\manic\branches\rewrite\run_tree\manic.exe</Exe>
 				<Args></Args>
-				<WorkingDirectory>C:\manic\branches\rewrite\run_tree</WorkingDirectory>
+				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
 				<DebugCommand></DebugCommand>
 				<DebugSln></DebugSln>
 				<Defines></Defines>
@@ -96,11 +96,11 @@
 				<RebuildCommand></RebuildCommand>
 				<BuildFileCommand></BuildFileCommand>
 				<CleanCommand></CleanCommand>
-				<BuildWorkingDirectory>C:\manic\branches\rewrite</BuildWorkingDirectory>
+				<BuildWorkingDirectory>W:\manic\branches\rewrite</BuildWorkingDirectory>
 				<CancelBuild></CancelBuild>
-				<Exe>C:\manic\branches\rewrite\run_tree\manic.exe</Exe>
+				<Exe>W:\manic\branches\rewrite\run_tree\manic.exe</Exe>
 				<Args></Args>
-				<WorkingDirectory>C:\manic\branches\rewrite\run_tree</WorkingDirectory>
+				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
 				<DebugCommand></DebugCommand>
 				<DebugSln></DebugSln>
 				<Defines></Defines>

@@ -81,7 +81,7 @@ namespace Starlight {
 												g_window_state->window_dim.x1, g_window_state->window_dim.y1);
 
 		// Initialize the resource manager.
-		MeshInfo* mesh_data = load_model(g_window_state->game_memory, str8_lit("data/meshes/dragon.obj"));
+		MeshInfo* mesh_data = load_model(g_window_state->game_memory, str8_lit("data/meshes/cube.obj"));
 
 	}
 

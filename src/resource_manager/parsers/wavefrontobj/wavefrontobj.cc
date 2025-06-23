@@ -15,13 +15,61 @@ namespace Starlight {
 	namespace ResourceManager {
 		namespace Parser {
 
+			internal void count_mesh_elements(Token token, Lexer* lexer, u32 vert_count, u32 texcoord_count, u32 norm_count, u32 face_count) {
+				read_char(lexer);
+				eat_all_whitespace(lexer);
+				eat_comments(lexer);
+
+				switch(lexer->current_char) {
+					// Format: `v x y z`
+					case('v'): {
+						if(peek_ahead(lexer) == ' ') {
+							vert_count += 1;
+						} 
+						
+						// Format: `vt u v`
+						else if(peek_ahead(lexer) == 't') {
+							token.type = FormatTokenType_TextureVertices;
+							read_char(lexer);
+						} 
+						
+						// Format: `vn i j`
+						else if(peek_ahead(lexer) == 'n') {
+							token.type = FormatTokenType_VertexNormals;
+							read_char(lexer);
+						} else {
+							DEBUGBREAK;
+							//read_char(lexer);
+						}
+					} break;
+
+					// Format: `f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3`
+					case('f'): {
+						if(peek_ahead(lexer) == ' ') {
+							token.type = FormatTokenType_Face;
+						} else {
+							read_char(lexer);
+						}	
+					} break;
+				}
+			}
+
 			internal MeshInfo*  rm_parse_data_from_file(Arena* arena, string8 data) {
+				ProfFunction(profDebug_coral);
 				Token token = {};
 				Lexer lexer(data);
+
+				u32 no_verticies = 0;
+				u32 no_norms = 0;
+				u32 no_texcoords = 0;
+				u32 no_faces = 0;
+
+				count_mesh_elements(token, &lexer, no_verticies, no_norms, no_texcoords, no_faces);
+
 				MeshInfo* mesh_info = arena_push<MeshInfo>(arena, 1);
 
 				while(token.type != FormatTokenType_EOF) {
-					token = next_token(arena, &lexer);
+					token = next_token(&lexer);
 
 					switch(token.type) {
 						case(FormatTokenType_GeometricVertices): {
@@ -50,7 +98,7 @@ namespace Starlight {
 			}
 
 
-			internal Token next_token(Arena* arena, Lexer* lexer) {
+			internal Token next_token(Lexer* lexer) {
 				Token token = {};
 				read_char(lexer);
 				eat_all_whitespace(lexer);
