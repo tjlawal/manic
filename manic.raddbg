@@ -1,9 +1,10 @@
 // raddbg 0.9.20 project file
 
 recent_file: path: "src/game/main.cc"
-recent_file: path: "src/foundation/arena.cc"
+recent_file: path: "src/render/software/win32/render_win32.cc"
 recent_file: path: "src/resource_manager/resource_manager.cc"
 recent_file: path: "src/platform/core/platform_core.cc"
+recent_file: path: "src/foundation/arena.cc"
 recent_file: path: "src/resource_manager/parsers/wavefrontobj/wavefrontobj.cc"
 recent_file: path: "src/platform/core/win32/platform_core_win32.cc"
 recent_file: path: "src/platform/gfx/win32/platform_gfx_win32.cc"
@@ -20,19 +21,4 @@ target:
   executable: "run_tree/manic.exe"
   working_directory: run_tree
   enabled: 1
-}
-breakpoint:
-{
-  source_location: "src/game/main.cc:162:1"
-  hit_count: 0
-}
-breakpoint:
-{
-  source_location: "src/platform/core/platform_core.cc:26:1"
-  hit_count: 0
-}
-breakpoint:
-{
-  source_location: "src/resource_manager/resource_manager.cc:22:1"
-  hit_count: 0
 }

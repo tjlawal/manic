@@ -94,7 +94,6 @@ namespace Starlight {
 
 	internal void update() {
 		ProfFunction(profDebug_orangered);
-		arena_clear(g_window_state->game_memory);
 	}
 
 	internal void render() {
