@@ -15,6 +15,7 @@ namespace Starlight {
 				u32 vertices_idx;
 				u32 normals_idx;
 				u32 texture_coords_idx;
+				u32 faces_idx;
 
 				u32 vertices_count;
 				u32 normals_count;

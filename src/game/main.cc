@@ -71,28 +71,30 @@ namespace Starlight {
 		Arena* big_daddy_arena = arena_alloc();
 		g_window_state = arena_push<GameState>(big_daddy_arena, 1);
 		g_window_state->game_memory = arena_alloc(); 
-		g_window_state->per_frame_memory = arena_alloc(); 
+		g_window_state->per_frame_memory = arena_alloc();
+		g_window_state->asset_memory = arena_alloc();
+
 
 		// Initialize window and paint into it
 		// 16:9 aspect ratio, 518,400 pixels to process each frame.
 		g_window_state->os_handle = window_open(Rng2f32(0, 0, 960, 540), str8_lit(BUILD_TITLE_STRING_LITERAL)); 
 		g_window_state->window_dim = client_rect_from_window(g_window_state->os_handle);
 		window_first_paint(g_window_state->os_handle);
-		allocate_backbuffer(g_window_state->per_frame_memory, &g_window_state->render_buffer, 
+		allocate_backbuffer(g_window_state->game_memory, &g_window_state->render_buffer, 
 												g_window_state->window_dim.x1, g_window_state->window_dim.y1);
 
 		// Initialize the resource manager.
-		MeshInfo* mesh_data = load_model(g_window_state->game_memory, str8_lit("data/meshes/f22.obj"));
+		MeshInfo* mesh_data = load_model(g_window_state->asset_memory, str8_lit("data/meshes/bunny.obj"));
 
 		#if BUILD_DEBUG_VERY_NOISY
-			dump_mesh_info(mesh_data);
+		dump_mesh_info(mesh_data);
 		#endif
 
 	}
 
 	internal void update() {
 		ProfFunction(profDebug_orangered);
-		arena_clear(g_window_state->per_frame_memory);
+		arena_clear(g_window_state->game_memory);
 	}
 
 	internal void render() {

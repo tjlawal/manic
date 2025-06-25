@@ -11,7 +11,7 @@ namespace Starlight {
 			// Commit initial block
 			void* base = mem_reserve(reserve_size);
 			mem_commit(base, commit_size);
-			ProfMemAlloc(base, commit_size);
+			ProfMemAlloc(base, commit_size, 10);
 
 			// Panic on failure, very very unlikely
 			if(UNLIKELY(base == nullptr)) {
@@ -40,7 +40,7 @@ namespace Starlight {
 			for(Arena* current_arena = arena->current, *previous_arena = 0; current_arena != 0; current_arena = previous_arena) {
 				previous_arena = current_arena->previous;
 				mem_release(current_arena, current_arena->reserve_size);
-				ProfMemFree(current_arena);
+				ProfMemFree(current_arena, 10);
 			}
 		}
 
@@ -81,7 +81,7 @@ namespace Starlight {
 					u8* commit_ptr = (u8*)current_arena + current_arena->commit;
 				
 					mem_commit(commit_ptr, _commit_size);
-					ProfMemAlloc(commit_ptr, _commit_size);
+					ProfMemAlloc(commit_ptr, _commit_size, 10);
 					current_arena->commit = commit_pos_clamped;
 				}
 			}
@@ -118,7 +118,7 @@ namespace Starlight {
 			for(Arena* previous_arena = 0; current_arena->base_position >= big_pos; current_arena = previous_arena) {
 				previous_arena = current_arena->previous;
 				mem_release(current_arena, current_arena->reserve);
-				ProfMemFree(current_arena);
+				ProfMemFree(current_arena, 10);
 			}
 
 			arena->current  = current_arena;

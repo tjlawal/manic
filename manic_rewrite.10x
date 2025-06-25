@@ -16,6 +16,7 @@
 			<Configuration>Profile SP</Configuration>
 			<Configuration>Profile Tracy</Configuration>
 			<Configuration>Release</Configuration>
+			<Configuration>ASAN</Configuration>
 		</Configurations>
 		<Platforms>
 			<Platform>x64</Platform>
@@ -43,6 +44,22 @@
 		</AdditionalIncludePaths>
 		<Defines></Defines>
 		<ConfigProperties>
+			<ConfigAndPlatform>
+				<Name>ASAN:x64</Name>
+				<BuildCommand>build clang asan</BuildCommand>
+				<RebuildCommand></RebuildCommand>
+				<BuildFileCommand></BuildFileCommand>
+				<CleanCommand></CleanCommand>
+				<BuildWorkingDirectory>W:\manic\branches\rewrite</BuildWorkingDirectory>
+				<CancelBuild></CancelBuild>
+				<Exe>W:\manic\branches\rewrite\run_tree\manic.exe</Exe>
+				<Args></Args>
+				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
+				<DebugCommand></DebugCommand>
+				<DebugSln></DebugSln>
+				<Defines></Defines>
+				<ForceIncludes></ForceIncludes>
+			</ConfigAndPlatform>
 			<ConfigAndPlatform>
 				<Name>Debug:x64</Name>
 				<BuildCommand>build msvc</BuildCommand>
@@ -123,6 +140,10 @@
 				<Defines></Defines>
 				<ForceIncludes></ForceIncludes>
 			</ConfigAndPlatform>
+			<Config>
+				<Name>ASAN</Name>
+				<Defines></Defines>
+			</Config>
 			<Config>
 				<Name>Debug</Name>
 				<Defines></Defines>

@@ -24,6 +24,7 @@ namespace Starlight {
 		}
 
 		internal string8 read_data_from_file(Arena* arena, string8 file_path) {
+			ProfFunction(profDebug_darkred);
 			Handle file = open_file(AccessFlag_Read, file_path);
 			FileProperty properties = properties_from_file(file);
 			string8 data = data_from_file_range(arena, file, rng1u64(0, properties.size));
@@ -33,9 +34,5 @@ namespace Starlight {
 
 		internal b32 write_data_to_file(string8 file_path, string8 data) {}
 		internal b32 append_data_to_file(string8 file_path, string8 data) {}
-
-
-		
-
 	}
 }

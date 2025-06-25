@@ -25,4 +25,4 @@ namespace Starlight {
 }
 
 #define scratch_begin(conflicts, count) temp_begin(tctxt_get_scratch_memory((conflicts), (count)))
-#define scratch_end(scratch_memory) 		temp_end(scratch)
+#define scratch_end(scratch_memory) 		temp_end(scratch_memory)

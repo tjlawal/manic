@@ -9,6 +9,7 @@ namespace Starlight {
 	struct GameState {
 		Arena* game_memory; 			// Persistent data goes here
 		Arena* per_frame_memory;  // Per-frame data, cleared each frame
+		Arena* asset_memory;
 
 		Renderer render_buffer;
 		Handle os_handle;

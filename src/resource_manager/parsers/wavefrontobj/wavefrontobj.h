@@ -7,8 +7,8 @@ namespace Starlight {
 
 			internal void parse_vertices(Arena* arena, Lexer* lexer, MeshInfo* dst);
 			internal void parse_textures(Arena* arena, Lexer* lexer, MeshInfo* dst);
-			internal Vertex parse_normals(Arena* arena, Lexer* lexer, MeshInfo* dst);
-			internal Face parse_faces(Arena* arena, Lexer* lexer, MeshInfo* dst);
+			internal void parse_normals(Arena* arena, Lexer* lexer, MeshInfo* dst);
+			internal void parse_faces(Arena* arena, Lexer* lexer, MeshInfo* dst);
 
 			// Helpers
 			internal u32 count_vertices(Token token, Lexer* lexer);

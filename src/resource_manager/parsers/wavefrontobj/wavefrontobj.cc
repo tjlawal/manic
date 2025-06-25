@@ -24,6 +24,7 @@ namespace Starlight {
 				mesh_info->vertices_idx = 0;
 				mesh_info->normals_idx = 0;
 				mesh_info->texture_coords_idx = 0;
+				mesh_info->faces_idx = 0;
 
 				mesh_info->vertices_count = count_vertices(token, &lexer);
 				mesh_info->normals_count = count_normals(token, &lexer);;
@@ -148,19 +149,17 @@ namespace Starlight {
 				#endif
 			}
 
-			internal Vertex parse_normals(Arena* arena, Lexer* lexer, MeshInfo* dst) {
+			internal void parse_normals(Arena* arena, Lexer* lexer, MeshInfo* dst) {
 				Vertex normals = {};
-
 				parse_float(lexer, &normals.x);
 				parse_float(lexer, &normals.y);
 				parse_float(lexer, &normals.z);
 
-				dst->normals_count += 1;
+				dst->normals[dst->normals_idx++] = normals;
 
 				#if BUILD_DEBUG
 				//printf("vn %g %g %g\n", normals.x, normals.y, normals.z);
 				#endif
-				return normals;
 			}
 
 			internal void parse_textures(Arena* arena, Lexer* lexer, MeshInfo* dst) {
@@ -175,7 +174,7 @@ namespace Starlight {
 				#endif
 			}
 
-			internal Face parse_faces(Arena* arena, Lexer* lexer, MeshInfo* dst) {
+			internal void parse_faces(Arena* arena, Lexer* lexer, MeshInfo* dst) {
 				ProfFunction(profDebug_orchid);
 				Face faces = {};
 				char buffer[MAX_NUMERIC_BUFFER_SIZE] = {0};
@@ -327,7 +326,9 @@ namespace Starlight {
 				}
 
 				// Now we have all the data filled out into their respective vertices, 
-				// allocate and 
+				// allocate and
+
+				dst->faces[dst->faces_idx++] = faces;
 
 				#if BUILD_DEBUG
 				//printf("f %d/%d/%d %d/%d/%d %d/%d/%d\n", faces.vertex_idx[0], faces.texture_idx[0], 
@@ -336,7 +337,6 @@ namespace Starlight {
 							 //faces.normal_idx[2]);
 
 				#endif
-				return faces;
 			}
 
 			
