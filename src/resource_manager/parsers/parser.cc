@@ -24,6 +24,18 @@ namespace Starlight {
 				return lexer->input.str[lexer->future_position];
 			}
 
+			internal void rewind_lexer(Lexer* lexer) {
+				if(is_eof(lexer->current_char) && is_eof(lexer->current_char)) {
+					lexer->previous_position = 0;
+					lexer->current_position = lexer->previous_position;
+					lexer->future_position = lexer->current_position + 1;
+
+					lexer->previous_char = lexer->input.str[lexer->previous_position];
+					lexer->current_char  = lexer->input.str[lexer->current_position];
+					lexer->future_char   = lexer->input.str[lexer->future_position];
+				}	
+			}
+
 			internal void eat_all_whitespace(Lexer *lexer) {
 				// Keep going until the next char is not a space
 				while(lexer->current_char == ' '  || lexer->current_char == '\t' || 
@@ -55,15 +67,15 @@ namespace Starlight {
 				return r;
 			}
 
+			inline b8 is_eof(u8 c) {
+				b8 r = (c == '\0');
+				return r;
+			}
+
 			inline b8 is_alpha(u8 c) {
 				b8 r = (((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')));
 				return r;
 			}
-
-			inline b8 is_eof(u8 c) {
-				b8 r = (c == '\0');
-				return r;
-			}		
 		}
 	}
 }

@@ -20,7 +20,6 @@ namespace Starlight {
 				u32 previous_position; // previous char position
 				u32 current_position;  // current char position 
 				u32 future_position;   // next char position
-
 				u8 previous_char;
 				u8 current_char;
 				u8 future_char;
@@ -49,6 +48,7 @@ namespace Starlight {
 			internal u8 		peek_ahead(Lexer* lexer);
 
 			// Helpers
+			internal void 	rewind_lexer(Lexer* lexer);
 			internal void 	eat_comments(Lexer* lexer);
 			internal void 	eat_all_whitespace(Lexer* lexer);
 			FORCE_INLINE b8 is_digit(u8 c);

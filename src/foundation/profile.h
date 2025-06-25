@@ -17,6 +17,7 @@
 		#define ProfMemFree(ptr)				  (0)
 	#elif PROFILER_TRACY
 		#define ProfFunction(c)					  ZoneScopedC(c)
+		#define ProfScope(v,n,c)					ZoneNamedNC((v), (n), (c), true)
 		#define ProfMemAlloc(ptr, count)	TracyAlloc(ptr, count)			
 		#define ProfMemFree(ptr)				  TracyFree(ptr)
 	#else
@@ -24,6 +25,7 @@
 	#endif
 #else // Zero out defines
 	#define ProfFunction(c)						(0)
+	#define ProfScope(v, n, c)				(0)
 	#define ProfMemAlloc(ptr, count)	(0)
 	#define ProfMemFree(ptr)					(0)
 	#define ProfThreadName(name)			(0)

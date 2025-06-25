@@ -67,6 +67,7 @@ namespace Starlight {
 	internal void initialize_system() {
 		ProfFunction(profDebug_hotpink);
 
+		ProfScope(init, "game memory alloc", profDebug_maroon);
 		Arena* big_daddy_arena = arena_alloc();
 		g_window_state = arena_push<GameState>(big_daddy_arena, 1);
 		g_window_state->game_memory = arena_alloc(); 
@@ -81,7 +82,11 @@ namespace Starlight {
 												g_window_state->window_dim.x1, g_window_state->window_dim.y1);
 
 		// Initialize the resource manager.
-		MeshInfo* mesh_data = load_model(g_window_state->game_memory, str8_lit("data/meshes/cube.obj"));
+		MeshInfo* mesh_data = load_model(g_window_state->game_memory, str8_lit("data/meshes/f22.obj"));
+
+		#if BUILD_DEBUG_VERY_NOISY
+			dump_mesh_info(mesh_data);
+		#endif
 
 	}
 

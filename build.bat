@@ -15,6 +15,7 @@ set auto_compile_flags=
 if "%asan%"=="1" 			set auto_compile_flags=%auto_compile_flags% -fsanitize=address && echo [asan enabled]
 if "%sp%"=="1" 				set auto_compile_flags=%auto_compile_flags% -DBUILD_PROFILE=1 -DPROFILER_SUPERLUMINAL=1 && echo [profiler enabled, using Superluminal profiler]
 if "%tracy%"=="1" 	  set auto_compile_flags=%auto_compile_flags% -DBUILD_PROFILE=1 -DPROFILER_TRACY=1 && echo [profiler enabled, using Tracy profiler]
+if "%noisy%"=="1"			set auto_compile_flags=%auto_compile_flags% -DBUILD_DEBUG_VERY_NOISY=1 && echo [noisy build]
 
 :: clang writes the result of getting only the preprocessed code to whatever is pointed to by '-o'.
 set preprocessor_flags=

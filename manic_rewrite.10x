@@ -12,6 +12,7 @@
 		<CaptureExeOutput>true</CaptureExeOutput>
 		<Configurations>
 			<Configuration>Debug</Configuration>
+			<Configuration>Noisy</Configuration>
 			<Configuration>Profile SP</Configuration>
 			<Configuration>Profile Tracy</Configuration>
 			<Configuration>Release</Configuration>
@@ -54,6 +55,22 @@
 				<Args></Args>
 				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
 				<DebugCommand>remedybg manic.exe</DebugCommand>
+				<DebugSln></DebugSln>
+				<Defines></Defines>
+				<ForceIncludes></ForceIncludes>
+			</ConfigAndPlatform>
+			<ConfigAndPlatform>
+				<Name>Noisy:x64</Name>
+				<BuildCommand>build msvc debug noisy</BuildCommand>
+				<RebuildCommand></RebuildCommand>
+				<BuildFileCommand></BuildFileCommand>
+				<CleanCommand></CleanCommand>
+				<BuildWorkingDirectory>W:\manic\branches\rewrite</BuildWorkingDirectory>
+				<CancelBuild></CancelBuild>
+				<Exe>W:\manic\branches\rewrite\run_tree\manic.exe</Exe>
+				<Args></Args>
+				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
+				<DebugCommand></DebugCommand>
 				<DebugSln></DebugSln>
 				<Defines></Defines>
 				<ForceIncludes></ForceIncludes>
@@ -108,6 +125,10 @@
 			</ConfigAndPlatform>
 			<Config>
 				<Name>Debug</Name>
+				<Defines></Defines>
+			</Config>
+			<Config>
+				<Name>Noisy</Name>
 				<Defines></Defines>
 			</Config>
 			<Config>

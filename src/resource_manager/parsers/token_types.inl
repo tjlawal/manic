@@ -10,12 +10,12 @@ namespace Starlight {
 				FormatTokenType_Grouping,
 				FormatTokenType_SmootingGroup,
 				FormatTokenType_ObjectName,
-				FormatTokenType_Line, 
-				FormatTokenType_Point,
-				FormatTokenType_Face,
+
 				FormatTokenType_GeometricVertices,
 				FormatTokenType_TextureVertices,
 				FormatTokenType_VertexNormals,
+				FormatTokenType_Face,
+				
 				FormatTokenType_MaterialName,
 				FormatTokenType_MaterialLibrary,
 				FormatTokenType_Float,
@@ -23,6 +23,9 @@ namespace Starlight {
 				FormatTokenType_Slash,
 				FormatTokenType_Minus,
 
+				FormatTokenType_Line,
+				FormatTokenType_Point,
+				
 				FormatTokenType_EOF,
 			};
 
