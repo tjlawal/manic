@@ -112,6 +112,17 @@ namespace Starlight {
 				}
 			}
 
+			Rng2f32 rect_from_window(Handle window_handle) {
+				Rng2f32 range = {};
+				Window *w = w32_window_from_handle(window_handle);
+				if(w) {
+					RECT r = {};
+					GetWindowRect(w->hwnd, &r);
+					range = w32_rng_from_rect(r);
+				}
+				return range;
+			}
+
 			Rng2f32 client_rect_from_window(Handle window_handle) {
 				Rng2f32 range = {};
 				Window *w = w32_window_from_handle(window_handle);

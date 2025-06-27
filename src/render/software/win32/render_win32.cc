@@ -5,7 +5,7 @@ using namespace Starlight::Platform::Gfx;
 namespace Starlight {
 	namespace Render {
 
-		void allocate_backbuffer(Arena *arena, Renderer *buffer, s32 width, s32 height) {
+		void allocate_buffer(Arena *arena, Renderer *buffer, s32 width, s32 height) {
 			ProfFunction(profDebug_steelblue);
 			buffer->sw.width = width;
 			buffer->sw.height = height;
@@ -40,7 +40,7 @@ namespace Starlight {
 										&buffer->sw.win32_bitmapinfo, DIB_RGB_COLORS, SRCCOPY);
 		}
 
-		// REVISE: Could this be faster?
+		// @REVISE: This could be faster!!
 		void clear_colour_buffer(Renderer *buffer, u32 colour) {
 			ProfFunction(profDebug_firebrick);
 			for (s32 y = 0; y < buffer->sw.height; y++) {
@@ -50,7 +50,7 @@ namespace Starlight {
 			}
 		}
 
-		// REVISE: Could this be faster?
+		// @REVISE: This could be faster!!
 		void clear_z_buffer(Renderer *buffer) {
 			ProfFunction(profDebug_dimgrey);
 			for (s32 y = 0; y < buffer->sw.height; ++y) {

@@ -3,20 +3,21 @@
 namespace Starlight {
 	namespace Foundation {
 
-		union Vertex {
-			struct {
-				f32 x;
-				f32 y;
-				f32 z;
-			};
+		//union Vertex {
+		//	struct {
+		//		f32 x;
+		//		f32 y;
+		//		f32 z;
+		//	};
 
-			f32 v[3];
-		};
+		//	f32 v[3];
+		//};
 
 		struct Face {
 			s32 vertex_idx[3];
 			s32 texture_idx[3];
 			s32 normal_idx[3];
+			u32 colour;
 		};
 
 		union TextureCoord {
@@ -26,6 +27,12 @@ namespace Starlight {
 			};
 
 			f32 uv[2];
+		};
+
+		struct Triangle {
+			Vec4 points[3];
+			//TextureCoord texture_coords[3];
+			u32 colour;
 		};
 
 		// Calculate the barycentric weights of alpha, beta and gamma for point p;

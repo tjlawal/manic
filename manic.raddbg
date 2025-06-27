@@ -1,14 +1,14 @@
-// raddbg 0.9.20 project file
+// raddbg 0.9.19 project file
 
-recent_file: path: "src/game/main.cc"
 recent_file: path: "src/render/software/win32/render_win32.cc"
-recent_file: path: "src/resource_manager/resource_manager.cc"
-recent_file: path: "src/platform/core/platform_core.cc"
+recent_file: path: "src/game/main.cc"
+recent_file: path: "src/platform/core/win32/platform_core_win32.cc"
 recent_file: path: "src/foundation/arena.cc"
 recent_file: path: "src/resource_manager/parsers/wavefrontobj/wavefrontobj.cc"
-recent_file: path: "src/platform/core/win32/platform_core_win32.cc"
 recent_file: path: "src/platform/gfx/win32/platform_gfx_win32.cc"
 recent_file: path: "src/resource_manager/parsers/parser.cc"
+recent_file: path: "src/resource_manager/resource_manager.cc"
+recent_file: path: "src/platform/core/platform_core.cc"
 recent_file: path: "run_tree/minkernel/crts/ucrt/inc/corecrt_internal_stdio_output.h"
 recent_file: path: "../src/resource_manager/parsers/wavefrontobj/wavefrontobj.cc"
 recent_file: path: "D:/os/obj/amd64fre/minkernel/crts/ucrt/src/appcrt/startup/mt/objfre/amd64/minkernel/crts/ucrt/inc/corecrt_internal_traits.h"
@@ -21,4 +21,9 @@ target:
   executable: "run_tree/manic.exe"
   working_directory: run_tree
   enabled: 1
+}
+breakpoint:
+{
+  source_location: "src/game/main.cc:230:1"
+  hit_count: 1
 }

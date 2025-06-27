@@ -4,16 +4,31 @@
 
 namespace Starlight {
 	namespace Foundation {
-		// Forward declare stuff so order is irrelevant
+
+		// --------------------------------------------------
+		// Forward declaration so order of use is irrelevant.
+		// --------------------------------------------------
 		struct Vec2f;
 		struct Vec2s;
 		struct Vec3;
 		struct Vec4;
 		struct Matrix4;
 		struct Rng1u64;
-		
-		
-		// Vectors
+
+		// Vertex 
+		union Vertex {
+			struct {
+				f32 x;
+				f32 y;
+				f32 z;
+			};
+
+			f32 v[3];
+		};
+
+		//-----------------------------------------------
+		// Vecto2 Math - seperated into signed and float
+		//----------------------------------------------
 
 		// This is mostly used to represent gfx window.
 		struct Vec2s {
@@ -24,7 +39,6 @@ namespace Starlight {
 			Vec2s(s32 _x, s32 _y) : x(_x), y(_y) {}
 		};
 
-		// 2D
 		struct Vec2f {
 			f32 x;
 			f32 y;
@@ -51,6 +65,7 @@ namespace Starlight {
 
 			Vec3() : x(0), y(0), z(0) {}
 			Vec3(f32 _x, f32 _y, f32 _z) : x(_x), y(_y), z(_z) {}
+			Vec3(const Vertex& vertex) : x(vertex.x), y(vertex.y), z(vertex.z) {}
 
 			Vec3 operator+(const Vec3& left) const { return Vec3 { x + left.x, y + left.y, z + left.z }; }
 			Vec3 operator-(const Vec3& left) const { return Vec3 { x - left.x, y - left.y, z - left.z }; }
@@ -81,11 +96,21 @@ namespace Starlight {
 			internal Vec4 vec4_from_vec3(Vec3 v);
 		};
 
+		// ----------------------------------------
 		// Common vector operations
+		// ----------------------------------------
 
-		FORCE_INLINE internal f32 dot(const Vec2f& a, const Vec2f& b) { return ((a.x * b.x) + (a.y * b.y)); }
-		FORCE_INLINE internal f32 dot(const Vec3& a, const Vec3& b) { return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z)); }
-		FORCE_INLINE internal f32 dot(const Vec4& a, const Vec4& b) { return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z) + (a.w * b.w)); }
+		FORCE_INLINE internal f32 dot(const Vec2f& a, const Vec2f& b) { 
+			return ((a.x * b.x) + (a.y * b.y)); 
+		}
+		
+		FORCE_INLINE internal f32 dot(const Vec3& a, const Vec3& b) { 
+			return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z)); 
+		}
+
+		FORCE_INLINE internal f32 dot(const Vec4& a, const Vec4& b) { 
+			return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z) + (a.w * b.w)); 
+		}
 
 		FORCE_INLINE internal void normalize(Vec2f* v) {
 			f32 length = sqrtf((v->x * v->x) + (v->y * v->y));
@@ -115,12 +140,10 @@ namespace Starlight {
 			return Vec3 { (a.y * b.z) - (a.z * b.y), (a.z * b.x) - (a.x * b.z), (a.x * b.y) - (a.y * b.x) };
 		}
 
-		//FORCE_INLINE internal length(Vec2f* v) {}
-		//FORCE_INLINE internal length(Vec3* v) {}
-		//FORCE_INLINE internal length(Vec4* v) {}
+		// ----------------------------------------
+		// Matrix - 4 x 4
+		// ----------------------------------------
 
-		// Matrices
-		// 4 x 4
 		// REVISE, easy clap to speed up using SIMD!
 		struct Matrix4 {
 			f32 m[4][4];
@@ -236,18 +259,68 @@ namespace Starlight {
 				return result;
 			}
 
+			// Make faster!
 			FORCE_INLINE internal Matrix4 mat4f32_mul_mat4f32(Matrix4 a, Matrix4 b) {
 				Matrix4 result;
 
 				for (s32 rows = 0; rows < 4; ++rows) {
 					for (s32 cols = 0; cols < 4; ++cols) {
-						result.m[rows][cols] = a.m[rows][0] * b.m[0][cols] + a.m[rows][1] * b.m[1][cols] + a.m[rows][2] * b.m[2][cols] +
-							a.m[rows][3] * b.m[3][cols];
+						result.m[rows][cols] = a.m[rows][0] * b.m[0][cols] +
+																	 a.m[rows][1] * b.m[1][cols] + 
+																	 a.m[rows][2] * b.m[2][cols] +
+																	 a.m[rows][3] * b.m[3][cols];
 					}
 				}
 
 				return result;
 			}
+
+			//FORCE_INLINE internal Matrix4 mat4f32_mul_mat4f32(Matrix4 a, Matrix4 b) {
+			//	Matrix4 result;
+    
+			//	// Completely unroll the loops
+			//	result.m[0][0] = a.m[0][0]*b.m[0][0] + a.m[0][1]*b.m[1][0] + a.m[0][2]*b.m[2][0] + a.m[0][3]*b.m[3][0];
+			//	result.m[0][1] = a.m[0][0]*b.m[0][1] + a.m[0][1]*b.m[1][1] + a.m[0][2]*b.m[2][1] + a.m[0][3]*b.m[3][1];
+			//	result.m[0][2] = a.m[0][0]*b.m[0][2] + a.m[0][1]*b.m[1][2] + a.m[0][2]*b.m[2][2] + a.m[0][3]*b.m[3][2];
+			//	result.m[0][3] = a.m[0][0]*b.m[0][3] + a.m[0][1]*b.m[1][3] + a.m[0][2]*b.m[2][3] + a.m[0][3]*b.m[3][3];
+    
+			//	result.m[1][0] = a.m[1][0]*b.m[0][0] + a.m[1][1]*b.m[1][0] + a.m[1][2]*b.m[2][0] + a.m[1][3]*b.m[3][0];
+			//	result.m[1][1] = a.m[1][0]*b.m[0][1] + a.m[1][1]*b.m[1][1] + a.m[1][2]*b.m[2][1] + a.m[1][3]*b.m[3][1];
+			//	result.m[1][2] = a.m[1][0]*b.m[0][2] + a.m[1][1]*b.m[1][2] + a.m[1][2]*b.m[2][2] + a.m[1][3]*b.m[3][2];
+			//	result.m[1][3] = a.m[1][0]*b.m[0][3] + a.m[1][1]*b.m[1][3] + a.m[1][2]*b.m[2][3] + a.m[1][3]*b.m[3][3];
+    
+			//	result.m[2][0] = a.m[2][0]*b.m[0][0] + a.m[2][1]*b.m[1][0] + a.m[2][2]*b.m[2][0] + a.m[2][3]*b.m[3][0];
+			//	result.m[2][1] = a.m[2][0]*b.m[0][1] + a.m[2][1]*b.m[1][1] + a.m[2][2]*b.m[2][1] + a.m[2][3]*b.m[3][1];
+			//	result.m[2][2] = a.m[2][0]*b.m[0][2] + a.m[2][1]*b.m[1][2] + a.m[2][2]*b.m[2][2] + a.m[2][3]*b.m[3][2];
+			//	result.m[2][3] = a.m[2][0]*b.m[0][3] + a.m[2][1]*b.m[1][3] + a.m[2][2]*b.m[2][3] + a.m[2][3]*b.m[3][3];
+    
+			//	result.m[3][0] = a.m[3][0]*b.m[0][0] + a.m[3][1]*b.m[1][0] + a.m[3][2]*b.m[2][0] + a.m[3][3]*b.m[3][0];
+			//	result.m[3][1] = a.m[3][0]*b.m[0][1] + a.m[3][1]*b.m[1][1] + a.m[3][2]*b.m[2][1] + a.m[3][3]*b.m[3][1];
+			//	result.m[3][2] = a.m[3][0]*b.m[0][2] + a.m[3][1]*b.m[1][2] + a.m[3][2]*b.m[2][2] + a.m[3][3]*b.m[3][2];
+			//	result.m[3][3] = a.m[3][0]*b.m[0][3] + a.m[3][1]*b.m[1][3] + a.m[3][2]*b.m[2][3] + a.m[3][3]*b.m[3][3];
+    
+			//	return result;
+			//}
+
+			//FORCE_INLINE internal Matrix4 mat4f32_mul_mat4f32(Matrix4 a, Matrix4 b) {
+			//	Matrix4 result;
+    
+			//	for (s32 i = 0; i < 4; ++i) {
+			//		// Cache the entire row of matrix A
+			//		f32 ai0 = a.m[i][0];
+			//		f32 ai1 = a.m[i][1]; 
+			//		f32 ai2 = a.m[i][2];
+			//		f32 ai3 = a.m[i][3];
+        
+			//		// Compute entire row at once
+			//		result.m[i][0] = ai0*b.m[0][0] + ai1*b.m[1][0] + ai2*b.m[2][0] + ai3*b.m[3][0];
+			//		result.m[i][1] = ai0*b.m[0][1] + ai1*b.m[1][1] + ai2*b.m[2][1] + ai3*b.m[3][1];
+			//		result.m[i][2] = ai0*b.m[0][2] + ai1*b.m[1][2] + ai2*b.m[2][2] + ai3*b.m[3][2];
+			//		result.m[i][3] = ai0*b.m[0][3] + ai1*b.m[1][3] + ai2*b.m[2][3] + ai3*b.m[3][3];
+			//	}
+    
+			//	return result;
+			//}
 
 			FORCE_INLINE internal Vec4 mat4f32_mul_projection(Matrix4 projection_matrix, Vec4 v) {
 				// Multiply the projection matrix by the original vector
@@ -306,7 +379,6 @@ namespace Starlight {
 
 			internal Vec2f dim2f32(Rng2f32 r);
 		};
-
 	}
 }
 

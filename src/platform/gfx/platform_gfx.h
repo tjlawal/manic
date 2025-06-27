@@ -52,6 +52,7 @@ namespace Starlight {
 			internal void     window_close(Handle window_handle);
 			internal void    	window_first_paint(Handle window_handle);
 			internal void 	 	window_set_fullscreen(Handle window_handle);
+			internal Rng2f32  rect_from_window(Handle window_handle);
 			internal Rng2f32  client_rect_from_window(Handle window_handle);
 
 			// TODO: Delete me

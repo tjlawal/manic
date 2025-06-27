@@ -16,6 +16,31 @@ namespace Starlight {
 		Rng2f32	window_dim;
 	};
 
+	// @NOTE: This is temporary, pending when I can think of a better way to architect this.
+	struct Camera {
+		Matrix4 projection;
+		Vec3 position;
+		f32 fov;
+		f32 znear;
+		f32 zfar;
+		f32 aspect_ratio;
+	};
+
+	struct Light {
+		Vec3 direction;
+	};
+
+
+	internal u32 light_intensity(u32 colour, f32 percentage) {
+		//clamp(percentage, 0, 1);
+		u32 alpha = (colour & 0xFF000000);
+		u32 red = 	(colour & 0x00FF0000) * percentage;
+		u32 green = (colour & 0x0000FF00) * percentage;
+		u32 blue = 	(colour & 0x000000FF) * percentage;
+		u32 new_colour = alpha | (red & 0x00FF0000) | (green & 0x0000FF00) | (blue & 0x000000FF);
+		return new_colour;
+	}
+
 	//RenderHandle render_handle;
 	//struct GameState {};
 }
