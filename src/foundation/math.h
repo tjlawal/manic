@@ -157,11 +157,12 @@ namespace Starlight {
 			// its just the foundation.
 
 			FORCE_INLINE internal Matrix4 identity(void) {
-				// | 1 0 0 0 |
-				// | 0 1 0 0 |
-				// | 0 0 1 0 |
-				// | 0 0 0 1 |
-				Matrix4 m = {{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}}};
+				Matrix4 m = {
+					{1, 0, 0, 0},
+					{0, 1, 0, 0},
+					{0, 0, 1, 0},
+					{0, 0, 0, 1},
+				};
 				return m;
 			}
 
