@@ -23,6 +23,10 @@ using namespace Starlight::Foundation;
 
 namespace Starlight {
 	namespace Platform {
+
+		// EXE folder stuff
+		WCHAR EXE_FOLDER[256];
+		WCHAR CURRENT_FOLDER[256];
 		
 		// Win32 State
 		struct Win32State {

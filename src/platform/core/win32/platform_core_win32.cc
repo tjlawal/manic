@@ -392,13 +392,20 @@ namespace Starlight {
 
 		// @todo: Add argc and argv
 		internal void w32_entry_point_caller() {
-			ProfFunction(profDebug_plum);
-
 			SetUnhandledExceptionFilter(&win32_exception_filter);
 
-			// Do initialization stuff here before calling into the "real" entry point
-
-			// TODO: See if large pages support is available here!
+			// Set working directory based on the exe location. 
+			// This allows to be able to start cli style.
+			WCHAR exe_path[256];
+			GetModuleFileNameW(0, exe_path, sizeof(exe_path));
+			WCHAR *one_past_slash = exe_path;
+			WCHAR *exe = exe_path;
+			while(*exe) {
+				if(*exe++ == L'\\') one_past_slash = exe;
+			}
+			
+			MemoryCopy(EXE_FOLDER, exe_path, (one_past_slash - 1 - exe_path) * sizeof(WCHAR));
+			GetCurrentDirectoryW(sizeof(CURRENT_FOLDER), CURRENT_FOLDER);
 
 			SYSTEM_INFO sys_info;
 			GetSystemInfo(&sys_info);

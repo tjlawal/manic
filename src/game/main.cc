@@ -59,6 +59,14 @@ namespace Starlight {
 							quit = 1;
 						} break;
 
+						case(Key_A): {
+							g_mesh_info->rotate.y += 0.1;
+						} break;
+
+						case(Key_O): {
+							g_mesh_info->rotate.x += 0.1;
+						} break;
+
 						default:
 							break;
 					} break;
@@ -86,7 +94,7 @@ namespace Starlight {
 
 		// Initialize window and paint into it
 		// 16:9 aspect ratio, 518,400 pixels to process each frame.
-		g_window_state->os_handle = window_open(Rng2f32(0, 0, 1020, 920), str8_lit(BUILD_TITLE_STRING_LITERAL)); 
+		g_window_state->os_handle = window_open(Rng2f32(0, 0, 1920, 1080), str8_lit(BUILD_TITLE_STRING_LITERAL)); 
 		g_window_state->window_dim = rect_from_window(g_window_state->os_handle);
 		window_first_paint(g_window_state->os_handle);
 		allocate_buffer(g_window_state->game_memory, &g_window_state->render_buffer, 
@@ -103,7 +111,7 @@ namespace Starlight {
 		g_camera.projection = perspective_project(g_camera.fov, g_camera.aspect_ratio, g_camera.znear, g_camera.zfar);
 
 		// Initialize the resource manager.
-		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/drone.obj"));
+		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/crab.obj"));
 		g_mesh_info->scale = {1.0, 1.0, 1.0};
 
 		#if BUILD_DEBUG_VERY_NOISY
@@ -117,8 +125,11 @@ namespace Starlight {
 		ProfFunction(profDebug_orangered);
 
 		g_face_count_idx = 0;
-		g_mesh_info->rotate.y += 0.01;
+		//g_mesh_info->rotate.y += 0.051;
+		//g_mesh_info->rotate.x += 0.056;
+		//g_mesh_info->rotate.z += 0.001;
 		g_mesh_info->translate.z = 5.0;
+		//g_mesh_info->translate.y = 2.5;
 
 		Matrix4 scale = Matrix4::scale(g_mesh_info->scale.x, g_mesh_info->scale.y, g_mesh_info->scale.z);
 		Matrix4 translate = Matrix4::translate(g_mesh_info->translate.x, g_mesh_info->translate.y, g_mesh_info->translate.z);
