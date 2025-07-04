@@ -499,8 +499,8 @@ namespace Starlight {
 				if (!wait || GetMessage(&msg, 0, 0, 0)) {
 					b32 first_wait = wait;
 					for (; first_wait || PeekMessage(&msg, 0, 0, 0, PM_REMOVE); first_wait = 0) {
-						DispatchMessage(&msg);
 						TranslateMessage(&msg);
+						DispatchMessage(&msg);
 						if (msg.message == WM_QUIT) {
 							w32_push_event(EventKind_WindowClose, 0);
 						}

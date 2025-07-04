@@ -1,34 +1,36 @@
 #pragma once
 
-/* 
-Some opinions made at the foundation layer of this codebase that determines what operating systems, language standard,
-and compiler versions, and CPU architecture are supported. These are meant to be minimum requirements this codebase 
-promises to provide and guarantee within technical reason. Some will get dropped, 
-(i.e., OS and compiler versions) with time as they become irrelevant or unneeded.
-
-- Supported Architecture:
-	- 64-bit processors only are supported.
-	- x86_64, arm64 (or aarch64), and RISCV(when ever they materialize).
-	- Big Endian and Little Endian support exist, but Little Endian is the default unless required.
-
-- Language Standard: C99 and C++11.
-
-- Supported operating systems are:
-	- Windows 10 and above. If the need to support anything below that arises, then handle it then.
-	- Linux. This is a never ending hole cause there's so many linux distros but the ones supported right now
-		are the distros I am familiar with and in tandem, OLDEST LTS version as of this writing. If the minimum supported versions
-		LTS dates has passed, assume they are longer supported.
-	- Ubuntu 14.04 LTS (Legacy support ends Apr 2026) and above.
-	- Debian 11 LTS (Legacy support ends August 2026) and above.
-	- Fedora Linux
-	- MacOS. Stubs are in place for its support but pending I acquire a mac or need arise, whichever comes first, stub it shall remain.
-
-- Supported compilers are:
-	- MSVC C/C++ compiler - 2017 and above. (NOTE: As of the time of writing, I dont have access to / can't find a 
-	community version of the compiler less than 19.43, so ensuring support with other versions is gonna be fishy except I buy a subscription)
-	- GCC 7.5  is minimum supported compiler.
-	- Clang 3.3 is the minimum supported compiler.
-*/
+/************************************************************************************
+*
+* Some opinions made at the foundation layer of this codebase that determines what operating systems, language standard,
+* and compiler versions, and CPU architecture are supported. These are meant to be minimum requirements this codebase 
+* promises to provide and guarantee within technical reason. Some will get dropped,  (i.e., OS and compiler versions) 
+* with time as they become irrelevant or unneeded.
+*
+*	- Minimum Supported CPU
+*   - Extra care is taken to support features in CPU from 2015 onwards. Attention is not paid to CPUs made before then.
+*
+* - Supported Architecture:
+*		- 64-bit processors only are supported.
+*		- x86_64, arm64 (or aarch64), and RISCV(when ever they materialize).
+*		- Big Endian and Little Endian support exist, but Little Endian is the default unless required.
+* - Language Standard: 
+* 	- C99 and C++11.
+* - Supported operating systems are:
+* 	- Windows 10 and above. If the need to support anything below that arises, then handle it then.
+* 	- Linux. This is a never ending hole cause there's so many linux distros but the ones supported right now
+* 		are the distros I am familiar with and in tandem, OLDEST LTS version as of this writing. If the minimum supported versions
+* 		LTS dates has passed, assume they are longer supported.
+* 	- Ubuntu 14.04 LTS (Legacy support ends Apr 2026) and above.
+* 	- Debian 11 LTS (Legacy support ends August 2026) and above.
+* 	- Fedora Linux
+* 	- MacOS. Stubs are in place for its support but pending I acquire a mac or need arise, whichever comes first, stub it shall remain.
+* - Supported compilers are:
+* 	- MSVC C/C++ compiler - 2017 and above. (NOTE: As of the time of writing, I dont have access to / can't find a 
+* 		community version of the compiler less than 19.43, so ensuring support with other versions is gonna be fishy except I buy a subscription)
+* 	- GCC 7.5  is minimum supported compiler.
+*   - Clang 3.3 is the minimum supported compiler.
+*************************************************************************************/
 
 #if defined(__clang__)
 	#define COMPILER_CLANG 1

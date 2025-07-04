@@ -59,17 +59,18 @@ namespace Starlight {
 							quit = 1;
 						} break;
 
-						case(Key_A): {
-							g_mesh_info->rotate.y += 0.1;
-						} break;
+		//				case(Key_A): {
+		//					g_mesh_info->rotate.y += 0.1;
+		//				} break;
 
-						case(Key_O): {
-							g_mesh_info->rotate.x += 0.1;
-						} break;
+		//				case(Key_O): {
+		//					g_mesh_info->rotate.x += 0.1;
+		//				} break;
 
 						default:
 							break;
 					} break;
+
 				}
 
 				default:
@@ -125,17 +126,17 @@ namespace Starlight {
 		ProfFunction(profDebug_orangered);
 
 		g_face_count_idx = 0;
+		g_mesh_info->rotate.x += 0.056;
 		//g_mesh_info->rotate.y += 0.051;
-		//g_mesh_info->rotate.x += 0.056;
 		//g_mesh_info->rotate.z += 0.001;
 		g_mesh_info->translate.z = 5.0;
 		//g_mesh_info->translate.y = 2.5;
 
-		Matrix4 scale = Matrix4::scale(g_mesh_info->scale.x, g_mesh_info->scale.y, g_mesh_info->scale.z);
-		Matrix4 translate = Matrix4::translate(g_mesh_info->translate.x, g_mesh_info->translate.y, g_mesh_info->translate.z);
-		Matrix4 rotate_x = Matrix4::rotate_x(g_mesh_info->rotate.x);
-		Matrix4 rotate_y = Matrix4::rotate_y(g_mesh_info->rotate.y);
-		Matrix4 rotate_z = Matrix4::rotate_z(g_mesh_info->rotate.z);
+		Matrix4 scale = matrix_scale(g_mesh_info->scale.x, g_mesh_info->scale.y, g_mesh_info->scale.z);
+		Matrix4 translate = matrix_translate(g_mesh_info->translate.x, g_mesh_info->translate.y, g_mesh_info->translate.z);
+		Matrix4 rotate_x = matrix_rotate_x(g_mesh_info->rotate.x);
+		Matrix4 rotate_y = matrix_rotate_y(g_mesh_info->rotate.y);
+		Matrix4 rotate_z = matrix_rotate_z(g_mesh_info->rotate.z);
 
 		s32 fc = g_mesh_info->faces_count;
 		for(s32 i = 0; i < fc; i++) {
@@ -150,17 +151,17 @@ namespace Starlight {
 			// Loop through all vertices in teh current face and apply transformation
 			for(s32 j = 0; j < 3; j++) {
 				Vec4 transformed_vertex = Vec4::vec4_from_vec3(face_vertices[j]);
-				Matrix4 world_matrix = Matrix4::identity();
+				Matrix4 world_matrix = matrix_identity();
 
 				// Order matters in how things are done, not respecting that means things are in weird places.
-				world_matrix = Matrix4::mat4f32_mul_mat4f32(scale, world_matrix);
-				world_matrix = Matrix4::mat4f32_mul_mat4f32(rotate_x, world_matrix);
-				world_matrix = Matrix4::mat4f32_mul_mat4f32(rotate_y, world_matrix);
-				world_matrix = Matrix4::mat4f32_mul_mat4f32(rotate_z, world_matrix);
-				world_matrix = Matrix4::mat4f32_mul_mat4f32(translate, world_matrix);
+				world_matrix = matrix_multiply(scale, world_matrix);
+				world_matrix = matrix_multiply(rotate_x, world_matrix);
+				world_matrix = matrix_multiply(rotate_y, world_matrix);
+				world_matrix = matrix_multiply(rotate_z, world_matrix);
+				world_matrix = matrix_multiply(translate, world_matrix);
 
 				// Multiply world matrix by original vector
-				transformed_vertex = Matrix4::mat4f32_mul_vec4(world_matrix, transformed_vertex);
+				transformed_vertex = matrix_multiply_vec4(world_matrix, transformed_vertex);
 				transformed_vertices[j] = transformed_vertex;
 			}
 
@@ -190,7 +191,7 @@ namespace Starlight {
 			Vec4 projected_points[3];
 			for(s32 k = 0; k < 3; k++) {
 				// Project current vertex
-				projected_points[k] = Matrix4::mat4f32_mul_projection(g_camera.projection, transformed_vertices[k]); 
+				projected_points[k] = mat4f32_mul_projection(g_camera.projection, transformed_vertices[k]); 
 
 				// scale viewport
 				projected_points[k].x *= (g_window_state->render_buffer.sw.width / 2.0);

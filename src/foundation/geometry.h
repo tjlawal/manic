@@ -59,21 +59,21 @@ namespace Starlight {
 			return weights;
 		}
 
-		FORCE_INLINE internal Matrix4 perspective_project(f32 fov, f32 aspect_ratio, f32 znear, f32 zfar) {
-			// Matrix projection formula
-			// |(h/w)*(1/tan(fov/2)							 0										0														 0|			|x|
-			// |									0		1/tan(fov/2)										0														 0|   	|y|
-			// | 									0							 0		zfar/(zfar-znear)		(-zfar*znear)/(zfar-znear)|	 *	|z|
-			// | 									0							 0										1														 0|			|1|
-			Matrix4 result = {{0}};
+		//FORCE_INLINE internal Matrix4 perspective_project(f32 fov, f32 aspect_ratio, f32 znear, f32 zfar) {
+		//	// Matrix projection formula
+		//	// |(h/w)*(1/tan(fov/2)							 0										0														 0|			|x|
+		//	// |									0		1/tan(fov/2)										0														 0|   	|y|
+		//	// | 									0							 0		zfar/(zfar-znear)		(-zfar*znear)/(zfar-znear)|	 *	|z|
+		//	// | 									0							 0										1														 0|			|1|
+		//	Matrix4 result = {{0}};
 
-			result.m[0][0] = aspect_ratio * (1 / tan(fov / 2));
-			result.m[1][1] = (1 / tan(fov / 2));
-			result.m[2][2] = (zfar / (zfar - znear));
-			result.m[2][3] = (((-zfar) * znear) / (zfar - znear));
-			result.m[3][2] = 1.0;
+		//	result.m[0][0] = aspect_ratio * (1 / tan(fov / 2));
+		//	result.m[1][1] = (1 / tan(fov / 2));
+		//	result.m[2][2] = (zfar / (zfar - znear));
+		//	result.m[2][3] = (((-zfar) * znear) / (zfar - znear));
+		//	result.m[3][2] = 1.0;
 
-			return result;
-		}
+		//	return result;
+		//}
 	}
 }
