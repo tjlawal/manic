@@ -95,7 +95,7 @@ namespace Starlight {
 
 		// Initialize window and paint into it
 		// 16:9 aspect ratio, 518,400 pixels to process each frame.
-		g_window_state->os_handle = window_open(Rng2f32(0, 0, 1920, 1080), str8_lit(BUILD_TITLE_STRING_LITERAL)); 
+		g_window_state->os_handle = window_open(Rng2f32(0, 0, 800, 600), str8_lit(BUILD_TITLE_STRING_LITERAL)); 
 		g_window_state->window_dim = rect_from_window(g_window_state->os_handle);
 		window_first_paint(g_window_state->os_handle);
 		allocate_buffer(g_window_state->game_memory, &g_window_state->render_buffer, 
@@ -126,7 +126,7 @@ namespace Starlight {
 		ProfFunction(profDebug_orangered);
 
 		g_face_count_idx = 0;
-		g_mesh_info->rotate.x += 0.0563;
+		g_mesh_info->rotate.x += 0.01;
 		//g_mesh_info->rotate.y += 0.011;
 		//g_mesh_info->rotate.z += 0.001;
 		g_mesh_info->translate.z = 5.0;
@@ -154,11 +154,11 @@ namespace Starlight {
 				Matrix world_matrix = matrix_identity();
 
 				// Order matters in how things are done, not respecting that means things are in weird places.
-				world_matrix = matrix_multiply(scale, world_matrix);
-				world_matrix = matrix_multiply(rotate_x, world_matrix);
-				world_matrix = matrix_multiply(rotate_y, world_matrix);
-				world_matrix = matrix_multiply(rotate_z, world_matrix);
-				world_matrix = matrix_multiply(translate, world_matrix);
+				world_matrix = scale * world_matrix;
+				world_matrix = rotate_x * world_matrix;
+				world_matrix = rotate_y * world_matrix;
+				world_matrix = rotate_z * world_matrix;
+				world_matrix = translate * world_matrix;
 
 				// Multiply world matrix by original vector
 				transformed_vertex = matrix_multiply_vec4(world_matrix, transformed_vertex);
@@ -219,6 +219,7 @@ namespace Starlight {
 	}
 
 	internal void render() {
+		ProfFrameMark;
 		ProfFunction(profDebug_red);
 		clear_colour_buffer(&g_window_state->render_buffer, 0x00000019);
 
@@ -250,7 +251,7 @@ namespace Starlight {
 			update();
 			render();
 
-			sleep(16); // This is sucky
+			//sleep(16); // This is sucky
 		}
 	}
 
