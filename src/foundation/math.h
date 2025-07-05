@@ -47,7 +47,7 @@ namespace Starlight {
 		struct Vec2s;
 		struct Vec3;
 		struct Vec4;
-		struct Matrix4;
+		struct Matrix;
 		struct Rng1u64;
 
 		// Vertex 
@@ -176,20 +176,21 @@ namespace Starlight {
 			return Vec3 { (a.y * b.z) - (a.z * b.y), (a.z * b.x) - (a.x * b.z), (a.x * b.y) - (a.y * b.x) };
 		}
 
-		// REVISE, easy clap to speed up using SIMD!
-
+		
 		// ----------------------------------------
 		// Matrix - 4 x 4
 		// ----------------------------------------
-		struct Matrix4 {
+		struct Matrix {
 			f32  m0,  m1,  m2,  m3; // Row 1
 			f32  m4,  m5,  m6,  m7; // Row 2
 			f32  m8,  m9, m10, m11; // Row 3
 			f32 m12, m13, m14, m15; // Row 4
 		};
 
-		FORCE_INLINE internal Matrix4 matrix_identity(void) {
-			Matrix4 result = { 
+		// @REVISE: Could this be even more faster?
+
+		FORCE_INLINE internal Matrix matrix_identity(void) {
+			Matrix result = { 
 				1.0f, 0.0f, 0.0f, 0.0f, 
 				0.0f, 1.0f, 0.0f, 0.0f, 
 				0.0f, 0.0f, 1.0f, 0.0f, 
@@ -199,8 +200,8 @@ namespace Starlight {
 			return result;
 		}
 
-		FORCE_INLINE internal Matrix4 matrix_add(Matrix4 first, Matrix4 second) {
-			Matrix4 result = {};
+		FORCE_INLINE internal Matrix matrix_add(Matrix first, Matrix second) {
+			Matrix result = {};
 
 			result.m0  = first.m0 + second.m0;
 			result.m1  = first.m1 + second.m1;
@@ -222,8 +223,8 @@ namespace Starlight {
 			return result;
 		}
 
-		FORCE_INLINE internal Matrix4 matrix_subtract(Matrix4 first, Matrix4 second) {
-			Matrix4 result = {};
+		FORCE_INLINE internal Matrix matrix_subtract(Matrix first, Matrix second) {
+			Matrix result = {};
 
 			result.m0  = first.m0 - second.m0;
 			result.m1  = first.m1 - second.m1;
@@ -246,8 +247,8 @@ namespace Starlight {
 		}
 
 		// Matrix multiplication does not care about how it is represented in memory (row-major or column-major)!
-		FORCE_INLINE internal Matrix4 matrix_multiply(Matrix4 first, Matrix4 second) {
-			Matrix4 result = {};
+		FORCE_INLINE internal Matrix matrix_multiply(Matrix first, Matrix second) {
+			Matrix result = {};
 
 			result.m0 = (first.m0 * second.m0) + (first.m1 * second.m4) + (first.m2 * second.m8)  + (first.m3 * second.m12);
 			result.m1 = (first.m0 * second.m1) + (first.m1 * second.m5) + (first.m2 * second.m9)  + (first.m3 * second.m13);
@@ -272,8 +273,10 @@ namespace Starlight {
 			return result;
 		}
 
-		FORCE_INLINE internal Matrix4 matrix_rotate_x(f32 angle) {
-			Matrix4 result = { 
+		FORCE_INLINE internal Matrix matrix_transpose(Matrix m) {};
+
+		FORCE_INLINE internal Matrix matrix_rotate_x(f32 angle) {
+			Matrix result = { 
 				1.0f, 0.0f, 0.0f, 0.0f, 
 				0.0f, 1.0f, 0.0f, 0.0f, 
 				0.0f, 0.0f, 1.0f, 0.0f, 
@@ -291,8 +294,8 @@ namespace Starlight {
 			return result;
 		}
 
-		FORCE_INLINE internal Matrix4 matrix_rotate_y(f32 angle) {
-			Matrix4 result = { 
+		FORCE_INLINE internal Matrix matrix_rotate_y(f32 angle) {
+			Matrix result = { 
 				1.0f, 0.0f, 0.0f, 0.0f, 
 				0.0f, 1.0f, 0.0f, 0.0f, 
 				0.0f, 0.0f, 1.0f, 0.0f, 
@@ -310,8 +313,8 @@ namespace Starlight {
 			return result;
 		}
 
-		FORCE_INLINE internal Matrix4 matrix_rotate_z(f32 angle) {
-			Matrix4 result = { 
+		FORCE_INLINE internal Matrix matrix_rotate_z(f32 angle) {
+			Matrix result = { 
 				1.0f, 0.0f, 0.0f, 0.0f, 
 				0.0f, 1.0f, 0.0f, 0.0f, 
 				0.0f, 0.0f, 1.0f, 0.0f, 
@@ -329,8 +332,8 @@ namespace Starlight {
 			return result;
 		}
 
-		FORCE_INLINE internal Matrix4 matrix_scale(f32 x, f32 y, f32 z) {
-			Matrix4 result = {
+		FORCE_INLINE internal Matrix matrix_scale(f32 x, f32 y, f32 z) {
+			Matrix result = {
 				x, 0.0f, 0.0f, 0.0f,
 				0.0f, y, 0.0f, 0.0f, 
 				0.0f, 0.0f, z, 0.0f, 
@@ -340,8 +343,8 @@ namespace Starlight {
 			return result;
 		}
 
-		FORCE_INLINE internal Matrix4 matrix_translate(f32 x, f32 y, f32 z){
-			Matrix4 result = { 
+		FORCE_INLINE internal Matrix matrix_translate(f32 x, f32 y, f32 z){
+			Matrix result = { 
 				1.0f, 0.0f, 0.0f, 0.0f, 
 				0.0f, 1.0f, 0.0f, 0.0f, 
 				0.0f, 0.0f, 1.0f, 0.0f, 
@@ -355,7 +358,7 @@ namespace Starlight {
 			return result;
 		}
 
-		FORCE_INLINE internal Vec4 matrix_multiply_vec4(Matrix4 m, Vec4 v) {
+		FORCE_INLINE internal Vec4 matrix_multiply_vec4(Matrix m, Vec4 v) {
 			Vec4 result;
 			
 			result.x = (m.m0 * v.x)  + (m.m1 * v.y)  + (m.m2 * v.z)  + (m.m3 * v.w);
@@ -366,144 +369,37 @@ namespace Starlight {
 			return result;
 		}
 
-		// NOTE: TEMPORARY
-		FORCE_INLINE internal Matrix4 perspective_project(f32 fov, f32 aspect_ratio, f32 znear, f32 zfar) {
-			// Matrix projection formula
-			// |(h/w)*(1/tan(fov/2)							 0										0														 0|			|x|
-			// |									0		1/tan(fov/2)										0														 0|   	|y|
-			// | 									0							 0		zfar/(zfar-znear)		(-zfar*znear)/(zfar-znear)|	 *	|z|
-			// | 									0							 0										1														 0|			|1|
-			Matrix4 result = {};
+		FORCE_INLINE Matrix perspective(f32 fov, f32 aspect, f32 znear, f32 zfar) {
+			Matrix result = {};
+			
+			f32 f = 1 / (tanf(fov / 2));
+			f32 z_normalize = zfar / (zfar - znear);
 
-			result.m0 = aspect_ratio * (1 / tanf(fov / 20));
-			result.m5 = (1 / tanf(fov / 2));
-			result.m10 = (zfar / (zfar - znear));
-			result.m11 = (((-zfar) * znear) / (zfar - znear));
-			result.m15 = 1.0f;
-
-			//result.m[0][0] = aspect_ratio * (1 / tan(fov / 2));
-			//result.m[1][1] = (1 / tan(fov / 2));
-			//result.m[2][2] = (zfar / (zfar - znear));
-			//result.m[2][3] = (((-zfar) * znear) / (zfar - znear));
-			//result.m[3][2] = 1.0;
+			result.m0 = aspect * f;
+			result.m5 = f;
+			result.m10 = z_normalize;
+			result.m11 = -z_normalize * znear;
+			result.m14 = 1.0f;
 
 			return result;
 		}
 
-		FORCE_INLINE internal Vec4 mat4f32_mul_projection(Matrix4 projection_matrix, Vec4 v) {
-			// Multiply the projection matrix by the original vector
-			Vec4 result = matrix_multiply_vec4(projection_matrix, v);
+		FORCE_INLINE internal Vec4 mat4f32_mul_projection(Matrix m, Vec4 v) {
+			Vec4 result;
+			result.x = (m.m0 * v.x)  + (m.m1 * v.y)  + (m.m2 * v.z)  + (m.m3 * v.w);
+			result.y = (m.m4 * v.x)  + (m.m5 * v.y)  + (m.m6 * v.z)  + (m.m7 * v.w);
+			result.z = (m.m8 * v.x)  + (m.m9 * v.y)  + (m.m10 * v.z) + (m.m11 * v.w);
+			result.w = (m.m12 * v.x) + (m.m13 * v.y) + (m.m14 * v.z) + (m.m15 * v.w);
 
-			// Perform perspective divide with original z-value that is
-			// stored in the projection matrix 'w', hence normalizing the entire image
-			// space.
-			if (result.w != 0.0) {
+			// Perform perspective divide with original z-value that is stored in 
+			// the projection matrix 'w', hence normalizing the entire image space.
+			if (result.w != 0.0f) {
 				result.x /= result.w;
 				result.y /= result.w;
 				result.z /= result.w;
 			}
 			return result;	
 		}
-
-		//struct Matrix4 {
-		//	f32 m[4][4];
-
-		//	Matrix4 operator+(const Matrix4& left) const {}
-		//	Matrix4 operator-(const Matrix4& left) const {}
-		//	Matrix4 operator*(const Matrix4& left) const {}
-		//	Matrix4 operator/(const Matrix4& left) const {}
-
-		//	// REVISE: A second pass should be done on these functions for performance. Not necessary now cause 
-		//	// its just the foundation.
-
-		//	FORCE_INLINE internal Vec4 mat4f32_mul_vec4(Matrix4 m, Vec4 v) {
-		//		Vec4 result;
-		//		result.x = m.m[0][0] * v.x + m.m[0][1] * v.y + m.m[0][2] * v.z + m.m[0][3] * v.w;
-		//		result.y = m.m[1][0] * v.x + m.m[1][1] * v.y + m.m[1][2] * v.z + m.m[1][3] * v.w;
-		//		result.z = m.m[2][0] * v.x + m.m[2][1] * v.y + m.m[2][2] * v.z + m.m[2][3] * v.w;
-		//		result.w = m.m[3][0] * v.x + m.m[3][1] * v.y + m.m[3][2] * v.z + m.m[3][3] * v.w;
-
-		//		return result;
-		//	}
-
-		//	// Make faster!
-		//	FORCE_INLINE internal Matrix4 mat4f32_mul_mat4f32(Matrix4 a, Matrix4 b) {
-		//		Matrix4 result;
-
-		//		for (s32 rows = 0; rows < 4; ++rows) {
-		//			for (s32 cols = 0; cols < 4; ++cols) {
-		//				result.m[rows][cols] = a.m[rows][0] * b.m[0][cols] +
-		//															 a.m[rows][1] * b.m[1][cols] + 
-		//															 a.m[rows][2] * b.m[2][cols] +
-		//															 a.m[rows][3] * b.m[3][cols];
-		//			}
-		//		}
-
-		//		return result;
-		//	}
-
-			//FORCE_INLINE internal Matrix4 mat4f32_mul_mat4f32(Matrix4 a, Matrix4 b) {
-			//	Matrix4 result;
-    
-			//	// Completely unroll the loops
-			//	result.m[0][0] = a.m[0][0]*b.m[0][0] + a.m[0][1]*b.m[1][0] + a.m[0][2]*b.m[2][0] + a.m[0][3]*b.m[3][0];
-			//	result.m[0][1] = a.m[0][0]*b.m[0][1] + a.m[0][1]*b.m[1][1] + a.m[0][2]*b.m[2][1] + a.m[0][3]*b.m[3][1];
-			//	result.m[0][2] = a.m[0][0]*b.m[0][2] + a.m[0][1]*b.m[1][2] + a.m[0][2]*b.m[2][2] + a.m[0][3]*b.m[3][2];
-			//	result.m[0][3] = a.m[0][0]*b.m[0][3] + a.m[0][1]*b.m[1][3] + a.m[0][2]*b.m[2][3] + a.m[0][3]*b.m[3][3];
-    
-			//	result.m[1][0] = a.m[1][0]*b.m[0][0] + a.m[1][1]*b.m[1][0] + a.m[1][2]*b.m[2][0] + a.m[1][3]*b.m[3][0];
-			//	result.m[1][1] = a.m[1][0]*b.m[0][1] + a.m[1][1]*b.m[1][1] + a.m[1][2]*b.m[2][1] + a.m[1][3]*b.m[3][1];
-			//	result.m[1][2] = a.m[1][0]*b.m[0][2] + a.m[1][1]*b.m[1][2] + a.m[1][2]*b.m[2][2] + a.m[1][3]*b.m[3][2];
-			//	result.m[1][3] = a.m[1][0]*b.m[0][3] + a.m[1][1]*b.m[1][3] + a.m[1][2]*b.m[2][3] + a.m[1][3]*b.m[3][3];
-    
-			//	result.m[2][0] = a.m[2][0]*b.m[0][0] + a.m[2][1]*b.m[1][0] + a.m[2][2]*b.m[2][0] + a.m[2][3]*b.m[3][0];
-			//	result.m[2][1] = a.m[2][0]*b.m[0][1] + a.m[2][1]*b.m[1][1] + a.m[2][2]*b.m[2][1] + a.m[2][3]*b.m[3][1];
-			//	result.m[2][2] = a.m[2][0]*b.m[0][2] + a.m[2][1]*b.m[1][2] + a.m[2][2]*b.m[2][2] + a.m[2][3]*b.m[3][2];
-			//	result.m[2][3] = a.m[2][0]*b.m[0][3] + a.m[2][1]*b.m[1][3] + a.m[2][2]*b.m[2][3] + a.m[2][3]*b.m[3][3];
-    
-			//	result.m[3][0] = a.m[3][0]*b.m[0][0] + a.m[3][1]*b.m[1][0] + a.m[3][2]*b.m[2][0] + a.m[3][3]*b.m[3][0];
-			//	result.m[3][1] = a.m[3][0]*b.m[0][1] + a.m[3][1]*b.m[1][1] + a.m[3][2]*b.m[2][1] + a.m[3][3]*b.m[3][1];
-			//	result.m[3][2] = a.m[3][0]*b.m[0][2] + a.m[3][1]*b.m[1][2] + a.m[3][2]*b.m[2][2] + a.m[3][3]*b.m[3][2];
-			//	result.m[3][3] = a.m[3][0]*b.m[0][3] + a.m[3][1]*b.m[1][3] + a.m[3][2]*b.m[2][3] + a.m[3][3]*b.m[3][3];
-    
-			//	return result;
-			//}
-
-			//FORCE_INLINE internal Matrix4 mat4f32_mul_mat4f32(Matrix4 a, Matrix4 b) {
-			//	Matrix4 result;
-    
-			//	for (s32 i = 0; i < 4; ++i) {
-			//		// Cache the entire row of matrix A
-			//		f32 ai0 = a.m[i][0];
-			//		f32 ai1 = a.m[i][1]; 
-			//		f32 ai2 = a.m[i][2];
-			//		f32 ai3 = a.m[i][3];
-        
-			//		// Compute entire row at once
-			//		result.m[i][0] = ai0*b.m[0][0] + ai1*b.m[1][0] + ai2*b.m[2][0] + ai3*b.m[3][0];
-			//		result.m[i][1] = ai0*b.m[0][1] + ai1*b.m[1][1] + ai2*b.m[2][1] + ai3*b.m[3][1];
-			//		result.m[i][2] = ai0*b.m[0][2] + ai1*b.m[1][2] + ai2*b.m[2][2] + ai3*b.m[3][2];
-			//		result.m[i][3] = ai0*b.m[0][3] + ai1*b.m[1][3] + ai2*b.m[2][3] + ai3*b.m[3][3];
-			//	}
-    
-			//	return result;
-			//}
-
-		//	FORCE_INLINE internal Vec4 mat4f32_mul_projection(Matrix4 projection_matrix, Vec4 v) {
-		//		// Multiply the projection matrix by the original vector
-		//		Vec4 result = mat4f32_mul_vec4(projection_matrix, v);
-
-		//		// Perform perspective divide with original z-value that is
-		//		// stored in the projection matrix 'w', hence normalizing the entire image
-		//		// space.
-		//		if (result.w != 0.0) {
-		//			result.x /= result.w;
-		//			result.y /= result.w;
-		//			result.z /= result.w;
-		//		}
-		//		return result;	
-		//	}
-		//};
 
 		// Ranges
 

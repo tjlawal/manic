@@ -18,7 +18,7 @@ namespace Starlight {
 
 	// @NOTE: This is temporary, pending when I can think of a better way to architect this.
 	struct Camera {
-		Matrix4 projection;
+		Matrix projection;
 		Vec3 position;
 		f32 fov;
 		f32 znear;

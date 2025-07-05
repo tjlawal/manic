@@ -109,10 +109,10 @@ namespace Starlight {
 		g_camera.znear = 1.0;
 		g_camera.zfar = 100.0;
 		g_camera.aspect_ratio = g_window_state->window_dim.x1 / g_window_state->window_dim.y1;
-		g_camera.projection = perspective_project(g_camera.fov, g_camera.aspect_ratio, g_camera.znear, g_camera.zfar);
+		g_camera.projection = perspective(g_camera.fov, g_camera.aspect_ratio, g_camera.znear, g_camera.zfar);
 
 		// Initialize the resource manager.
-		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/crab.obj"));
+		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/drone.obj"));
 		g_mesh_info->scale = {1.0, 1.0, 1.0};
 
 		#if BUILD_DEBUG_VERY_NOISY
@@ -126,17 +126,17 @@ namespace Starlight {
 		ProfFunction(profDebug_orangered);
 
 		g_face_count_idx = 0;
-		g_mesh_info->rotate.x += 0.056;
-		//g_mesh_info->rotate.y += 0.051;
+		g_mesh_info->rotate.x += 0.0563;
+		//g_mesh_info->rotate.y += 0.011;
 		//g_mesh_info->rotate.z += 0.001;
 		g_mesh_info->translate.z = 5.0;
 		//g_mesh_info->translate.y = 2.5;
 
-		Matrix4 scale = matrix_scale(g_mesh_info->scale.x, g_mesh_info->scale.y, g_mesh_info->scale.z);
-		Matrix4 translate = matrix_translate(g_mesh_info->translate.x, g_mesh_info->translate.y, g_mesh_info->translate.z);
-		Matrix4 rotate_x = matrix_rotate_x(g_mesh_info->rotate.x);
-		Matrix4 rotate_y = matrix_rotate_y(g_mesh_info->rotate.y);
-		Matrix4 rotate_z = matrix_rotate_z(g_mesh_info->rotate.z);
+		Matrix scale = matrix_scale(g_mesh_info->scale.x, g_mesh_info->scale.y, g_mesh_info->scale.z);
+		Matrix translate = matrix_translate(g_mesh_info->translate.x, g_mesh_info->translate.y, g_mesh_info->translate.z);
+		Matrix rotate_x = matrix_rotate_x(g_mesh_info->rotate.x);
+		Matrix rotate_y = matrix_rotate_y(g_mesh_info->rotate.y);
+		Matrix rotate_z = matrix_rotate_z(g_mesh_info->rotate.z);
 
 		s32 fc = g_mesh_info->faces_count;
 		for(s32 i = 0; i < fc; i++) {
@@ -151,7 +151,7 @@ namespace Starlight {
 			// Loop through all vertices in teh current face and apply transformation
 			for(s32 j = 0; j < 3; j++) {
 				Vec4 transformed_vertex = Vec4::vec4_from_vec3(face_vertices[j]);
-				Matrix4 world_matrix = matrix_identity();
+				Matrix world_matrix = matrix_identity();
 
 				// Order matters in how things are done, not respecting that means things are in weird places.
 				world_matrix = matrix_multiply(scale, world_matrix);
@@ -250,7 +250,7 @@ namespace Starlight {
 			update();
 			render();
 
-			//sleep(16); // This is sucky
+			sleep(16); // This is sucky
 		}
 	}
 
