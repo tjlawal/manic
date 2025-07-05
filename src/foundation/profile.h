@@ -16,11 +16,17 @@
 		#define ProfScope(v,n,c)					(0)
 		#define ProfMemAlloc(p, c, d)			(0)			
 		#define ProfMemFree(p, d)				  (0)
+		#define ProfFrameMark							(0)
+		#define ProfFrameStart(n)					(0)
+		#define ProfFrameEnd(n)			  		(0)
 	#elif PROFILER_TRACY
 		#define ProfFunction(c)					  ZoneScopedC(c)
 		#define ProfScope(v,n,c)					ZoneNamedNC((v), (n), (c), true)
 		#define ProfMemAlloc(p, c, d)			TracyAllocS(p, c, d)			
 		#define ProfMemFree(p, d)				  TracyFreeS(p, d)
+		#define ProfMarkFrame						  FrameMark
+		#define ProfFrameStart(n)					FrameMarkStart(n)
+		#define ProfFrameEnd(n)			  		FrameMarkEnd(n)
 	#else
 		#error "Profiler not recognized, are you using the correct profiler flag?"
 	#endif
@@ -30,6 +36,9 @@
 	#define ProfMemAlloc(p, c, d)			(0)
 	#define ProfMemFree(p, d)					(0)
 	#define ProfThreadName(name)			(0)
+	#define ProfFrameMark						  (0)
+	#define ProfFrameStart(n)					(0)
+	#define ProfFrameEnd(n)			  		(0)
 #endif
 
 // Profiler Debug Colours
