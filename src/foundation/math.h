@@ -401,6 +401,14 @@ namespace Starlight {
 			return result;	
 		}
 
+		// ----------------------------------------
+		// Convenient math operator overloads
+		// ----------------------------------------
+		FORCE_INLINE Matrix operator+(const Matrix& lhs, const Matrix& rhs) { return matrix_add(lhs, rhs); }
+		FORCE_INLINE Matrix operator-(const Matrix& lhs, const Matrix& rhs) { return matrix_subtract(lhs, rhs); }
+		FORCE_INLINE Matrix operator*(const Matrix& lhs, const Matrix& rhs) { return matrix_multiply(lhs, rhs); }
+
+
 		// Ranges
 
 		// 1D
