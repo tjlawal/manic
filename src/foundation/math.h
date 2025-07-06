@@ -306,7 +306,7 @@ namespace Starlight {
 			f32 sin_result = sinf(angle);
 
 			result.m0 = cos_result;
-			result.m3 = sin_result;
+			result.m2 = sin_result;
 			result.m8 = -sin_result;
 			result.m10 = cos_result;
 
@@ -325,8 +325,8 @@ namespace Starlight {
 			f32 sin_result = sinf(angle);
 
 			result.m0 = cos_result;
-			result.m1 = -sin_result;
-			result.m4 = sin_result;
+			result.m1 = sin_result;
+			result.m4 = -sin_result;
 			result.m5 = cos_result;
 
 			return result;
@@ -339,6 +339,10 @@ namespace Starlight {
 				0.0f, 0.0f, z, 0.0f, 
 				0.0f, 0.0f, 0.0f, 1.0f
 			};
+
+			result.m0 = x;
+			result.m5 = y;
+			result.m10 = z;
 
 			return result;
 		}
