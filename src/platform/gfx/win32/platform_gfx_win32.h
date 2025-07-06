@@ -18,15 +18,15 @@ namespace Starlight {
 			};
 
 			struct GfxState {
+				Key key_from_vkey_table[256];
 				Arena* arena;
-				HINSTANCE hInstance;
-				HCURSOR hCursor;
-				GfxInfo gfx_info;
 				Window* first_window;
 				Window* last_window;
 				Window* free_window;
+				HINSTANCE hInstance;
+				HCURSOR hCursor;
+				GfxInfo gfx_info;
 				u32 gfx_thread_id;
-				Key key_from_vkey_table[256];
 			};
 
 			// Globals

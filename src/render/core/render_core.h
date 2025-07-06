@@ -15,9 +15,22 @@ namespace Starlight {
 			RendererType_Metal,
 			RendererType_Count
 		};
+
+		enum RenderMode : u8 {
+			RenderMode_WireFrame,
+			RenderMode_VertexPoints,
+			RenderMode_Fill,
+			RenderMode_Texture,
+			RenderMode_TextureWireFrame,
+			RenderMode_BackCull,
+			RenderMode_Count
+		};
+
+		enum CullMode : u8 {
+			CullMode_Back
+		};
 		
 		struct Renderer {
-			RendererType type;
 			union {
 				struct {
 					void* context;
@@ -41,7 +54,10 @@ namespace Starlight {
 					#endif
 				} sw;
 			};
-
+			RendererType type;
+			RenderMode mode;
+			CullMode cull;
+			u8 padding;
 		};
 
 		// OS - Renderer Association

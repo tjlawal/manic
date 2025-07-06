@@ -16,22 +16,24 @@ namespace Starlight {
 			struct Event {
 				Event *next;
 				Event *previous;
-				EventKind event_kind;
 				Handle window;
-
-				// Keyboard event data
-				KeyModifiers key_modifiers;
-				Key key;
-				b32 is_repeat;
-				b32 right_sided;
-				b32 left_sided;
-				b32 character;
-				u32 repeat_count;
 				u64 timestamp_us;
 
 				// Mouse event data
 				Vec2f position;
 				Vec2f delta;
+
+				// Keyboard event data
+				b32 is_repeat;
+				b32 right_sided;
+				b32 left_sided;
+				b32 character;
+				u32 repeat_count;
+				EventKind event_kind;
+				KeyModifiers key_modifiers;
+				Key key;
+
+				u8 padding;
 			};
 
 			typedef struct EventList EventList;

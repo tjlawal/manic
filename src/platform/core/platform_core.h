@@ -8,10 +8,11 @@ namespace Starlight {
 	namespace Platform {
 
 		struct SystemInfo {
-			u32 logical_processor_count;
 			u64 page_size;
 			u64 large_page_size;
 			u64 allocation_granularity;
+			u32 logical_processor_count;
+			u32 padding;
 		};
 
 		// Process information

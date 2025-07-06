@@ -5,7 +5,7 @@ namespace Starlight {
 	namespace Platform {
 		
 		// Keys
-		enum Key : u32 {
+		enum Key : u8 {
 			Key_Null,
 
 			// Letters
@@ -176,14 +176,14 @@ namespace Starlight {
 			Key_COUNT,
 		};
 
-		enum KeyModifiers : u32{
+		enum KeyModifiers : u8 {
 			KeyModifiers_Ctrl = (1 << 0),
 			KeyModifiers_Shift = (1 << 1),
 			KeyModifiers_Alt = (1 << 2),
 		};
 
 		// Event types
-		enum EventKind : u32 {
+		enum EventKind : u8 {
 			EventKind_Null,
 			EventKind_Press,
 			EventKind_Release,
@@ -196,7 +196,7 @@ namespace Starlight {
 			EventKind_COUNT
 		};
 
-		enum AccessFlags : u32 {
+		enum AccessFlags : u8 {
 			AccessFlag_Read = (1 << 0),
 			AccessFlag_Write = (1 << 1),
 			AccessFlag_Append = (1 << 2),
@@ -204,13 +204,13 @@ namespace Starlight {
 			AccessFlag_ShareWrite = (1 << 4),
 		};
 
-		enum FilePropertyFlag : u32 {
+		enum FilePropertyFlag : u8 {
 			FilePropertyFlag_IsFolder = ( 1 << 0),
 		};
 
 		// Window types
-		enum WindowFlags : u32 {
-			WindowFlag_CustomBorder = (1 << 0),
+		enum WindowFlags : u8 {
+			WindowFlag_FullScreen = (1 << 0),
 		};
 
 	}
