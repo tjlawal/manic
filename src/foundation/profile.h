@@ -24,7 +24,7 @@
 		#define ProfScope(v,n,c)					ZoneNamedNC((v), (n), (c), true)
 		#define ProfMemAlloc(p, c, d)			TracyAllocS(p, c, d)			
 		#define ProfMemFree(p, d)				  TracyFreeS(p, d)
-		#define ProfMarkFrame						  FrameMark
+		#define ProfFrameMark						  FrameMark
 		#define ProfFrameStart(n)					FrameMarkStart(n)
 		#define ProfFrameEnd(n)			  		FrameMarkEnd(n)
 	#else

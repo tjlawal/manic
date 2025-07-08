@@ -59,18 +59,26 @@ namespace Starlight {
 							quit = 1;
 						} break;
 
-		//				case(Key_A): {
-		//					g_mesh_info->rotate.y += 0.1;
-		//				} break;
+						case(Key_Up): {
+							g_mesh_info->rotate.x += 0.5f;
+						} break;
 
-		//				case(Key_O): {
-		//					g_mesh_info->rotate.x += 0.1;
-		//				} break;
+						case(Key_Down): {
+							g_mesh_info->rotate.x -= 0.5;
+						} break;
+
+						case(Key_Left): {
+							g_mesh_info->rotate.y += 0.5;
+						} break;
+
+						case(Key_Right): {
+							g_mesh_info->rotate.y -= 0.5;
+						} break;
+
 
 						default:
 							break;
 					} break;
-
 				}
 
 				default:
@@ -95,8 +103,8 @@ namespace Starlight {
 
 		// Initialize window and paint into it
 		// 16:9 aspect ratio, 518,400 pixels to process each frame.
-		g_window_state->os_handle = window_open(Rng2f32(0, 0, 800, 600), str8_lit(BUILD_TITLE_STRING_LITERAL)); 
-		g_window_state->window_dim = rect_from_window(g_window_state->os_handle);
+		g_window_state->os_handle = window_open(Rng2f32(0, 0, 900, 800), str8_lit(BUILD_TITLE_STRING_LITERAL)); 
+		g_window_state->window_dim = client_rect_from_window(g_window_state->os_handle);
 		window_first_paint(g_window_state->os_handle);
 		allocate_buffer(g_window_state->game_memory, &g_window_state->render_buffer, 
 												g_window_state->window_dim.x1, g_window_state->window_dim.y1);
@@ -106,7 +114,7 @@ namespace Starlight {
 
 		//// Initialize camera system
 		g_camera.fov = MATH_PI / 3.0;
-		g_camera.znear = 1.0;
+		g_camera.znear = 50.0;
 		g_camera.zfar = 100.0;
 		g_camera.aspect_ratio = g_window_state->window_dim.x1 / g_window_state->window_dim.y1;
 		g_camera.projection = perspective(g_camera.fov, g_camera.aspect_ratio, g_camera.znear, g_camera.zfar);
@@ -126,13 +134,12 @@ namespace Starlight {
 		ProfFunction(profDebug_orangered);
 
 		g_face_count_idx = 0;
-		g_mesh_info->rotate.x += 0.01;
-		//g_mesh_info->rotate.y += 0.011;
+		//g_mesh_info->rotate.x += 0.01;
+		//g_mesh_info->rotate.y += 0.01;
 		//g_mesh_info->rotate.z += 0.001;
 		g_mesh_info->translate.z = 5.0;
-		//g_mesh_info->translate.y = 2.5;
 
-		Matrix scale = matrix_scale(g_mesh_info->scale.x, g_mesh_info->scale.y, g_mesh_info->scale.z);
+		Matrix scale     = matrix_scale(g_mesh_info->scale.x, g_mesh_info->scale.y, g_mesh_info->scale.z);
 		Matrix translate = matrix_translate(g_mesh_info->translate.x, g_mesh_info->translate.y, g_mesh_info->translate.z);
 		Matrix rotate_x = matrix_rotate_x(g_mesh_info->rotate.x);
 		Matrix rotate_y = matrix_rotate_y(g_mesh_info->rotate.y);
@@ -143,9 +150,9 @@ namespace Starlight {
 			Face current_face = g_mesh_info->faces[i];
 			Vec3 face_vertices[3];
 
-			face_vertices[0] = g_mesh_info->vertices[current_face.vertex_idx[0]];
-			face_vertices[1] = g_mesh_info->vertices[current_face.vertex_idx[1]];
-			face_vertices[2] = g_mesh_info->vertices[current_face.vertex_idx[2]];
+			face_vertices[0] = g_mesh_info->vertices[current_face.vertex_idx[0] - 1];
+			face_vertices[1] = g_mesh_info->vertices[current_face.vertex_idx[1] - 1];
+			face_vertices[2] = g_mesh_info->vertices[current_face.vertex_idx[2] - 1];
 
 			Vec4 transformed_vertices[3];
 			// Loop through all vertices in teh current face and apply transformation
@@ -226,17 +233,28 @@ namespace Starlight {
 		//s32 triangle_count = array_length(g_triangles_to_render);
 		for(u32 i = 0; i < g_face_count_idx; i++) {
 			Triangle triangle = g_triangles_to_render[i];
-			draw_rect(&g_window_state->render_buffer, triangle.points[0].x, triangle.points[0].y, 3, 3, 0xFFFE7104);
-			draw_rect(&g_window_state->render_buffer, triangle.points[1].x, triangle.points[1].y, 3, 3, 0xFFFE7104);
-			draw_rect(&g_window_state->render_buffer, triangle.points[2].x, triangle.points[2].y, 3, 3, 0xFFFE7104);
+			//draw_rect(&g_window_state->render_buffer, triangle.points[0].x, triangle.points[0].y, 3, 3, 0xFFFE7104);
+			//draw_rect(&g_window_state->render_buffer, triangle.points[1].x, triangle.points[1].y, 3, 3, 0xFFFE7104);
+			//draw_rect(&g_window_state->render_buffer, triangle.points[2].x, triangle.points[2].y, 3, 3, 0xFFFE7104);
 
 
-			//draw_filled_triangle(
-			//	&g_window_state->render_buffer, 
-			//	triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[0].w, // Vertex A
-			//	triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w, // Vertex B
-			//	triangle.points[2].x, triangle.points[2].y, triangle.points[2].z, triangle.points[2].w, // Vertex C
-			//	triangle.colour);
+			//draw_filled_triangle(&g_window_state->render_buffer, 
+			//							triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[0].w, // Vertex A
+			//							triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w, // Vertex B
+			//							triangle.points[2].x, triangle.points[2].y, triangle.points[2].z, triangle.points[2].w, // Vertex C
+			//							0xFFFFFFFF);
+
+			draw_filled_triangle(&g_window_state->render_buffer, 
+				triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[0].w, // Vertex A
+				triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w, // Vertex B
+				triangle.points[2].x, triangle.points[2].y, triangle.points[2].z, triangle.points[2].w, // Vertex C
+				triangle.colour);
+
+		//	draw_triangle(&g_window_state->render_buffer, 
+		//								triangle.points[0].x, triangle.points[0].y, // Vertex A
+		//								triangle.points[1].x, triangle.points[1].y,            // Vertex B
+		//								triangle.points[2].x, triangle.points[2].y,            // Vertex C
+		//								0xFFFFFFF);
 		}
 
 

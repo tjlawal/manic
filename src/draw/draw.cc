@@ -18,6 +18,7 @@ namespace Starlight {
 		}
 	
 		void draw_rect(Renderer *buffer, s32 x, s32 y, s32 width, s32 height, u32 colour) {
+			ProfFunction(profDebug_cyan);
 			for (s32 row = 0; row < width; ++row) {
 				for (s32 col = 0; col < height; ++col) {
 					s32 current_x = x + row;
@@ -29,12 +30,14 @@ namespace Starlight {
 
 		// REVISE: Could this be unrolled and made faster?
 		void draw_pixel(Renderer *buffer, s32 x, s32 y, u32 colour) {
+			ProfFunction(profDebug_cyan);
 			if ((x >= 0) && (x < buffer->sw.width) && (y >= 0) && (y < buffer->sw.height)) {
 				buffer->sw.colour_buffer[(buffer->sw.width * y) + x] = colour;
 			}
 		}
 
 		void draw_line_dda(Renderer *buffer, s32 x0, s32 y0, s32 x1, s32 y1, u32 colour) {
+			ProfFunction(profDebug_cyan);
 			s32 delta_x = (x1 - x0);
 			s32 delta_y = (y1 - y0);
 
@@ -55,6 +58,8 @@ namespace Starlight {
 		}
 
 		void draw_triangle(Renderer *buffer, s32 x0, s32 y0, s32 x1, s32 y1, s32 x2, s32 y2, u32 colour) {
+			ProfFunction(profDebug_cyan);
+
 			draw_line_dda(buffer, x0, y0, x1, y1, colour);
 			draw_line_dda(buffer, x1, y1, x2, y2, colour);
 			draw_line_dda(buffer, x2, y2, x0, y0, colour);
@@ -95,6 +100,7 @@ namespace Starlight {
 															s32 x0, s32 y0, f32 z0, f32 w0, 
 															s32 x1, s32 y1, f32 z1, f32 w1, 
 															s32 x2, s32 y2, f32 z2, f32 w2, u32 colour){
+			ProfFunction(profDebug_cyan);
 			if (y0 > y1) {
 				swap_ptrs(&y0, &y1);
 				swap_ptrs(&x0, &x1);
@@ -121,9 +127,6 @@ namespace Starlight {
 			Vec4 point_b = {(f32)x1, (f32)y1, (f32)z1, (f32)w1};
 			Vec4 point_c = {(f32)x2, (f32)y2, (f32)z2, (f32)w2};
 
-			//Vec4 point_b = {x1, y1, z1, w1};
-			//Vec4 point_c = {x2, y2, z2, w2};
-
 			// Draw filled flat-bottom of triangle
 			f32 left_leg = 0;
 			f32 right_leg = 0;
@@ -143,7 +146,7 @@ namespace Starlight {
 						swap_ptrs(&x_start, &x_end);
 					}
 
-					for(s32 x = x_start; x < x_end; ++x){
+					for(s32 x = x_start; x < x_end; x++){
 						draw_triangle_pixel(buffer, x, y, point_a, point_b, point_c, colour);
 					}
 				}
@@ -183,6 +186,7 @@ namespace Starlight {
 		internal void draw_texel(Renderer *buffer, s32 x, s32 y, Vec4 point_a, Vec4 point_b, Vec4 point_c, 
 														 TextureCoord a_uv, TextureCoord b_uv, TextureCoord c_uv, 
 														 u32 *texture, s32 texture_width, s32 texture_height) {
+			ProfFunction(profDebug_cyan);
 			Assert(texture != NULL);
 			Vec2f point_p = {(f32)x, (f32)y};
 
