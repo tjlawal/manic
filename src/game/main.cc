@@ -58,7 +58,7 @@ namespace Starlight {
 						case(Key_Q): {
 							quit = 1;
 						} break;
-
+						
 						case(Key_Up): {
 							g_mesh_info->rotate.x += 0.5f;
 						} break;
@@ -120,7 +120,7 @@ namespace Starlight {
 		g_camera.projection = perspective(g_camera.fov, g_camera.aspect_ratio, g_camera.znear, g_camera.zfar);
 
 		// Initialize the resource manager.
-		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/drone.obj"));
+		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/sphere.obj"));
 		g_mesh_info->scale = {1.0, 1.0, 1.0};
 
 		#if BUILD_DEBUG_VERY_NOISY
@@ -157,7 +157,7 @@ namespace Starlight {
 			Vec4 transformed_vertices[3];
 			// Loop through all vertices in teh current face and apply transformation
 			for(s32 j = 0; j < 3; j++) {
-				Vec4 transformed_vertex = Vec4::vec4_from_vec3(face_vertices[j]);
+				Vec4 transformed_vertex = vec4_from_vec3(face_vertices[j]);
 				Matrix world_matrix = matrix_identity();
 
 				// Order matters in how things are done, not respecting that means things are in weird places.
@@ -173,27 +173,27 @@ namespace Starlight {
 			}
 
 			// Triangles are clocwise
-			Vec3 a = Vec3::vec3_from_vec4(transformed_vertices[0]);
-			Vec3 b = Vec3::vec3_from_vec4(transformed_vertices[1]);
-			Vec3 c = Vec3::vec3_from_vec4(transformed_vertices[2]);
+			Vec3 a = vec3_from_vec4(transformed_vertices[0]);
+			Vec3 b = vec3_from_vec4(transformed_vertices[1]);
+			Vec3 c = vec3_from_vec4(transformed_vertices[2]);
 
 			Vec3 ab = b - a;
 			Vec3 ac = c - a;
-			normalize(&ab);
-			normalize(&ac);
+			vec3_normalize(&ab);
+			vec3_normalize(&ac);
 
 			// Computer face normal using cross product to find perpendicular
 			Vec3 normal = cross(ab, ac);
-			normalize(&normal);
+			vec3_normalize(&normal);
 
 			// Find the vector between points in the triangle and camera origin
 			Vec3 camera_ray = g_camera.position - a;
 
 			// If face normal (dot product) is aligned with camera ray, draw, if not cull.
-			f32 dot_normal_camera = dot(normal, camera_ray);
-			if(dot_normal_camera < 0) {
-				continue;
-			}
+			//f32 dot_normal_camera = dot(normal, camera_ray);
+			//if(dot_normal_camera < 0) {
+			//	continue;
+			//}
 
 			Vec4 projected_points[3];
 			for(s32 k = 0; k < 3; k++) {
@@ -210,7 +210,7 @@ namespace Starlight {
 			}
 
 			// calculate light intensity based on the alignment of the face normal and the light ray
-			f32 light_intensity_factor = -dot(normal, g_light.direction);
+			f32 light_intensity_factor = -vec3_dot_product(normal, g_light.direction);
 			u32 triangle_colour = light_intensity(0xFFFFFFFF, light_intensity_factor);
 
 			Triangle projected_triangle = {{
@@ -229,7 +229,8 @@ namespace Starlight {
 		ProfFrameMark;
 		ProfFunction(profDebug_red);
 		clear_colour_buffer(&g_window_state->render_buffer, 0x00000019);
-
+		clear_z_buffer(&g_window_state->render_buffer);
+		
 		//s32 triangle_count = array_length(g_triangles_to_render);
 		for(u32 i = 0; i < g_face_count_idx; i++) {
 			Triangle triangle = g_triangles_to_render[i];
@@ -237,6 +238,7 @@ namespace Starlight {
 			//draw_rect(&g_window_state->render_buffer, triangle.points[1].x, triangle.points[1].y, 3, 3, 0xFFFE7104);
 			//draw_rect(&g_window_state->render_buffer, triangle.points[2].x, triangle.points[2].y, 3, 3, 0xFFFE7104);
 
+		//	if(g_window_state.render_buffer.mode 
 
 			//draw_filled_triangle(&g_window_state->render_buffer, 
 			//							triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[0].w, // Vertex A
@@ -255,6 +257,12 @@ namespace Starlight {
 		//								triangle.points[1].x, triangle.points[1].y,            // Vertex B
 		//								triangle.points[2].x, triangle.points[2].y,            // Vertex C
 		//								0xFFFFFFF);
+
+			draw_triangle(&g_window_state->render_buffer, 
+										triangle.points[0].x, triangle.points[0].y,		 // Vertex A
+										triangle.points[1].x, triangle.points[1].y,    // Vertex B
+										triangle.points[2].x, triangle.points[2].y,    // Vertex C
+										0xFFFFFFF);
 		}
 
 
@@ -272,8 +280,4 @@ namespace Starlight {
 			//sleep(16); // This is sucky
 		}
 	}
-
-
 }
-
-
