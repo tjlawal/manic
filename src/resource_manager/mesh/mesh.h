@@ -7,8 +7,8 @@ namespace Starlight {
 		namespace Mesh {
 
 			struct MeshInfo {
-				Vertex* vertices;
-				Vertex* normals;
+				Vec3* vertices;
+				Vec3* normals;
 				TextureCoord* texture_coords;
 				Face* 	faces;
 

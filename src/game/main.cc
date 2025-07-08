@@ -134,7 +134,7 @@ namespace Starlight {
 		ProfFunction(profDebug_orangered);
 
 		g_face_count_idx = 0;
-		//g_mesh_info->rotate.x += 0.01;
+		g_mesh_info->rotate.x += 0.01;
 		//g_mesh_info->rotate.y += 0.01;
 		//g_mesh_info->rotate.z += 0.001;
 		g_mesh_info->translate.z = 5.0;
@@ -179,21 +179,21 @@ namespace Starlight {
 
 			Vec3 ab = b - a;
 			Vec3 ac = c - a;
-			vec3_normalize(&ab);
-			vec3_normalize(&ac);
+			vec3_normalize(ab);
+			vec3_normalize(ac);
 
 			// Computer face normal using cross product to find perpendicular
-			Vec3 normal = cross(ab, ac);
-			vec3_normalize(&normal);
+			Vec3 normal = vec3_cross(ab, ac);
+			vec3_normalize(normal);
 
 			// Find the vector between points in the triangle and camera origin
 			Vec3 camera_ray = g_camera.position - a;
 
 			// If face normal (dot product) is aligned with camera ray, draw, if not cull.
-			//f32 dot_normal_camera = dot(normal, camera_ray);
-			//if(dot_normal_camera < 0) {
-			//	continue;
-			//}
+			f32 dot_normal_camera = vec3_dot_product(normal, camera_ray);
+			if(dot_normal_camera < 0) {
+				continue;
+			}
 
 			Vec4 projected_points[3];
 			for(s32 k = 0; k < 3; k++) {
@@ -228,7 +228,7 @@ namespace Starlight {
 	internal void render() {
 		ProfFrameMark;
 		ProfFunction(profDebug_red);
-		clear_colour_buffer(&g_window_state->render_buffer, 0x00000019);
+		clear_colour_buffer(&g_window_state->render_buffer, 0xFFFFFFFF);
 		clear_z_buffer(&g_window_state->render_buffer);
 		
 		//s32 triangle_count = array_length(g_triangles_to_render);
@@ -258,11 +258,11 @@ namespace Starlight {
 		//								triangle.points[2].x, triangle.points[2].y,            // Vertex C
 		//								0xFFFFFFF);
 
-			draw_triangle(&g_window_state->render_buffer, 
-										triangle.points[0].x, triangle.points[0].y,		 // Vertex A
-										triangle.points[1].x, triangle.points[1].y,    // Vertex B
-										triangle.points[2].x, triangle.points[2].y,    // Vertex C
-										0xFFFFFFF);
+		//draw_triangle(&g_window_state->render_buffer, 
+		//							triangle.points[0].x, triangle.points[0].y,		 // Vertex A
+		//							triangle.points[1].x, triangle.points[1].y,    // Vertex B
+		//							triangle.points[2].x, triangle.points[2].y,    // Vertex C
+		//							0xFFFFFFF);
 		}
 
 

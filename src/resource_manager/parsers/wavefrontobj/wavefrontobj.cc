@@ -32,8 +32,8 @@ namespace Starlight {
 				mesh_info->faces_count = count_faces(token, &lexer);
 
 				ProfScope(alloc_mesh, "alloc data to MeshInfo", profDebug_snow);
-				mesh_info->vertices = arena_push<Vertex>(arena, mesh_info->vertices_count);
-				mesh_info->normals = arena_push<Vertex>(arena, mesh_info->normals_count);
+				mesh_info->vertices = arena_push<Vec3>(arena, mesh_info->vertices_count);
+				mesh_info->normals = arena_push<Vec3>(arena, mesh_info->normals_count);
 				mesh_info->texture_coords = arena_push<TextureCoord>(arena, mesh_info->texture_coords_count);
 				mesh_info->faces = arena_push<Face>(arena, mesh_info->faces_count);
 
@@ -137,7 +137,7 @@ namespace Starlight {
 			}
 		
 			internal void parse_vertices(Arena* arena, Lexer* lexer, MeshInfo* dst) {
-				Vertex vertex = {};
+				Vec3 vertex = {};
 				parse_float(lexer, &vertex.x);
 				parse_float(lexer, &vertex.y);
 				parse_float(lexer, &vertex.z);
@@ -150,7 +150,7 @@ namespace Starlight {
 			}
 
 			internal void parse_normals(Arena* arena, Lexer* lexer, MeshInfo* dst) {
-				Vertex normals = {};
+				Vec3 normals = {};
 				parse_float(lexer, &normals.x);
 				parse_float(lexer, &normals.y);
 				parse_float(lexer, &normals.z);

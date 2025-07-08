@@ -32,11 +32,11 @@ namespace Starlight {
 
 
 	internal u32 light_intensity(u32 colour, f32 percentage) {
-		//clamp(percentage, 0, 1);
+		clamp(percentage, 0.0f, 1.0f);
 		u32 alpha = (colour & 0xFF000000);
-		u32 red = 	(colour & 0x00FF0000) * percentage;
+		u32 red   = (colour & 0x00FF0000) * percentage;
 		u32 green = (colour & 0x0000FF00) * percentage;
-		u32 blue = 	(colour & 0x000000FF) * percentage;
+		u32 blue  = (colour & 0x000000FF) * percentage;
 		u32 new_colour = alpha | (red & 0x00FF0000) | (green & 0x0000FF00) | (blue & 0x000000FF);
 		return new_colour;
 	}
