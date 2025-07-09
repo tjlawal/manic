@@ -1,10 +1,12 @@
 // raddbg 0.9.19 project file
 
 recent_file: path: "src/game/main.cc"
+recent_file: path: "src/game/manic.h"
+recent_file: path: "src/foundation/core.h"
+recent_file: path: "src/foundation/math.h"
 recent_file: path: "src/draw/draw.cc"
 recent_file: path: "src/platform/gfx/win32/platform_gfx_win32.cc"
 recent_file: path: "src/platform/core/win32/platform_core_win32.cc"
-recent_file: path: "src/foundation/math.h"
 recent_file: path: "src/render/software/win32/render_win32.cc"
 recent_file: path: "src/foundation/arena.cc"
 recent_file: path: "src/resource_manager/parsers/wavefrontobj/wavefrontobj.cc"
@@ -31,11 +33,16 @@ breakpoint:
 }
 breakpoint:
 {
-  source_location: "src/game/main.cc:247:1"
+  source_location: "src/game/main.cc:250:1"
   hit_count: 0
 }
 breakpoint:
 {
-  source_location: "src/game/main.cc:198:1"
+  source_location: "src/game/main.cc:213:1"
+  hit_count: 1
+}
+breakpoint:
+{
+  source_location: "src/foundation/core.h:224:1"
   hit_count: 1
 }
