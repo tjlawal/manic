@@ -110,7 +110,9 @@ namespace Starlight {
 												g_window_state->window_dim.x1, g_window_state->window_dim.y1);
 
 		// Initialize lights
-		g_light.direction.z = 1;
+		g_light.direction.x = 0.0f;
+		g_light.direction.y = 0.0f;
+		g_light.direction.z = 1.0f;
 
 		//// Initialize camera system
 		g_camera.fov = MATH_PI / 3.0;
@@ -183,7 +185,7 @@ namespace Starlight {
 			vec3_normalize(ac);
 
 			// Computer face normal using cross product to find perpendicular
-			Vec3 normal = vec3_cross(ab, ac);
+			Vec3 normal = vec3_cross_product(ab, ac);
 			vec3_normalize(normal);
 
 			// Find the vector between points in the triangle and camera origin
@@ -211,7 +213,9 @@ namespace Starlight {
 
 			// calculate light intensity based on the alignment of the face normal and the light ray
 			f32 light_intensity_factor = -vec3_dot_product(normal, g_light.direction);
-			u32 triangle_colour = light_intensity(0xFFFFFFFF, light_intensity_factor);
+			light_intensity_factor *= 5.0f; // Boost the light temporarily
+			// Calculate the triangle color based on the light angle
+			u32 triangle_colour = light_intensity(0xffffffff, light_intensity_factor); 
 
 			Triangle projected_triangle = {{
 					{ projected_points[0].x, projected_points[0].y, projected_points[0].z, projected_points[0].w },
@@ -228,7 +232,7 @@ namespace Starlight {
 	internal void render() {
 		ProfFrameMark;
 		ProfFunction(profDebug_red);
-		clear_colour_buffer(&g_window_state->render_buffer, 0xFFFFFFFF);
+		clear_colour_buffer(&g_window_state->render_buffer, 0xFF2C2C2C);
 		clear_z_buffer(&g_window_state->render_buffer);
 		
 		//s32 triangle_count = array_length(g_triangles_to_render);
@@ -238,25 +242,12 @@ namespace Starlight {
 			//draw_rect(&g_window_state->render_buffer, triangle.points[1].x, triangle.points[1].y, 3, 3, 0xFFFE7104);
 			//draw_rect(&g_window_state->render_buffer, triangle.points[2].x, triangle.points[2].y, 3, 3, 0xFFFE7104);
 
-		//	if(g_window_state.render_buffer.mode 
 
-			//draw_filled_triangle(&g_window_state->render_buffer, 
-			//							triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[0].w, // Vertex A
-			//							triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w, // Vertex B
-			//							triangle.points[2].x, triangle.points[2].y, triangle.points[2].z, triangle.points[2].w, // Vertex C
-			//							0xFFFFFFFF);
-
-			draw_filled_triangle(&g_window_state->render_buffer, 
-				triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[0].w, // Vertex A
-				triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w, // Vertex B
-				triangle.points[2].x, triangle.points[2].y, triangle.points[2].z, triangle.points[2].w, // Vertex C
-				triangle.colour);
-
-		//	draw_triangle(&g_window_state->render_buffer, 
-		//								triangle.points[0].x, triangle.points[0].y, // Vertex A
-		//								triangle.points[1].x, triangle.points[1].y,            // Vertex B
-		//								triangle.points[2].x, triangle.points[2].y,            // Vertex C
-		//								0xFFFFFFF);
+		draw_filled_triangle(&g_window_state->render_buffer, 
+			triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[0].w, // Vertex A
+			triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w, // Vertex B
+			triangle.points[2].x, triangle.points[2].y, triangle.points[2].z, triangle.points[2].w, // Vertex C
+			triangle.colour);
 
 		//draw_triangle(&g_window_state->render_buffer, 
 		//							triangle.points[0].x, triangle.points[0].y,		 // Vertex A

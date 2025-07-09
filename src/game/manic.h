@@ -30,9 +30,8 @@ namespace Starlight {
 		Vec3 direction;
 	};
 
-
 	internal u32 light_intensity(u32 colour, f32 percentage) {
-		clamp(percentage, 0.0f, 1.0f);
+		percentage = clamp(percentage, 0.0f, 1.0f);
 		u32 alpha = (colour & 0xFF000000);
 		u32 red   = (colour & 0x00FF0000) * percentage;
 		u32 green = (colour & 0x0000FF00) * percentage;
@@ -41,6 +40,4 @@ namespace Starlight {
 		return new_colour;
 	}
 
-	//RenderHandle render_handle;
-	//struct GameState {};
 }

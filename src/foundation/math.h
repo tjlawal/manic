@@ -128,13 +128,23 @@ namespace Starlight {
 			Vec4() : x(0), y(0), z(0), w(0) {}
 			Vec4(f32 _x, f32 _y, f32 _z, f32 _w) : x(_x), y(_y), z(_z), w(_w) {}
 
-			Vec4 operator+(const Vec4& left) const { return Vec4 { x + left.x, y + left.y, z + left.z, w + left.w }; }
-			Vec4 operator-(const Vec4& left) const { return Vec4 { x - left.x, y - left.y, z - left.z, w - left.w }; }
-			Vec4 operator*(const Vec4& left) const { return Vec4 { x * left.x, y * left.y, z * left.z, w * left.w }; }
-			Vec4 operator/(const Vec4& left) const { return Vec4 { x / left.x, y / left.y, z / left.z, w / left.w }; }
+		FORCE_INLINE internal Vec3 vec3_cross_product(Vec3 v1, Vec3 v2) {
+			Vec3 result = {
+				(v1.y * v2.z) - (v1.z * v2.y),
+				(v1.z * v2.x) - (v1.x * v2.z),
+				(v1.x * v2.y) - (v1.y * v2.x)
+			};
 
-			internal Vec4 vec4_from_vec3(Vec3 v);
-		};
+			return result;
+		}
+
+		// ----------------------------------------
+		// Vec3 operator overloads
+		// ----------------------------------------
+		FORCE_INLINE internal Vec3 operator+(const Vec3& lhs, const Vec3& rhs) { return vec3_add(lhs, rhs); }
+		FORCE_INLINE internal Vec3 operator-(const Vec3& lhs, const Vec3& rhs) { return vec3_subtract(lhs, rhs); } 		
+		FORCE_INLINE internal Vec3 operator*(const Vec3& lhs, const Vec3& rhs) { return vec3_multiply(lhs, rhs); } 		
+		FORCE_INLINE internal Vec3 operator/(const Vec3& lhs, const Vec3& rhs) { return vec3_divide(lhs, rhs); } 		
 
 		// ----------------------------------------
 		// Common vector operations
@@ -176,10 +186,30 @@ namespace Starlight {
 			v->w /= length;
 		}
 
-		FORCE_INLINE internal Vec3 cross(const Vec3& a, const Vec3& b) {
-			return Vec3 { (a.y * b.z) - (a.z * b.y), (a.z * b.x) - (a.x * b.z), (a.x * b.y) - (a.y * b.x) };
+		
+		FORCE_INLINE internal const Vec4& operator/=(Vec4& lhs, const Vec4& rhs) {
+			lhs = vec4_divide(lhs, rhs);
+			return lhs;
 		}
 
+		FORCE_INLINE internal const Vec4& operator*=(Vec4& lhs, const Vec4& rhs) { 
+			lhs = vec4_multiply(lhs, rhs); 
+			return lhs;
+		} 
+
+		// ----------------------------------------
+		// Vec4 operator overloads
+		// ----------------------------------------
+
+		FORCE_INLINE internal Vec3 vec3_from_vec4(Vec4 v) {
+		  Vec3 result = {v.x, v.y, v.z};
+		  return result;
+		}
+
+		FORCE_INLINE internal Vec4 vec4_from_vec3(Vec3 v) {
+			Vec4 result = {v.x, v.y, v.z, 1.0};
+			return result;
+		}
 		
 		// ----------------------------------------
 		// Matrix - 4 x 4
