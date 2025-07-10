@@ -122,7 +122,7 @@ namespace Starlight {
 		g_camera.projection = perspective(g_camera.fov, g_camera.aspect_ratio, g_camera.znear, g_camera.zfar);
 
 		// Initialize the resource manager.
-		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/sphere.obj"));
+		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/f117.obj"));
 		g_mesh_info->scale = {1.0, 1.0, 1.0};
 
 		#if BUILD_DEBUG_VERY_NOISY
@@ -211,6 +211,8 @@ namespace Starlight {
 				projected_points[k].y += (g_window_state->render_buffer.sw.height / 2.0);
 			}
 
+			// There's a lighting bug but cant figure it out yet
+			// @BUG!!
 			// calculate light intensity based on the alignment of the face normal and the light ray
 			f32 light_intensity_factor = -vec3_dot_product(normal, g_light.direction);
 			light_intensity_factor *= 5.0f; // Boost the light temporarily

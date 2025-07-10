@@ -187,6 +187,7 @@ namespace Starlight {
 			EventKind_Null,
 			EventKind_Press,
 			EventKind_Release,
+			EventKind_Repeat,
 			EventKind_MouseMove,
 			EventKind_Text,
 			EventKind_Scroll,
