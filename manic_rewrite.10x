@@ -56,6 +56,7 @@
 				<Args></Args>
 				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
 				<DebugCommand></DebugCommand>
+				<DebuggerExe></DebuggerExe>
 				<DebugSln></DebugSln>
 				<Defines></Defines>
 				<ForceIncludes></ForceIncludes>
@@ -72,6 +73,7 @@
 				<Args></Args>
 				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
 				<DebugCommand>remedybg manic.exe</DebugCommand>
+				<DebuggerExe></DebuggerExe>
 				<DebugSln></DebugSln>
 				<Defines></Defines>
 				<ForceIncludes></ForceIncludes>
@@ -88,6 +90,7 @@
 				<Args></Args>
 				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
 				<DebugCommand></DebugCommand>
+				<DebuggerExe></DebuggerExe>
 				<DebugSln></DebugSln>
 				<Defines></Defines>
 				<ForceIncludes></ForceIncludes>
@@ -104,6 +107,7 @@
 				<Args></Args>
 				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
 				<DebugCommand></DebugCommand>
+				<DebuggerExe></DebuggerExe>
 				<DebugSln></DebugSln>
 				<Defines></Defines>
 				<ForceIncludes></ForceIncludes>
@@ -120,6 +124,7 @@
 				<Args></Args>
 				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
 				<DebugCommand></DebugCommand>
+				<DebuggerExe></DebuggerExe>
 				<DebugSln></DebugSln>
 				<Defines></Defines>
 				<ForceIncludes></ForceIncludes>
@@ -136,6 +141,7 @@
 				<Args></Args>
 				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
 				<DebugCommand></DebugCommand>
+				<DebuggerExe></DebuggerExe>
 				<DebugSln></DebugSln>
 				<Defines></Defines>
 				<ForceIncludes></ForceIncludes>

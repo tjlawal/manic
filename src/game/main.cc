@@ -249,11 +249,11 @@ namespace Starlight {
 			triangle.points[2].x, triangle.points[2].y, triangle.points[2].z, triangle.points[2].w, // Vertex C
 			triangle.colour);
 
-		//draw_triangle(&g_window_state->render_buffer, 
-		//							triangle.points[0].x, triangle.points[0].y,		 // Vertex A
-		//							triangle.points[1].x, triangle.points[1].y,    // Vertex B
-		//							triangle.points[2].x, triangle.points[2].y,    // Vertex C
-		//							0xFFFFFFF);
+		draw_triangle(&g_window_state->render_buffer, 
+									triangle.points[0].x, triangle.points[0].y,		 // Vertex A
+									triangle.points[1].x, triangle.points[1].y,    // Vertex B
+									triangle.points[2].x, triangle.points[2].y,    // Vertex C
+									0xFFFFFFF);
 		}
 
 

@@ -74,59 +74,130 @@ namespace Starlight {
 			Vec2s(s32 _x, s32 _y) : x(_x), y(_y) {}
 		};
 
+		// ----------------------------------------
+		// Vec2f
+		//
 		// This is used for math stuff.
+		// ----------------------------------------
+
 		struct Vec2f {
 			f32 x;
 			f32 y;
-
-			Vec2f() : x(0), y(0) {}
-			Vec2f(f32 _x, f32 _y) : x(_x), y(_y) {}
-
-			Vec2f operator+(const Vec2f& right) const { return Vec2f { x + right.x, y + right.y }; }
-			Vec2f operator-(const Vec2f& right) const { return Vec2f { x - right.x, y - right.y }; }
-			Vec2f operator*(const Vec2f& right) const { return Vec2f { x * right.x, y * right.y }; }
-			Vec2f operator/(const Vec2f& right) const { return Vec2f { x / right.x, y / right.y }; }
-
-			Vec2f operator*(f32 scalar) const { return Vec2f { x * scalar, y * scalar }; }
-			Vec2f operator/(f32 scalar) const { return Vec2f { x / scalar, y / scalar }; }
-
-			internal Vec2f vec2f_from_vec4(Vec4 v);
 		};
 
-		// 3D
+		FORCE_INLINE internal Vec2f vec2f_add(Vec2f v1, Vec2f v2) {
+			Vec2f result = {
+				v1.x + v2.x,
+				v1.y + v2.y
+			};
+
+			return result;
+		}
+
+		FORCE_INLINE internal Vec2f vec2f_subtract(Vec2f v1, Vec2f v2) {
+			Vec2f result = {
+				v1.x - v2.x,
+				v1.y - v2.y
+			};
+
+			return result;
+		}
+
+		FORCE_INLINE internal Vec2f vec2f_multiply(Vec2f v1, Vec2f v2) {
+			Vec2f result = {
+				v1.x * v2.x,
+				v1.y * v2.y
+			};
+
+			return result;
+		}
+
+		FORCE_INLINE internal Vec2f vec2f_divide(Vec2f v1, Vec2f v2) {
+			Vec2f result = {
+				v1.x / v2.x,
+				v1.y / v2.y
+			};
+
+			return result;
+		}
+
+		// ----------------------------------------
+		// Vec2f operator overloads
+		// ----------------------------------------
+
+		FORCE_INLINE internal Vec2f operator+(const Vec2f& lhs, const Vec2f& rhs) { return vec2f_add(lhs, rhs); }
+		FORCE_INLINE internal Vec2f operator-(const Vec2f& lhs, const Vec2f& rhs) { return vec2f_subtract(lhs, rhs); } 		
+		FORCE_INLINE internal Vec2f operator*(const Vec2f& lhs, const Vec2f& rhs) { return vec2f_multiply(lhs, rhs); } 		
+		FORCE_INLINE internal Vec2f operator/(const Vec2f& lhs, const Vec2f& rhs) { return vec2f_divide(lhs, rhs); } 		
+
+		// ----------------------------------------
+		// Vec3
+		// ----------------------------------------
+
 		struct Vec3 {
 			f32 x;
 			f32 y;
 			f32 z;
-
-			Vec3() : x(0), y(0), z(0) {}
-			Vec3(f32 _x, f32 _y, f32 _z) : x(_x), y(_y), z(_z) {}
-			Vec3(const Vertex& vertex) : x(vertex.x), y(vertex.y), z(vertex.z) {}
-
-			Vec3 operator+(const Vec3& left) const { return Vec3 { x + left.x, y + left.y, z + left.z }; }
-			Vec3 operator-(const Vec3& left) const { return Vec3 { x - left.x, y - left.y, z - left.z }; }
-			Vec3 operator*(const Vec3& left) const { return Vec3 { x * left.x, y * left.y, z * left.z }; }
-			Vec3 operator/(const Vec3& left) const { return Vec3 { x / left.x, y / left.y, z / left.z }; }
-
-			internal Vec3 rotate_x(Vec3 vector, f32 angle);
-			internal Vec3 rotate_y(Vec3 vector, f32 angle);
-			internal Vec3 rotate_z(Vec3 vector, f32 angle);
-			internal Vec3 vec3_from_vec4(Vec4);
 		};
 
-		struct Vec4 {
+		FORCE_INLINE internal Vec3 vec3_add(Vec3 v1, Vec3 v2) {
+			Vec3 result = {
+				v1.x + v2.x,
+				v1.y + v2.y,
+				v1.z + v2.z
+			};
+
+			return result;
+		}
+
+		FORCE_INLINE internal Vec3 vec3_subtract(Vec3 v1, Vec3 v2) {
+			Vec3 result = {
+				v1.x - v2.x,
+				v1.y - v2.y,
+				v1.z - v2.z
+			};
+
+			return result;
+		}
+
+		FORCE_INLINE internal Vec3 vec3_multiply(Vec3 v1, Vec3 v2) {
+			Vec3 result = {
+				v1.x * v2.x,
+				v1.y * v2.y,
+				v1.z * v2.z
+			};
+
+			return result;
+		}
+
+		FORCE_INLINE internal Vec3 vec3_divide(Vec3 v1, Vec3 v2) {
+			Vec3 result = {
+				v1.x / v2.x,
+				v1.y / v2.y,
+				v1.z / v2.z
+			};
+
+			return result;
+		}
+
+		FORCE_INLINE internal Vec3 vec3_normalize(Vec3 v) {
+			Vec3 result = {};
+			f32 length = sqrtf((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
 			
-		};
+			if(length != 0.0f) {
+				f32 n = 1.0f / length;
+				result.x *= n;
+				result.y *= n;
+				result.z *= n;
+			}
 
-		// 4D
-		struct Vec4{
-			f32 x;
-			f32 y;
-			f32 z;
-			f32 w;
+			return result;
+		}
 
-			Vec4() : x(0), y(0), z(0), w(0) {}
-			Vec4(f32 _x, f32 _y, f32 _z, f32 _w) : x(_x), y(_y), z(_z), w(_w) {}
+		FORCE_INLINE internal f32 vec3_dot_product(Vec3 v1, Vec3 v2) {
+			f32 result = (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
+			return result;
+		}
 
 		FORCE_INLINE internal Vec3 vec3_cross_product(Vec3 v1, Vec3 v2) {
 			Vec3 result = {
@@ -138,6 +209,26 @@ namespace Starlight {
 			return result;
 		}
 
+		FORCE_INLINE internal const Vec3& operator+=(Vec3&lhs, const Vec3& rhs) {
+			lhs = vec3_add(lhs, rhs);
+			return lhs;
+		}
+
+		FORCE_INLINE internal const Vec3& operator-=(Vec3& lhs, const Vec3& rhs) {
+			lhs = vec3_subtract(lhs, rhs);
+			return lhs;
+		}
+
+		FORCE_INLINE internal const Vec3& operator*=(Vec3& lhs, const Vec3& rhs) { 
+			lhs = vec3_multiply(lhs, rhs); 
+			return lhs;
+		} 
+
+		FORCE_INLINE internal const Vec3& operator/=(Vec3& lhs, const Vec3& rhs) {
+			lhs = vec3_divide(lhs, rhs);
+			return lhs;
+		}
+
 		// ----------------------------------------
 		// Vec3 operator overloads
 		// ----------------------------------------
@@ -146,46 +237,91 @@ namespace Starlight {
 		FORCE_INLINE internal Vec3 operator*(const Vec3& lhs, const Vec3& rhs) { return vec3_multiply(lhs, rhs); } 		
 		FORCE_INLINE internal Vec3 operator/(const Vec3& lhs, const Vec3& rhs) { return vec3_divide(lhs, rhs); } 		
 
+
 		// ----------------------------------------
-		// Common vector operations
+		// Vec4
 		// ----------------------------------------
 
-		FORCE_INLINE internal f32 dot(const Vec2f& a, const Vec2f& b) { 
-			return ((a.x * b.x) + (a.y * b.y)); 
-		}
-		
-		FORCE_INLINE internal f32 dot(const Vec3& a, const Vec3& b) { 
-			return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z)); 
-		}
+		struct Vec4 {
+			f32 x;
+			f32 y;
+			f32 z;
+			f32 w;
+		};
 
-		FORCE_INLINE internal f32 dot(const Vec4& a, const Vec4& b) { 
-			return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z) + (a.w * b.w)); 
-		}
-
-		FORCE_INLINE internal void normalize(Vec2f* v) {
-			f32 length = sqrtf((v->x * v->x) + (v->y * v->y));
-
-			v->x /= length;
-			v->y /= length;
-		}
-
-		FORCE_INLINE internal void normalize(Vec3* v) {
-			f32 length = sqrtf((v->x * v->x) + (v->y * v->y) + (v->z * v->z));
-
-			v->x /= length;
-			v->y /= length;
-			v->z /= length;
+		FORCE_INLINE internal Vec4 vec4_add(Vec4 v1, Vec4 v2){
+			Vec4 result = {
+				v1.x + v2.x,
+				v1.y + v2.y,
+				v1.z + v2.z,
+				v1.w + v2.w
+			};
+			
+			return result;
 		}
 
-		FORCE_INLINE internal void normalize(Vec4* v) {
-			f32 length = sqrtf((v->x * v->x) + (v->y * v->y) + (v->z * v->z) + (v->w * v->w));
-
-			v->x /= length;
-			v->y /= length;
-			v->z /= length;
-			v->w /= length;
+		FORCE_INLINE internal Vec4 vec4_subtract(Vec4 v1, Vec4 v2) {
+			Vec4 result = {
+				v1.x - v2.x,
+				v1.y - v2.y,
+				v1.z - v2.z,
+				v1.w - v2.w
+			};
+			
+			return result;
 		}
 
+		FORCE_INLINE internal Vec4 vec4_multiply(Vec4 v1, Vec4 v2) {
+			Vec4 result = {
+				v1.x * v2.x,
+				v1.y * v2.y,
+				v1.z * v2.z,
+				v1.w * v2.w
+			};
+
+			return result;
+		}
+
+		FORCE_INLINE internal Vec4 vec4_divide(Vec4 v1, Vec4 v2) {
+			Vec4 result = {
+				v1.x / v2.x,
+				v1.y / v2.y,
+				v1.z / v2.z,
+				v1.w / v2.w
+			};
+
+			return result;
+		}
+
+		FORCE_INLINE internal Vec4 vec4_normalize(Vec4 v) {
+			Vec4 result = {};
+			f32 length = sqrtf((v.x*v.x) + (v.y*v.y) + (v.z*v.z) + (v.w*v.w));
+
+			if (length > 0) {
+				f32 n = 1.0f/length;
+				result.x = v.x * n;
+				result.y = v.y * n;
+				result.z = v.z * n;
+				result.w = v.w * n;
+			}
+
+			return result;
+		}
+
+		FORCE_INLINE internal Vec4 vec4_scale(Vec4 v, f32 scale) {
+			Vec4 result = {
+				v.x * scale,
+				v.y * scale,
+				v.z * scale,
+				v.w * scale
+			};
+
+			return result;
+		}
+
+		// ----------------------------------------
+		// Vec4 operator overloads
+		// ----------------------------------------
 		
 		FORCE_INLINE internal const Vec4& operator/=(Vec4& lhs, const Vec4& rhs) {
 			lhs = vec4_divide(lhs, rhs);
@@ -198,19 +334,24 @@ namespace Starlight {
 		} 
 
 		// ----------------------------------------
-		// Vec4 operator overloads
+		// Vector utility operations
 		// ----------------------------------------
 
+		FORCE_INLINE internal Vec2f vec2f_from_vec4(Vec4 v) { 
+			Vec2f result = { v.x, v.y };
+			return result;
+		}
+
 		FORCE_INLINE internal Vec3 vec3_from_vec4(Vec4 v) {
-		  Vec3 result = {v.x, v.y, v.z};
+		  Vec3 result = { v.x, v.y, v.z };
 		  return result;
 		}
 
 		FORCE_INLINE internal Vec4 vec4_from_vec3(Vec3 v) {
-			Vec4 result = {v.x, v.y, v.z, 1.0};
+			Vec4 result = { v.x, v.y, v.z, 1.0 };
 			return result;
 		}
-		
+				
 		// ----------------------------------------
 		// Matrix - 4 x 4
 		// ----------------------------------------
@@ -422,6 +563,7 @@ namespace Starlight {
 			return result;
 		}
 
+		// @REVISE!
 		FORCE_INLINE internal Vec4 mat4f32_mul_projection(Matrix m, Vec4 v) {
 			Vec4 result;
 			result.x = (m.m0 * v.x)  + (m.m1 * v.y)  + (m.m2 * v.z)  + (m.m3 * v.w);
@@ -440,7 +582,7 @@ namespace Starlight {
 		}
 
 		// ----------------------------------------
-		// Convenient math operator overloads
+		// Matrix operator overloads
 		// ----------------------------------------
 		FORCE_INLINE Matrix operator+(const Matrix& lhs, const Matrix& rhs) { return matrix_add(lhs, rhs); }
 		FORCE_INLINE Matrix operator-(const Matrix& lhs, const Matrix& rhs) { return matrix_subtract(lhs, rhs); }

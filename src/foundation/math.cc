@@ -3,32 +3,6 @@ using namespace Starlight::Foundation;
 namespace Starlight {
 	namespace Foundation {
 
-		Vec2f Vec2f::vec2f_from_vec4(Vec4 v) { return Vec2f {v.x, v.y }; }
-		
-		//Vec3 Vec3::rotate_x(Vec3 vector, f32 new_angle) {
-		//  return Vec3 {
-		//		vector.x,
-		//		vector.y * (f32)cos(new_angle) - vector.z * (f32)sin(new_angle),
-		//		vector.y * (f32)sin(new_angle) + vector.z * (f32)cos(new_angle)
-		//	};
-		//}
-
-		//Vec3 Vec3::rotate_y(Vec3 vector, f32 new_angle) {
-		//  return Vec3 {
-		//		vector.x * (f32)cos(new_angle) - vector.z * (f32)sin(new_angle),
-		//		vector.y,
-		//		vector.x * (f32)sin(new_angle) + vector.z * (f32)cos(new_angle)
-		//	};
-		//}
-
-		//Vec3 Vec3::rotate_z(Vec3 vector, f32 new_angle) {
-		//  return Vec3 {
-		//		vector.x * (f32)cos(new_angle) - vector.y * (f32)sin(new_angle),
-		//		vector.x * (f32)sin(new_angle) + vector.y * (f32)cos(new_angle),
-		//		vector.z
-		//	};
-		//}
-
 		// Ranges
 		// 1-dimension
 		Rng1u64 rng1u64(u64 min, u64 max) {

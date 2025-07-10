@@ -1,10 +1,11 @@
-
-
 using namespace Starlight::Foundation;
 using namespace Starlight::Render;
 
 namespace Starlight {
 	namespace Draw {
+
+		// @TODO: Review all the code in here to make sure they are going as fast as possible, 
+		// not doing unnecessary work, etc.
 
 		internal void draw_grid(Renderer *buffer, s32 width, s32 height, u32 colour) {
 			ProfFunction(profDebug_cyan);
@@ -42,16 +43,18 @@ namespace Starlight {
 			s32 delta_y = (y1 - y0);
 
 			// Check for the longest side length
-			s32 longest = (abs(delta_x) >= abs(delta_y)) ? abs(delta_x) : abs(delta_y);
+			s32 abs_delta_x = abs(delta_x);
+			s32 abs_delta_y = abs(delta_y);
+			s32 longest = abs_delta_x >= abs_delta_y ? abs_delta_x : abs_delta_y;
 
 			f32 x_inc = delta_x / (f32)longest;
 			f32 y_inc = delta_y / (f32)longest;
 
-			f32 current_x = x0;
-			f32 current_y = y0;
+			f32 current_x = round(x0);
+			f32 current_y = round(y0);
 
 			for (s32 i = 0; i < longest; ++i) {
-				draw_pixel(buffer, round(current_x), round(current_y), colour);
+				draw_pixel(buffer, current_x, current_y, colour);
 				current_x += x_inc;
 				current_y += y_inc;
 			}
@@ -68,9 +71,9 @@ namespace Starlight {
 		void draw_triangle_pixel(Renderer *buffer, s32 x, s32 y, Vec4 point_a, Vec4 point_b, Vec4 point_c, u32 colour){
 			Vec2f point_p = {static_cast<f32>(x), static_cast<f32>(y)};
 
-			Vec2f a = Vec2f::vec2f_from_vec4(point_a);
-			Vec2f b = Vec2f::vec2f_from_vec4(point_b);
-			Vec2f c = Vec2f::vec2f_from_vec4(point_c);
+			Vec2f a = vec2f_from_vec4(point_a);
+			Vec2f b = vec2f_from_vec4(point_b);
+			Vec2f c = vec2f_from_vec4(point_c);
 
 			Vec3 weights = barycentric_weights(a, b, c, point_p);
 			f32 alpha = weights.x;
@@ -190,9 +193,9 @@ namespace Starlight {
 			Assert(texture != NULL);
 			Vec2f point_p = {(f32)x, (f32)y};
 
-			Vec2f a = Vec2f::vec2f_from_vec4(point_a);
-			Vec2f b = Vec2f::vec2f_from_vec4(point_b);
-			Vec2f c = Vec2f::vec2f_from_vec4(point_c);
+			Vec2f a = vec2f_from_vec4(point_a);
+			Vec2f b = vec2f_from_vec4(point_b);
+			Vec2f c = vec2f_from_vec4(point_c);
 
 			Vec3 weights = barycentric_weights(a, b, c, point_p);
 			f32 alpha = weights.x;
