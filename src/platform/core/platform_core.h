@@ -60,8 +60,11 @@ namespace Starlight {
 		internal string8 read_data_from_file(Arena* arena, string8 file_path);
 		internal string8 data_from_file_range(Arena* arena, Handle file, Rng1u64 range);
 
+		// Time
+		internal u64  get_high_res_time(void);
+		internal void sleep_milliseconds(u32 msec);
+
 		// OS halting primitives
 		internal void  abort(s32 exit_code);
-		internal void  sleep(u64 ns);
 	}
 }

@@ -3,6 +3,7 @@
 #define BUILD_VERSION_MINOR                00
 #define BUILD_VERSION_PATCH                BUILD_SVN_REVISION
 #define BUILD_RELEASE_PHASE_STRING_LITERAL "Pre-Alpha"
+#define RENDER_SW													 1
 
 // Includes, order is important here.
 #include "foundation/context_switch.h"
@@ -33,6 +34,7 @@ using namespace Starlight::ResourceManager;
 
 namespace Starlight {
 
+	s64 g_perf_frequency;
 	global GameState* g_window_state = {};
 	global MeshInfo* g_mesh_info = {};
 	global Triangle* g_triangles_to_render = nullptr; // no-checkin
@@ -60,19 +62,19 @@ namespace Starlight {
 						} break;
 						
 						case(Key_Up): {
-							g_mesh_info->rotate.x += 0.5f;
+							g_mesh_info->rotate.z -= 0.5f;
 						} break;
 
 						case(Key_Down): {
-							g_mesh_info->rotate.x -= 0.5;
+							g_mesh_info->rotate.z += 0.5;
 						} break;
 
 						case(Key_Left): {
-							g_mesh_info->rotate.y += 0.5;
+							g_mesh_info->rotate.y -= 0.5;
 						} break;
 
 						case(Key_Right): {
-							g_mesh_info->rotate.y -= 0.5;
+							g_mesh_info->rotate.y += 0.5;
 						} break;
 
 
@@ -100,6 +102,10 @@ namespace Starlight {
 		g_window_state->per_frame_memory = arena_alloc();
 		g_window_state->asset_memory = arena_alloc();
 
+		//// Frame rate stuff
+		//s32 monitor_hz = get_gfx_info()->monitor_refresh_rate;
+		//f32 game_hz = static_cast<f32>(monitor_hz/2);
+		//g_window_state->frame_dt = 1.f/game_hz;
 
 		// Initialize window and paint into it
 		// 16:9 aspect ratio, 518,400 pixels to process each frame.
@@ -107,7 +113,7 @@ namespace Starlight {
 		g_window_state->window_dim = client_rect_from_window(g_window_state->os_handle);
 		window_first_paint(g_window_state->os_handle);
 		allocate_buffer(g_window_state->game_memory, &g_window_state->render_buffer, 
-												g_window_state->window_dim.x1, g_window_state->window_dim.y1);
+										g_window_state->window_dim.x1, g_window_state->window_dim.y1);
 
 		// Initialize lights
 		g_light.direction.x = 0.0f;
@@ -134,6 +140,8 @@ namespace Starlight {
 
 	internal void update() {
 		ProfFunction(profDebug_orangered);
+
+		u64 begin_time_us = get_high_res_time();
 
 		g_face_count_idx = 0;
 		g_mesh_info->rotate.x += 0.01;
@@ -220,14 +228,19 @@ namespace Starlight {
 			u32 triangle_colour = light_intensity(0xffffffff, light_intensity_factor); 
 
 			Triangle projected_triangle = {{
-					{ projected_points[0].x, projected_points[0].y, projected_points[0].z, projected_points[0].w },
-					{ projected_points[1].x, projected_points[1].y, projected_points[1].z, projected_points[1].w },
-					{ projected_points[2].x, projected_points[2].y, projected_points[2].z, projected_points[2].w },
-				}, triangle_colour
+				{ projected_points[0].x, projected_points[0].y, projected_points[0].z, projected_points[0].w },
+				{ projected_points[1].x, projected_points[1].y, projected_points[1].z, projected_points[1].w },
+				{ projected_points[2].x, projected_points[2].y, projected_points[2].z, projected_points[2].w },
+			}, triangle_colour
 			};
 
 			g_triangles_to_render[g_face_count_idx++] = projected_triangle;
 		}
+
+		//u64 end_time_us = get_high_res_time();
+		//u64 frame_time_us = end_time_us - begin_time_us;
+
+		//printf("%lld FPS/ms\n", frame_time_us);
 
 	}
 
@@ -245,17 +258,17 @@ namespace Starlight {
 			//draw_rect(&g_window_state->render_buffer, triangle.points[2].x, triangle.points[2].y, 3, 3, 0xFFFE7104);
 
 
-		draw_filled_triangle(&g_window_state->render_buffer, 
-			triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[0].w, // Vertex A
-			triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w, // Vertex B
-			triangle.points[2].x, triangle.points[2].y, triangle.points[2].z, triangle.points[2].w, // Vertex C
-			triangle.colour);
+			draw_filled_triangle(&g_window_state->render_buffer, 
+													 triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[0].w, // Vertex A
+													 triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w, // Vertex B
+													 triangle.points[2].x, triangle.points[2].y, triangle.points[2].z, triangle.points[2].w, // Vertex C
+													 triangle.colour);
 
-		draw_triangle(&g_window_state->render_buffer, 
-									triangle.points[0].x, triangle.points[0].y,		 // Vertex A
-									triangle.points[1].x, triangle.points[1].y,    // Vertex B
-									triangle.points[2].x, triangle.points[2].y,    // Vertex C
-									0xFFFFFFF);
+			draw_triangle(&g_window_state->render_buffer, 
+										triangle.points[0].x, triangle.points[0].y,		 // Vertex A
+										triangle.points[1].x, triangle.points[1].y,    // Vertex B
+										triangle.points[2].x, triangle.points[2].y,    // Vertex C
+										0xFFFFFFF);
 		}
 
 
@@ -274,3 +287,50 @@ namespace Starlight {
 		}
 	}
 }
+
+// WIP
+
+//	internal void main_loop() {
+//    initialize_system();
+
+//    u64 last_frame_time = get_high_res_time();
+//    f32 fps_timer = 0.0f;
+//    u32 frame_count = 0;
+//    f32 average_fps = 0.0f;
+
+//		s32 monitor_hz = get_gfx_info()->monitor_refresh_rate;
+//		f32 game_hz = static_cast<f32>(monitor_hz/2);
+//		g_window_state->frame_dt = 1.f/game_hz;
+
+//    while(!quit) {
+//			u64 frame_start_time = get_high_res_time();
+        
+//			// Do all frame work
+//			process_input();
+//			update();
+//			render();
+        
+//			u64 frame_end_time = get_high_res_time();
+        
+//			// Calculate frame timing
+//			u64 frame_time_us = frame_end_time - frame_start_time;
+//			f32 frame_time_ms = frame_time_us / 1000.0f;
+//			f32 current_fps = 1000.0f / frame_time_ms;
+        
+//			// Update FPS averaging (update every second)
+//			fps_timer += frame_time_ms;
+//			frame_count++;
+        
+//			if(fps_timer >= 1000.0f) { // Every 1000ms (1 second)
+//				average_fps = frame_count / (fps_timer / 1000.0f);
+//				printf("FPS: %.1f | Frame Time: %.2f ms | Target: %.1f FPS\n",  average_fps, frame_time_ms, 1.0f / g_window_state->frame_dt);
+            
+//				// Reset counters
+//				fps_timer = 0.0f;
+//				frame_count = 0;
+//			}
+        
+//			last_frame_time = frame_end_time;
+//    }
+//	}
+//}

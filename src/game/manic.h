@@ -14,6 +14,8 @@ namespace Starlight {
 		Renderer render_buffer;
 		Handle os_handle;
 		Rng2f32	window_dim;
+
+		f32 frame_dt;
 	};
 
 	// @NOTE: This is temporary, pending when I can think of a better way to architect this.

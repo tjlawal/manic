@@ -54,6 +54,7 @@ namespace Starlight {
 					#endif
 				} sw;
 			};
+
 			RendererType type;
 			RenderMode mode;
 			CullMode cull;

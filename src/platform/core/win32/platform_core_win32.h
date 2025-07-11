@@ -33,7 +33,7 @@ namespace Starlight {
 			Arena* arena;
 			SystemInfo system_info;
 			ProcessInfo process_info;
-			u64 us_resolution;
+			u64 microsecond_resolution;
 		};
 
 		// Global

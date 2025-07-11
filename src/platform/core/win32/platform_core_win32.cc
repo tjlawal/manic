@@ -41,8 +41,6 @@ namespace Starlight {
 		internal SystemInfo*  get_system_info(void) { return &w32_state.system_info; }
 		internal ProcessInfo* get_process_info(void) { return &w32_state.process_info; }
 
-		internal void sleep(u64 ns) { Sleep(ns); }
-
 		// Memory allocation
 		// @REVISE: Should errors be handled here? what is the best way to do it?
 		internal void* mem_reserve(u64 size) {
@@ -201,6 +199,18 @@ namespace Starlight {
 				return src_offset;
 			}
 		}
+
+		// Time
+		internal u64  get_high_res_time(void) {
+			u64 result = 0;
+			LARGE_INTEGER large_int;
+			if(QueryPerformanceCounter(&large_int)) {
+				result = (large_int.QuadPart * Million(1)) / w32_state.microsecond_resolution;
+			}
+			return result;
+		}
+
+		internal void sleep_milliseconds(u32 msec) { Sleep(msec); }
 
 		// Win32 entry point
 		#include <dbghelp.h>
@@ -409,6 +419,15 @@ namespace Starlight {
 
 			SYSTEM_INFO sys_info;
 			GetSystemInfo(&sys_info);
+
+			{
+				w32_state.microsecond_resolution = 1;
+				LARGE_INTEGER large_int;
+				if(QueryPerformanceFrequency(&large_int)) {
+					w32_state.microsecond_resolution = large_int.QuadPart;
+				}
+			}
+
 			{
 				SystemInfo *system_information = &w32_state.system_info;
 				system_information->logical_processor_count = (u64)sys_info.dwNumberOfProcessors;
