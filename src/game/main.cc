@@ -96,16 +96,18 @@ namespace Starlight {
 
 		ProfScope(init, "game memory alloc", profDebug_maroon);
 
+		// Initialize game memory
+		// @IMPROVEMENT: A pool would be good for asset stuff instead of the arena!
 		Arena* big_daddy_arena = arena_alloc();
 		g_window_state = arena_push<GameState>(big_daddy_arena, 1);
 		g_window_state->game_memory = arena_alloc(); 
 		g_window_state->per_frame_memory = arena_alloc();
 		g_window_state->asset_memory = arena_alloc();
 
-		//// Frame rate stuff
-		//s32 monitor_hz = get_gfx_info()->monitor_refresh_rate;
-		//f32 game_hz = static_cast<f32>(monitor_hz/2);
-		//g_window_state->frame_dt = 1.f/game_hz;
+		// Get monitor frame rate stuff
+		s32 monitor_hz = get_gfx_info()->monitor_refresh_rate;
+		f32 game_hz = static_cast<f32>(monitor_hz/2);
+		g_window_state->frame_dt = 1.f/game_hz;
 
 		// Initialize window and paint into it
 		// 16:9 aspect ratio, 518,400 pixels to process each frame.
@@ -132,7 +134,7 @@ namespace Starlight {
 		g_mesh_info->scale = {1.0, 1.0, 1.0};
 
 		#if BUILD_DEBUG_VERY_NOISY
-		dump_mesh_info(g_mesh_info);
+			dump_mesh_info(g_mesh_info); // @IMPROVEMENT: profived this information in with text overlays when text rendering is a thing!
 		#endif
 
 		g_triangles_to_render = arena_push<Triangle>(g_window_state->per_frame_memory, g_mesh_info->faces_count);
@@ -140,8 +142,6 @@ namespace Starlight {
 
 	internal void update() {
 		ProfFunction(profDebug_orangered);
-
-		u64 begin_time_us = get_high_res_time();
 
 		g_face_count_idx = 0;
 		g_mesh_info->rotate.x += 0.01;
