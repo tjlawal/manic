@@ -34,7 +34,6 @@ using namespace Starlight::ResourceManager;
 
 namespace Starlight {
 
-	s64 g_perf_frequency;
 	global GameState* g_window_state = {};
 	global MeshInfo* g_mesh_info = {};
 	global Triangle* g_triangles_to_render = nullptr; // no-checkin
@@ -60,13 +59,20 @@ namespace Starlight {
 						case(Key_Q): {
 							quit = 1;
 						} break;
-						
+
+						// Toggle render modes
+						case(Key_W): { g_window_state->render_buffer.render_mode ^= RENDERMODE_WIREFRAME; } break;
+						case(Key_F): { g_window_state->render_buffer.render_mode ^= RENDERMODE_FILL; } break;
+						case(Key_V): { g_window_state->render_buffer.render_mode ^= RENDERMODE_VERTEXPOINTS; } break;
+						case(Key_T): { g_window_state->render_buffer.render_mode ^= RENDERMODE_TEXTURE; } break;
+						case(Key_C): { g_window_state->render_buffer.render_mode ^= RENDERMODE_CULL; } break;
+
 						case(Key_Up): {
-							g_mesh_info->rotate.z -= 0.5f;
+							g_mesh_info->rotate.z += 0.5f;
 						} break;
 
 						case(Key_Down): {
-							g_mesh_info->rotate.z += 0.5;
+							g_mesh_info->rotate.z -= 0.5;
 						} break;
 
 						case(Key_Left): {
@@ -77,6 +83,13 @@ namespace Starlight {
 							g_mesh_info->rotate.y += 0.5;
 						} break;
 
+						case(Key_A): {
+							g_mesh_info->rotate.x -= 0.5;
+						} break;
+
+						case(Key_O): {
+							g_mesh_info->rotate.x += 0.5;
+						} break;
 
 						default:
 							break;
@@ -105,36 +118,44 @@ namespace Starlight {
 		g_window_state->asset_memory = arena_alloc();
 
 		// Get monitor frame rate stuff
-		s32 monitor_hz = get_gfx_info()->monitor_refresh_rate;
-		f32 game_hz = static_cast<f32>(monitor_hz/2);
+		// @THOUGHT: It would be nice to render at the speed of the monitor Hz in the case where 
+		// it is faster than 60Hz.
+		// @IMPROVE: It'll be nice to improve this to handle the case of choosing the best 
+		// target_monitor_hz based on what the OS reports back.
+
+		s32 target_monitor_hz = get_gfx_info()->monitor_refresh_rate;
+		f32 game_hz = static_cast<f32>(target_monitor_hz);
 		g_window_state->frame_dt = 1.f/game_hz;
 
 		// Initialize window and paint into it
-		// 16:9 aspect ratio, 518,400 pixels to process each frame.
-		g_window_state->os_handle = window_open(Rng2f32(0, 0, 900, 800), str8_lit(BUILD_TITLE_STRING_LITERAL)); 
+		// 16:9 aspect ratio, 675,000 pixels to process each frame.
+		g_window_state->os_handle = window_open(Rng2f32(0, 0, 900, 750), str8_lit(BUILD_TITLE_STRING_LITERAL)); 
 		g_window_state->window_dim = client_rect_from_window(g_window_state->os_handle);
 		window_first_paint(g_window_state->os_handle);
 		allocate_buffer(g_window_state->game_memory, &g_window_state->render_buffer, 
 										g_window_state->window_dim.x1, g_window_state->window_dim.y1);
 
+		// Default rendering mode 
+		// @NOTE(Tijani): maybe too verbose
+		g_window_state->render_buffer.render_mode = (RENDERMODE_DEFAULT | RENDERMODE_CULL | RENDERMODE_FILL);
+
 		// Initialize lights
-		g_light.direction.x = 0.0f;
-		g_light.direction.y = 0.0f;
-		g_light.direction.z = 1.0f;
+		g_light.direction = { 0.0f, 0.0f, 1.0f };
 
 		//// Initialize camera system
 		g_camera.fov = MATH_PI / 3.0;
-		g_camera.znear = 50.0;
-		g_camera.zfar = 100.0;
+		g_camera.znear = 0.0f;
+		g_camera.zfar = 100.0f;
 		g_camera.aspect_ratio = g_window_state->window_dim.x1 / g_window_state->window_dim.y1;
 		g_camera.projection = perspective(g_camera.fov, g_camera.aspect_ratio, g_camera.znear, g_camera.zfar);
 
 		// Initialize the resource manager.
-		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/f117.obj"));
-		g_mesh_info->scale = {1.0, 1.0, 1.0};
+		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/f22.obj"));
+		g_mesh_info->scale = { 1.0, 1.0, 1.0};
+		g_mesh_info->colour = 0xFFFFFFFF;
 
 		#if BUILD_DEBUG_VERY_NOISY
-			dump_mesh_info(g_mesh_info); // @IMPROVEMENT: profived this information in with text overlays when text rendering is a thing!
+			dump_mesh_info(g_mesh_info); // @IMPROVEMENT: provide this information in with text overlays when text rendering is a thing!
 		#endif
 
 		g_triangles_to_render = arena_push<Triangle>(g_window_state->per_frame_memory, g_mesh_info->faces_count);
@@ -144,9 +165,9 @@ namespace Starlight {
 		ProfFunction(profDebug_orangered);
 
 		g_face_count_idx = 0;
-		g_mesh_info->rotate.x += 0.01;
-		//g_mesh_info->rotate.y += 0.01;
-		//g_mesh_info->rotate.z += 0.001;
+		g_mesh_info->rotate.x += 0.05;
+     //g_mesh_info->rotate.y += 0.08;
+		//g_mesh_info->rotate.z += 0.004;
 		g_mesh_info->translate.z = 5.0;
 
 		Matrix scale     = matrix_scale(g_mesh_info->scale.x, g_mesh_info->scale.y, g_mesh_info->scale.z);
@@ -165,6 +186,7 @@ namespace Starlight {
 			face_vertices[2] = g_mesh_info->vertices[current_face.vertex_idx[2] - 1];
 
 			Vec4 transformed_vertices[3];
+
 			// Loop through all vertices in teh current face and apply transformation
 			for(s32 j = 0; j < 3; j++) {
 				Vec4 transformed_vertex = vec4_from_vec3(face_vertices[j]);
@@ -189,20 +211,23 @@ namespace Starlight {
 
 			Vec3 ab = b - a;
 			Vec3 ac = c - a;
-			vec3_normalize(ab);
-			vec3_normalize(ac);
+			ab = vec3_normalize(ab);
+			ac = vec3_normalize(ac);
 
 			// Computer face normal using cross product to find perpendicular
-			Vec3 normal = vec3_cross_product(ab, ac);
-			vec3_normalize(normal);
+			Vec3 face_normal = vec3_cross_product(ac, ab);
+			face_normal = vec3_normalize(face_normal);
 
 			// Find the vector between points in the triangle and camera origin
 			Vec3 camera_ray = g_camera.position - a;
 
 			// If face normal (dot product) is aligned with camera ray, draw, if not cull.
-			f32 dot_normal_camera = vec3_dot_product(normal, camera_ray);
-			if(dot_normal_camera < 0) {
-				continue;
+			f32 dot_normal_camera = vec3_dot_product(face_normal, camera_ray);
+
+			if(g_window_state->render_buffer.render_mode & RENDERMODE_CULL) {
+				if(dot_normal_camera < 0) {
+					continue;
+				}
 			}
 
 			Vec4 projected_points[3];
@@ -219,13 +244,9 @@ namespace Starlight {
 				projected_points[k].y += (g_window_state->render_buffer.sw.height / 2.0);
 			}
 
-			// There's a lighting bug but cant figure it out yet
-			// @BUG!!
-			// calculate light intensity based on the alignment of the face normal and the light ray
-			f32 light_intensity_factor = -vec3_dot_product(normal, g_light.direction);
-			light_intensity_factor *= 5.0f; // Boost the light temporarily
-			// Calculate the triangle color based on the light angle
-			u32 triangle_colour = light_intensity(0xffffffff, light_intensity_factor); 
+			// Calculate shading density based on how aligned the face normal and the light ray are.
+			f32 intensity = -vec3_dot_product(face_normal, g_light.direction);
+			u32 triangle_colour = light_intensity(g_mesh_info->colour, intensity);
 
 			Triangle projected_triangle = {{
 				{ projected_points[0].x, projected_points[0].y, projected_points[0].z, projected_points[0].w },
@@ -236,12 +257,6 @@ namespace Starlight {
 
 			g_triangles_to_render[g_face_count_idx++] = projected_triangle;
 		}
-
-		//u64 end_time_us = get_high_res_time();
-		//u64 frame_time_us = end_time_us - begin_time_us;
-
-		//printf("%lld FPS/ms\n", frame_time_us);
-
 	}
 
 	internal void render() {
@@ -253,22 +268,30 @@ namespace Starlight {
 		//s32 triangle_count = array_length(g_triangles_to_render);
 		for(u32 i = 0; i < g_face_count_idx; i++) {
 			Triangle triangle = g_triangles_to_render[i];
-			//draw_rect(&g_window_state->render_buffer, triangle.points[0].x, triangle.points[0].y, 3, 3, 0xFFFE7104);
-			//draw_rect(&g_window_state->render_buffer, triangle.points[1].x, triangle.points[1].y, 3, 3, 0xFFFE7104);
-			//draw_rect(&g_window_state->render_buffer, triangle.points[2].x, triangle.points[2].y, 3, 3, 0xFFFE7104);
+			
+			// Draw vertex points
+			if(g_window_state->render_buffer.render_mode & RENDERMODE_VERTEXPOINTS){
+				draw_rect(&g_window_state->render_buffer, triangle.points[0].x, triangle.points[0].y, 3, 3, 0xFFFE7104);
+				draw_rect(&g_window_state->render_buffer, triangle.points[1].x, triangle.points[1].y, 3, 3, 0xFFFE7104);
+				draw_rect(&g_window_state->render_buffer, triangle.points[2].x, triangle.points[2].y, 3, 3, 0xFFFE7104);
+			}
 
+			// Draw filled triangles
+			if(g_window_state->render_buffer.render_mode == RENDERMODE_DEFAULT || g_window_state->render_buffer.render_mode & RENDERMODE_FILL) {
+				draw_filled_triangle(&g_window_state->render_buffer, 
+														 triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[0].w, // Vertex A
+														 triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w, // Vertex B
+														 triangle.points[2].x, triangle.points[2].y, triangle.points[2].z, triangle.points[2].w, // Vertex C
+														 triangle.colour);
+			}
 
-			draw_filled_triangle(&g_window_state->render_buffer, 
-													 triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[0].w, // Vertex A
-													 triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w, // Vertex B
-													 triangle.points[2].x, triangle.points[2].y, triangle.points[2].z, triangle.points[2].w, // Vertex C
-													 triangle.colour);
-
-			draw_triangle(&g_window_state->render_buffer, 
-										triangle.points[0].x, triangle.points[0].y,		 // Vertex A
-										triangle.points[1].x, triangle.points[1].y,    // Vertex B
-										triangle.points[2].x, triangle.points[2].y,    // Vertex C
-										0xFFFFFFF);
+			if(g_window_state->render_buffer.render_mode & RENDERMODE_WIREFRAME) {
+				draw_triangle(&g_window_state->render_buffer, 
+											triangle.points[0].x, triangle.points[0].y,		 // Vertex A
+											triangle.points[1].x, triangle.points[1].y,    // Vertex B
+											triangle.points[2].x, triangle.points[2].y,    // Vertex C
+											0xFFFFFFF);
+			}
 		}
 
 
@@ -278,59 +301,26 @@ namespace Starlight {
 	internal void main_loop() {
 		initialize_system();
 
+		u64 previous_frame_time = get_high_res_time();
+    u64 target_frame_time = (u64)(g_window_state->frame_dt * (f32)Million(1)); // Convert to microseconds
+
 		while(!quit) {
+			u64 frame_start_time = get_high_res_time();
 			process_input();
 			update();
 			render();
 
-			//sleep(16); // This is sucky
+			// Frame stats
+			u64 frame_end_time = get_high_res_time();
+			u64 frame_work_time = frame_end_time - frame_start_time;
+			if(frame_work_time < target_frame_time) {
+				u64 sleep_time = target_frame_time - frame_work_time;
+				// @IMPROVE/@INVESTIGATE: using timeBeginPeriod to set the scheduler timer lower,
+				// which in turn resolves the latency issue with Sleep().
+				// Need to do more research into if that actually works!
+				// 
+				Sleep((DWORD)(sleep_time / 1000));
+			}
 		}
 	}
 }
-
-// WIP
-
-//	internal void main_loop() {
-//    initialize_system();
-
-//    u64 last_frame_time = get_high_res_time();
-//    f32 fps_timer = 0.0f;
-//    u32 frame_count = 0;
-//    f32 average_fps = 0.0f;
-
-//		s32 monitor_hz = get_gfx_info()->monitor_refresh_rate;
-//		f32 game_hz = static_cast<f32>(monitor_hz/2);
-//		g_window_state->frame_dt = 1.f/game_hz;
-
-//    while(!quit) {
-//			u64 frame_start_time = get_high_res_time();
-        
-//			// Do all frame work
-//			process_input();
-//			update();
-//			render();
-        
-//			u64 frame_end_time = get_high_res_time();
-        
-//			// Calculate frame timing
-//			u64 frame_time_us = frame_end_time - frame_start_time;
-//			f32 frame_time_ms = frame_time_us / 1000.0f;
-//			f32 current_fps = 1000.0f / frame_time_ms;
-        
-//			// Update FPS averaging (update every second)
-//			fps_timer += frame_time_ms;
-//			frame_count++;
-        
-//			if(fps_timer >= 1000.0f) { // Every 1000ms (1 second)
-//				average_fps = frame_count / (fps_timer / 1000.0f);
-//				printf("FPS: %.1f | Frame Time: %.2f ms | Target: %.1f FPS\n",  average_fps, frame_time_ms, 1.0f / g_window_state->frame_dt);
-            
-//				// Reset counters
-//				fps_timer = 0.0f;
-//				frame_count = 0;
-//			}
-        
-//			last_frame_time = frame_end_time;
-//    }
-//	}
-//}

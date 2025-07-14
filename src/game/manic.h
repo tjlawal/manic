@@ -16,6 +16,10 @@ namespace Starlight {
 		Rng2f32	window_dim;
 
 		f32 frame_dt;
+
+		u64 frame_idx;
+		u64 frame_time_us_history[64];
+		u64 num_frames_requested;
 	};
 
 	// @NOTE: This is temporary, pending when I can think of a better way to architect this.
