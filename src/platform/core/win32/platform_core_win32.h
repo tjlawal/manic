@@ -7,12 +7,14 @@
 #include <shellapi.h>
 #include <shlobj.h>
 #include <processthreadsapi.h>
+#include <mmsystem.h>
 
 #pragma comment(lib, "user32")
 #pragma comment(lib, "shell32")
 #pragma comment(lib, "gdi32")
 #pragma comment(lib, "shlwapi")
 #pragma comment(lib, "comctl32")
+#pragma comment(lib, "winmm")
 
 // This line is required for loading the correct comctl32 dll
 // file. It ensures the correct version (6) is selected to enable visual styles

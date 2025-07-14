@@ -426,6 +426,14 @@ namespace Starlight {
 				if(QueryPerformanceFrequency(&large_int)) {
 					w32_state.microsecond_resolution = large_int.QuadPart;
 				}
+
+				// Set windows scheduler granularity to 1ms, this makes Sleep() more granular.
+				// @TODO: Verify this!
+				// @TODO: Should timeEndPeriod be called??
+				// @TODO: Would this be needed in scenario where software rendering is not the way 
+				// to get stuff on the screen?
+				UINT desired_scheduler_ms = 1;
+				b32 sleep_granular = (timeBeginPeriod(desired_scheduler_ms) == TIMERR_NOERROR );
 			}
 
 			{
