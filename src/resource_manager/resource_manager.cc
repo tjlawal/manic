@@ -1,4 +1,3 @@
-
 #include "mesh/mesh.cc"
 #include "parsers/parser.cc"
 #include "parsers/wavefrontobj/wavefrontobj.cc"
@@ -10,7 +9,7 @@ namespace Starlight {
 	namespace ResourceManager {
 		
 		// Parse model info and its texture data.
-		// @NOTE: This only works for Wavefront OBJ files.
+		// @NOTE: Only Wavefront objs are supported for now.
 		internal MeshInfo* load_model(Arena* arena, string8 file_path) {
 			ProfFunction(profDebug_mediumslateblue);
 			Temp scratch = scratch_begin(0, 0);
@@ -19,7 +18,5 @@ namespace Starlight {
 			scratch_end(scratch);
 			return parsed_data;
 		}
-
-
 	}
 }

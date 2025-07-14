@@ -1,13 +1,19 @@
-/*
- Todo List:
-- Some OBJ files include additional information like material name (usemtl), material library (mtlib) 
-	that is not relevant right now. just skip over them and continue. It'll be nice if those can be processed and just 
-	discarded for the sake of completeness but not absolutely necessary.
-- Currently if the parser comes across invalid OBJ files, it would be nice to report the error to the user then proceed to
-	crash and burn.
-- Currently mesh files that have faces certain vertices, textures or normals missing in the expected coordinates 
-	(see dragon.obj) just defaults to 0. It also doesn't handle obj files with negative `-` in the faces values.
-*/
+/******************************************************************************
+* Todos:
+* 
+* - Some OBJ files include additional information like material name (usemtl), 
+*		material library (mtlib) that is not relevant in this use case so it is
+*		skipped over and parsing continues.
+*	- It'll be nice to report errors when parsing invalid OBJ files and 
+*		exit gracefully.
+* - Need to investigate why it parses on really large obj files, but then again 
+*		OBJ files are the wrong tool for the job so it's just a good exercise and 
+*		not necessary. (see dragon.obj)
+*	- Writing back an already parsed OBJ file is trivial but there's no use case.
+*
+*
+******************************************************************************/
+
 
 namespace Starlight {
 	namespace ResourceManager {
@@ -19,44 +25,49 @@ namespace Starlight {
 				Lexer lexer(data);
 				MeshInfo* mesh_info = arena_push<MeshInfo>(arena, 1);
 
-				ProfScope(count, "count data elements", profDebug_peru);
-				
-				mesh_info->vertices_idx = 0;
-				mesh_info->normals_idx = 0;
-				mesh_info->texture_coords_idx = 0;
-				mesh_info->faces_idx = 0;
+				{
+					ProfScope(count, "count data elements", profDebug_peru);
+					mesh_info->vertices_idx = 0;
+					mesh_info->normals_idx = 0;
+					mesh_info->texture_coords_idx = 0;
+					mesh_info->faces_idx = 0;
 
-				mesh_info->vertices_count = count_vertices(token, &lexer);
-				mesh_info->normals_count = count_normals(token, &lexer);;
-				mesh_info->texture_coords_count = count_texcoords(token, &lexer);
-				mesh_info->faces_count = count_faces(token, &lexer);
+					mesh_info->vertices_count = count_vertices(token, &lexer);
+					mesh_info->normals_count = count_normals(token, &lexer);;
+					mesh_info->texture_coords_count = count_texcoords(token, &lexer);
+					mesh_info->faces_count = count_faces(token, &lexer);
+				}
 
-				ProfScope(alloc_mesh, "alloc data to MeshInfo", profDebug_snow);
-				mesh_info->vertices = arena_push<Vec3>(arena, mesh_info->vertices_count);
-				mesh_info->normals = arena_push<Vec3>(arena, mesh_info->normals_count);
-				mesh_info->texture_coords = arena_push<TextureCoord>(arena, mesh_info->texture_coords_count);
-				mesh_info->faces = arena_push<Face>(arena, mesh_info->faces_count);
+				{
+					ProfScope(alloc_mesh, "alloc data to MeshInfo", profDebug_snow);
+					mesh_info->vertices = arena_push<Vec3>(arena, mesh_info->vertices_count);
+					mesh_info->normals = arena_push<Vec3>(arena, mesh_info->normals_count);
+					mesh_info->texture_coords = arena_push<TextureCoord>(arena, mesh_info->texture_coords_count);
+					mesh_info->faces = arena_push<Face>(arena, mesh_info->faces_count);
+				}
 
-				ProfScope(start_parsing, "start parseing file", profDebug_bisque);
-				while(token.type != FormatTokenType_EOF) {
-					token = next_token(&lexer);
+				{
+					ProfScope(start_parsing, "start parseing file", profDebug_bisque);
+					while(token.type != FormatTokenType_EOF) {
+						token = next_token(&lexer);
 
-					switch(token.type) {
-						case(FormatTokenType_GeometricVertices): {
-							parse_vertices(arena, &lexer, mesh_info);
-						} break;
+						switch(token.type) {
+							case(FormatTokenType_GeometricVertices): {
+								parse_vertices(arena, &lexer, mesh_info);
+							} break;
 
-						case(FormatTokenType_VertexNormals): {
-							parse_normals(arena, &lexer, mesh_info);
-						} break;
+							case(FormatTokenType_VertexNormals): {
+								parse_normals(arena, &lexer, mesh_info);
+							} break;
 
-						case(FormatTokenType_TextureVertices): {
-							parse_textures(arena, &lexer, mesh_info);
-						} break;
+							case(FormatTokenType_TextureVertices): {
+								parse_textures(arena, &lexer, mesh_info);
+							} break;
 
-						case(FormatTokenType_Face): {
-							parse_faces(arena, &lexer, mesh_info);
-						} break;
+							case(FormatTokenType_Face): {
+								parse_faces(arena, &lexer, mesh_info);
+							} break;
+						}
 					}
 				}
 
@@ -143,10 +154,6 @@ namespace Starlight {
 				parse_float(lexer, &vertex.z);
 
 				dst->vertices[dst->vertices_idx++] = vertex;
-
-				#if BUILD_DEBUG
-					//printf("v %g %g %g\n", vertex.x, vertex.y, vertex.z);
-				#endif
 			}
 
 			internal void parse_normals(Arena* arena, Lexer* lexer, MeshInfo* dst) {
@@ -156,10 +163,6 @@ namespace Starlight {
 				parse_float(lexer, &normals.z);
 
 				dst->normals[dst->normals_idx++] = normals;
-
-				#if BUILD_DEBUG
-				//printf("vn %g %g %g\n", normals.x, normals.y, normals.z);
-				#endif
 			}
 
 			internal void parse_textures(Arena* arena, Lexer* lexer, MeshInfo* dst) {
@@ -167,11 +170,6 @@ namespace Starlight {
 
 				parse_float(lexer, &texture.u);
 				parse_float(lexer, &texture.v);
-
-				dst->texture_coords[dst->texture_coords_idx++] = texture;
-				#if BUILD_DEBUG
-				//printf("vt %g %g\n", texture.u, texture.v);
-				#endif
 			}
 
 			internal void parse_faces(Arena* arena, Lexer* lexer, MeshInfo* dst) {
@@ -329,14 +327,6 @@ namespace Starlight {
 				// allocate and
 
 				dst->faces[dst->faces_idx++] = faces;
-
-				#if BUILD_DEBUG
-				//printf("f %d/%d/%d %d/%d/%d %d/%d/%d\n", faces.vertex_idx[0], faces.texture_idx[0], 
-							 //faces.normal_idx[0], faces.vertex_idx[1], faces.texture_idx[1], 
-							 //faces.normal_idx[1], faces.vertex_idx[2], faces.texture_idx[2], 
-							 //faces.normal_idx[2]);
-
-				#endif
 			}
 
 			

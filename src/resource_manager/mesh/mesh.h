@@ -26,6 +26,8 @@ namespace Starlight {
 				s32 texture_width;
 				s32 texture_height;
 
+				u32 colour;
+
 				// Transformation data ??
 				Vec3 rotate;
 				Vec3 scale; 
