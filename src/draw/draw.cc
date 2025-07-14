@@ -81,12 +81,8 @@ namespace Starlight {
 			f32 gamma = weights.z;
 
 			// Interpolated the value of 1/W for the current pixel.
-			f32 interpolated_reciprocal_w;
+			f32 interpolated_reciprocal_w = (1 / point_a.w) * alpha + (1 / point_b.w) * beta + (1 / point_c.w) * gamma;
 
-			// Interpolate the value of 1/w for teh current pixel
-			interpolated_reciprocal_w = (1 / point_a.w) * alpha + (1 / point_b.w) * beta + (1 / point_c.w) * gamma;
-
-			// this is nasty
 			// Adjust 1/w so that the pixel that are close to the camera have smaller values
 			interpolated_reciprocal_w = 1.0 - interpolated_reciprocal_w;
 
