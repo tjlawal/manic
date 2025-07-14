@@ -3,6 +3,15 @@
 using namespace Starlight::Foundation;
 using namespace Starlight::Platform;
 
+// Render Modes
+#define RENDERMODE_DEFAULT           (1 << 0)
+#define RENDERMODE_WIREFRAME         (1 << 1)
+#define RENDERMODE_VERTEXPOINTS      (1 << 2)
+#define RENDERMODE_FILL              (1 << 3)
+#define RENDERMODE_TEXTURE           (1 << 4)
+#define RENDERMODE_TEXTURE_WIREFRAME (1 << 5)
+#define RENDERMODE_CULL							 (1 << 6)
+
 namespace Starlight {
 	namespace Render {
 
@@ -11,35 +20,12 @@ namespace Starlight {
 			RendererType_DirectX11,
 			RendererType_DirectX12,
 			RendererType_Vulkan,
-			RendererType_OpenGL,
 			RendererType_Metal,
 			RendererType_Count
-		};
-
-		enum RenderMode : u8 {
-			RenderMode_WireFrame,
-			RenderMode_VertexPoints,
-			RenderMode_Fill,
-			RenderMode_Texture,
-			RenderMode_TextureWireFrame,
-			RenderMode_BackCull,
-			RenderMode_Count
-		};
-
-		enum CullMode : u8 {
-			CullMode_Back
 		};
 		
 		struct Renderer {
 			union {
-				struct {
-					void* context;
-					s32 major;
-					s32 minor;
-					b16 core, compatible;
-					// DLL handle ??
-				} opengl;
-
 				struct {
 					void* memory_buffer;
 					u32* colour_buffer;
@@ -55,10 +41,8 @@ namespace Starlight {
 				} sw;
 			};
 
-			RendererType type;
-			RenderMode mode;
-			CullMode cull;
-			u8 padding;
+			RendererType type; // Contigent, I'd prefer this to be more explicit depending on the Platform, etc.
+			u8 render_mode;
 		};
 
 		// OS - Renderer Association
