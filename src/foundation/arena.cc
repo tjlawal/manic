@@ -1,3 +1,17 @@
+/******************************************************************************
+* System FYIs:
+* 
+* - Currently, this implementation does not reuse holes in the system 
+* 	created by freeing the temp arena. It very evident in places where
+* 	a large mesh data is loaded from the OS into a temp arena and then that
+* 	temp data is passed onto asset arena, although the temp data gets reset
+*		back to 0 and it is marked available for use, nobody ever actually uses it.
+* 	This is most likely a result of using the wrong tool for the job as 
+*		Memory Pools are suitable for meshes and the likes.
+*
+*
+******************************************************************************/
+
 
 using namespace Starlight::Platform;
 

@@ -1,6 +1,7 @@
 #pragma once
 
-// @revise: Foreign includes, replace with homegrown versions
+// @REVISE: Foreign includes, replace with homegrown versions,
+// is it even worth it? Maybe research for SIMD equivalents?
 #include <stdint.h> // For integer types
 #include <math.h>   // sin, cos, tan, round
 #include <stdio.h>  // printf

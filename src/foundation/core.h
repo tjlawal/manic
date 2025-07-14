@@ -173,27 +173,27 @@ struct DateTime {
 // NOTE: Breakdown:-
 // Either, check if it is an empty list, if not insert at the front of the list,
 // else if not insert at the end of the list, else insert in the middle.
-#define DLL_InsertNextPrevZero(nil, first, last, position, node, next, previous)                                       \
-(CheckNil(nil, first) ? ((first) = (last) = (node), SetNil(nil, (node)->next), SetNil(nil, (node)->previous))        \
-	: CheckNil(nil, position)                                                                                           \
-	? ((node)->next = (first), (first)->previous = (node), (first) = (node), SetNil(nil, (node)->previous))         \
-	: ((position) == (last))                                                                                            \
-	? ((last)->next = (node), (node)->previous = (last), (last) = (node), SetNil(nil, (node)->next))                \
-	: ((!CheckNil(nil, position) && CheckNil(nil, (position)->next)) ? (0) : ((position)->next->previous = (node)), \
+#define DLL_InsertNextPrevZero(nil, first, last, position, node, next, previous)                                        \
+(CheckNil(nil, first) ? ((first) = (last) = (node), SetNil(nil, (node)->next), SetNil(nil, (node)->previous))           \
+	: CheckNil(nil, position)                                                                                             \
+	? ((node)->next = (first), (first)->previous = (node), (first) = (node), SetNil(nil, (node)->previous))               \
+	: ((position) == (last))                                                                                              \
+	? ((last)->next = (node), (node)->previous = (last), (last) = (node), SetNil(nil, (node)->next))                      \
+	: ((!CheckNil(nil, position) && CheckNil(nil, (position)->next)) ? (0) : ((position)->next->previous = (node)),       \
 		(node)->next = (position)->next, (position)->next = (node), (node)->previous = (position)))
 
 	#define DLL_PushBackNextPrevZero(nil, first, last, node, next, previous)                                               \
   DLL_InsertNextPrevZero(nil, first, last, last, node, next, previous)
 
-	#define DLL_PushFrontNextPrevZero(nil, first, last, node, next, previous)                                              \
+	#define DLL_PushFrontNextPrevZero(nil, first, last, node, next, previous)                                               \
   DLL_InsertNextPrevZero(nil, last, first, first, node, previous, next)
 
 	// NOTE: Breakdown:-
 	// Upate first if needed, update last if needed, update previous link, update
 	// next link
-	#define DLL_RemoveNextPrevZero(nil, first, last, node, next, previous)                                                 \
-  (((node) == (first) ? (first) = (node)->next : (0)), ((node) == (last) ? (last) = (last)->previous : (0)),           \
-		(CheckNil(nil, (node)->previous) ? (0) : ((node)->previous->next = (node)->next)),                                  \
+	#define DLL_RemoveNextPrevZero(nil, first, last, node, next, previous)                                                    \
+  (((node) == (first) ? (first) = (node)->next : (0)), ((node) == (last) ? (last) = (last)->previous : (0)),                \
+		(CheckNil(nil, (node)->previous) ? (0) : ((node)->previous->next = (node)->next)),                                      \
 		(CheckNil(nil, (node)->next) ? (0) : ((node)->next->previous = (node)->previous)))
 
 	// NOTE Doubly-linked list operations

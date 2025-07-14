@@ -4,20 +4,22 @@
 * Vector3, Ranges, and Matrix.
 * 
 * Conventions:
-* 	- The Vec2s structure is mostly used to GFX windows.
-* 	- The Ranges structure is used to represent the highes and lowest values. It is 
-*			especially handy when trying to calculate file sizes, window rect, etc.
-*		- The Matrix structure is defined as Row-Major, and all operations and 
-*			parameter naming follow that structure. When dealing with Column-Major API, 
-*			machinery for inversion is provided. Example: row0 is [m0 m1 m2 m3].
 * 	- All functions are always self-contained, meaning one function doesn't use other
 * 		functions defined by this library inside, it is directly re-implemented.
 *		- All functions are always inlined.
 *		- All functions input parameters are always by value!
-*		- All functions use a "result " variable to return results of computations 
-*			(except C++ operators).
-*		- Angles are always in radians, macros are provided to convert to/from degrees.
-*		- All structures are 32-bits aligned for AVX2.
+*		- All functions use a "result " variable to return results of computations  (except C++ operators).
+*		- This library assumes a Left-Handed coordinate system.
+* 	- The Vec2s structure is mostly used to GFX windows.
+* 	- The Ranges structure is used to represent the highes and lowest values. It is 
+*			especially handy when trying to calculate file sizes, window rect, etc.
+*		- The Matrix structure is defined as Row-Major, and all operations and 
+*			parameter naming follow that structure. 
+*
+*   - [@TODO] When dealing with Column-Major API, machinery is provided for inversion to a Right-Handed 
+*     coordinate system.
+*		- [@TODO] Angles are always in radians, macros are provided to convert to/from degrees.
+*		- [@TODO] All structures are 32-bits aligned for AVX2.
 * 
 * Types:
 *		- Vectors:
@@ -185,29 +187,40 @@ namespace Starlight {
 			f32 length = sqrtf((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
 			
 			if(length != 0.0f) {
-				f32 n = 1.0f / length;
-				result.x *= n;
-				result.y *= n;
-				result.z *= n;
+				f32 reciprocal = 1.0f / length;
+				result.x = v.x * reciprocal;
+				result.y = v.y * reciprocal;
+				result.z = v.z * reciprocal;
 			}
 
 			return result;
 		}
 
 		FORCE_INLINE internal f32 vec3_dot_product(Vec3 v1, Vec3 v2) {
-			f32 result = (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
+			f32 result = (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z);
 			return result;
 		}
 
 		FORCE_INLINE internal Vec3 vec3_cross_product(Vec3 v1, Vec3 v2) {
 			Vec3 result = {
-				(v1.y * v2.z) - (v1.z * v2.y),
-				(v1.z * v2.x) - (v1.x * v2.z),
-				(v1.x * v2.y) - (v1.y * v2.x)
+				(v1.z * v2.y) - (v1.y * v2.z),
+				(v1.x * v2.z) - (v1.z * v2.x),
+				(v1.y * v2.x) - (v1.x * v2.y)
 			};
 
 			return result;
 		}
+
+		// ----------------------------------------
+		// Vec3 operator overloads
+		// ----------------------------------------
+		FORCE_INLINE internal Vec3 operator+(const Vec3& lhs, const Vec3& rhs) { return vec3_add(lhs, rhs); }
+
+		FORCE_INLINE internal Vec3 operator-(const Vec3& lhs, const Vec3& rhs) { return vec3_subtract(lhs, rhs); } 		
+
+		FORCE_INLINE internal Vec3 operator*(const Vec3& lhs, const Vec3& rhs) { return vec3_multiply(lhs, rhs); } 		
+
+		FORCE_INLINE internal Vec3 operator/(const Vec3& lhs, const Vec3& rhs) { return vec3_divide(lhs, rhs); }
 
 		FORCE_INLINE internal const Vec3& operator+=(Vec3&lhs, const Vec3& rhs) {
 			lhs = vec3_add(lhs, rhs);
@@ -228,14 +241,6 @@ namespace Starlight {
 			lhs = vec3_divide(lhs, rhs);
 			return lhs;
 		}
-
-		// ----------------------------------------
-		// Vec3 operator overloads
-		// ----------------------------------------
-		FORCE_INLINE internal Vec3 operator+(const Vec3& lhs, const Vec3& rhs) { return vec3_add(lhs, rhs); }
-		FORCE_INLINE internal Vec3 operator-(const Vec3& lhs, const Vec3& rhs) { return vec3_subtract(lhs, rhs); } 		
-		FORCE_INLINE internal Vec3 operator*(const Vec3& lhs, const Vec3& rhs) { return vec3_multiply(lhs, rhs); } 		
-		FORCE_INLINE internal Vec3 operator/(const Vec3& lhs, const Vec3& rhs) { return vec3_divide(lhs, rhs); } 		
 
 
 		// ----------------------------------------
@@ -348,7 +353,7 @@ namespace Starlight {
 		}
 
 		FORCE_INLINE internal Vec4 vec4_from_vec3(Vec3 v) {
-			Vec4 result = { v.x, v.y, v.z, 1.0 };
+			Vec4 result = { v.x, v.y, v.z, 1.0f };
 			return result;
 		}
 				
@@ -462,8 +467,8 @@ namespace Starlight {
 			f32 sin_result = sinf(angle);
 
 			result.m5 = cos_result;
-			result.m6 = -sin_result;
-			result.m9 = sin_result;
+			result.m6 = sin_result;
+			result.m9 = -sin_result;
 			result.m10 = cos_result;
 
 			return result;
@@ -508,10 +513,10 @@ namespace Starlight {
 		}
 
 		FORCE_INLINE internal Matrix matrix_scale(f32 x, f32 y, f32 z) {
-			Matrix result = {
-				x, 0.0f, 0.0f, 0.0f,
-				0.0f, y, 0.0f, 0.0f, 
-				0.0f, 0.0f, z, 0.0f, 
+			Matrix result = { 
+				1.0f, 0.0f, 0.0f, 0.0f, 
+				0.0f, 1.0f, 0.0f, 0.0f, 
+				0.0f, 0.0f, 1.0f, 0.0f, 
 				0.0f, 0.0f, 0.0f, 1.0f
 			};
 
