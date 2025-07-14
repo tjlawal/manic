@@ -55,9 +55,9 @@
 				<Exe>W:\manic\branches\rewrite\run_tree\manic.exe</Exe>
 				<Args></Args>
 				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
-				<DebugCommand></DebugCommand>
+				<DebugCommand>manic.exe</DebugCommand>
 				<DebuggerExe></DebuggerExe>
-				<DebugSln></DebugSln>
+				<DebugSln>W:\manic\branches\rewrite\run_tree\manic.rdbg</DebugSln>
 				<Defines></Defines>
 				<ForceIncludes></ForceIncludes>
 			</ConfigAndPlatform>
@@ -72,9 +72,9 @@
 				<Exe>W:\manic\branches\rewrite\run_tree\manic.exe</Exe>
 				<Args></Args>
 				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
-				<DebugCommand>remedybg manic.exe</DebugCommand>
+				<DebugCommand>manic.exe</DebugCommand>
 				<DebuggerExe></DebuggerExe>
-				<DebugSln></DebugSln>
+				<DebugSln>W:\manic\branches\rewrite\run_tree\manic.rdbg</DebugSln>
 				<Defines></Defines>
 				<ForceIncludes></ForceIncludes>
 			</ConfigAndPlatform>
@@ -114,7 +114,7 @@
 			</ConfigAndPlatform>
 			<ConfigAndPlatform>
 				<Name>Profile Tracy:x64</Name>
-				<BuildCommand>build msvc tracy release</BuildCommand>
+				<BuildCommand>build msvc tracy</BuildCommand>
 				<RebuildCommand></RebuildCommand>
 				<BuildFileCommand></BuildFileCommand>
 				<CleanCommand></CleanCommand>

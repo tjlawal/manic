@@ -27,7 +27,6 @@ if "%preprocess%"=="1" (
 
 :: --- Clang 
 set clang_common=   -I..\src\ -Wall -std=c++11 -ferror-limit=15 -gcodeview -fdiagnostics-absolute-paths -fno-exceptions -Wno-initializer-overrides -Wno-unused-function -Wno-missing-braces -Wno-unused-variable -Wno-writable-strings -Wno-address-of-temporary -Wno-switch -Wno-return-type -Wno-unused-command-line-argument -Wno-unused-but-set-variable
-
 set clang_debug=    call clang -g -O0 -DBUILD_DEBUG=1 %clang_common% %auto_compile_flags% %preprocessor_flags%
 set clang_release=  call clang -g -O2 -DBUILD_DEBUG=0 -DBUILD_RELEASE=1 %clang_common% %auto_compile_flags%
 set clang_link=     -fuse-ld=lld -Xlinker /MANIFEST:EMBED -Xlinker /pdbaltpath:%%%%_PDB%%%% -Wl,/ignore:4099

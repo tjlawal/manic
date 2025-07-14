@@ -1,8 +1,11 @@
 Absolute necessities before I can consider it done!
 
-- Enforce video frame rate (30 FPS) is good for a software renderer.
-- Non-blocking keyboard input. Current inplementation blocks, want something like in actual video games  .
-	- Maybe gamepad input, but not necessary.
+- Enforce video frame rate (30 FPS) is good for a software renderer. [DONE]
+- Fix lighting calculation bug. [DONE]
+
+- Texture loading. Should be easy, the machinery is already in-place.
 - Text rendering, it would be nice to show information about:
 	- Current FPS
 	- Information about the loaded texture.
+- Non-blocking keyboard input. Current inplementation blocks, want something like in actual video games  .
+	- Maybe gamepad input, but not necessary.
