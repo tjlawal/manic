@@ -3,16 +3,6 @@
 namespace Starlight {
 	namespace Foundation {
 
-		//union Vertex {
-		//	struct {
-		//		f32 x;
-		//		f32 y;
-		//		f32 z;
-		//	};
-
-		//	f32 v[3];
-		//};
-
 		struct Face {
 			s32 vertex_idx[3];
 			s32 texture_idx[3];

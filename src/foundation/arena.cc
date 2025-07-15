@@ -137,7 +137,7 @@ namespace Starlight {
 
 			arena->current  = current_arena;
 			size_t new_pos = big_pos - current_arena->base_position;
-			AssertAlways(new_pos <= current_arena->position);
+			AssertAlways(!(new_pos <= current_arena->position));
 			AsanPoisonMemoryRegion(reinterpret_cast<u8*>(current_arena + new_pos), (current_arena->position- new_pos));
 			current_arena->position = new_pos;
 		}

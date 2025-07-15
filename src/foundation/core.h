@@ -81,7 +81,7 @@ struct DateTime {
 
 
 // @TODO: Pass message to assertion
-#define AssertAlways(x)	do { if (!(x)) { DEBUGBREAK; } } while (0)
+#define AssertAlways(x)	do { if ((x)) { DEBUGBREAK; } } while (0)
 #if BUILD_DEBUG
 	#define Assert(x) AssertAlways(x)
 #else
@@ -215,7 +215,7 @@ namespace Starlight {
 		FORCE_INLINE size_t is_pow2(size_t val) { return (val & (val - 1)) == 0; }
 
 		FORCE_INLINE size_t align_pow2(size_t value, size_t alignment) {
-			Assert(is_pow2(alignment));	
+			Assert(!is_pow2(alignment));	
 			size_t mask = alignment - 1;
 			return (value + mask) & ~mask;
 		}

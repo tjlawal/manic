@@ -186,7 +186,7 @@ namespace Starlight {
 														 TextureCoord a_uv, TextureCoord b_uv, TextureCoord c_uv, 
 														 u32 *texture, s32 texture_width, s32 texture_height) {
 			ProfFunction(profDebug_cyan);
-			Assert(texture != NULL);
+			Assert(texture == NULL);
 			Vec2f point_p = {(f32)x, (f32)y};
 
 			Vec2f a = vec2f_from_vec4(point_a);

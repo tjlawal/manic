@@ -3,7 +3,7 @@ namespace Starlight {
 	namespace Foundation {
 	
 		u16 cast_u16_from_u32(u32 x) {
-			AssertAlways(x <= max_u16);
+			AssertAlways(!(x <= max_u16));
 			u16 result = static_cast<u16>(x);
 			return result;
 		}
