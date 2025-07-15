@@ -110,19 +110,16 @@ namespace Starlight {
 		ProfScope(init, "game memory alloc", profDebug_maroon);
 
 		// Initialize game memory
-		// @IMPROVEMENT: A pool would be good for asset stuff instead of the arena!
+		// @IMPROVEMENT: A pool would be good for assets and game_memory instead of the arena!
 		Arena* big_daddy_arena = arena_alloc();
 		g_window_state = arena_push<GameState>(big_daddy_arena, 1);
 		g_window_state->game_memory = arena_alloc(); 
 		g_window_state->per_frame_memory = arena_alloc();
 		g_window_state->asset_memory = arena_alloc();
 
-		// Get monitor frame rate stuff
-		// @THOUGHT: It would be nice to render at the speed of the monitor Hz in the case where 
-		// it is faster than 60Hz.
-		// @IMPROVE: It'll be nice to improve this to handle the case of choosing the best 
-		// target_monitor_hz based on what the OS reports back.
-
+		// @IMPROVEMENT: It would be nice to seperate the speed which render() and update() runs.
+		// This would allow us to run at the speed of the monitor without having a correlating effect
+		// on the speed of update(), input(), physics(), etc.
 		s32 target_monitor_hz = get_gfx_info()->monitor_refresh_rate;
 		f32 game_hz = static_cast<f32>(target_monitor_hz);
 		g_window_state->frame_dt = 1.f/game_hz;
@@ -137,12 +134,12 @@ namespace Starlight {
 
 		// Default rendering mode 
 		// @NOTE(Tijani): maybe too verbose
-		g_window_state->render_buffer.render_mode = (RENDERMODE_DEFAULT | RENDERMODE_CULL | RENDERMODE_FILL);
+		g_window_state->render_buffer.render_mode = (RENDERMODE_TEXTURE | RENDERMODE_CULL);
 
 		// Initialize lights
 		g_light.direction = { 0.0f, 0.0f, 1.0f };
 
-		//// Initialize camera system
+		// Initialize camera system
 		g_camera.fov = MATH_PI / 3.0;
 		g_camera.znear = 0.0f;
 		g_camera.zfar = 100.0f;
@@ -150,12 +147,13 @@ namespace Starlight {
 		g_camera.projection = perspective(g_camera.fov, g_camera.aspect_ratio, g_camera.znear, g_camera.zfar);
 
 		// Initialize the resource manager.
-		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/sphere.obj"));
+		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/f22.obj"), str8_lit("data/textures/f22.png"));
 		g_mesh_info->scale = { 1.0, 1.0, 1.0};
 		g_mesh_info->colour = 0xFFd80091;
 
 		#if BUILD_DEBUG_VERY_NOISY
-			dump_mesh_info(g_mesh_info); // @IMPROVEMENT: provide this information in with text overlays when text rendering is a thing!
+			// @IMPROVEMENT: provide this information in with text overlays when text rendering is a thing!
+			dump_mesh_info(g_mesh_info);
 		#endif
 
 		g_triangles_to_render = arena_push<Triangle>(g_window_state->per_frame_memory, g_mesh_info->faces_count);
@@ -248,11 +246,18 @@ namespace Starlight {
 			f32 intensity = -vec3_dot_product(face_normal, g_light.direction);
 			u32 triangle_colour = light_intensity(g_mesh_info->colour, intensity);
 
-			Triangle projected_triangle = {{
-				{ projected_points[0].x, projected_points[0].y, projected_points[0].z, projected_points[0].w },
-				{ projected_points[1].x, projected_points[1].y, projected_points[1].z, projected_points[1].w },
-				{ projected_points[2].x, projected_points[2].y, projected_points[2].z, projected_points[2].w },
-			}, triangle_colour
+			Triangle projected_triangle = {
+				{
+					{ projected_points[0].x, projected_points[0].y, projected_points[0].z, projected_points[0].w },
+					{ projected_points[1].x, projected_points[1].y, projected_points[1].z, projected_points[1].w },
+					{ projected_points[2].x, projected_points[2].y, projected_points[2].z, projected_points[2].w },
+				}, 
+				{
+					{ g_mesh_info->texture_coords[current_face.texture_idx[0] - 1].u, g_mesh_info->texture_coords[current_face.texture_idx[0] - 1].v },
+					{ g_mesh_info->texture_coords[current_face.texture_idx[1] - 1].u, g_mesh_info->texture_coords[current_face.texture_idx[1] - 1].v },
+					{ g_mesh_info->texture_coords[current_face.texture_idx[2] - 1].u, g_mesh_info->texture_coords[current_face.texture_idx[2] - 1].v },
+				},
+				triangle_colour
 			};
 
 			g_triangles_to_render[g_face_count_idx++] = projected_triangle;
@@ -277,7 +282,8 @@ namespace Starlight {
 			}
 
 			// Draw filled triangles
-			if(g_window_state->render_buffer.render_mode == RENDERMODE_DEFAULT || g_window_state->render_buffer.render_mode & RENDERMODE_FILL) {
+			//if(g_window_state->render_buffer.render_mode == RENDERMODE_DEFAULT || g_window_state->render_buffer.render_mode & RENDERMODE_FILL) {
+			if(g_window_state->render_buffer.render_mode & RENDERMODE_FILL) {
 				draw_filled_triangle(&g_window_state->render_buffer, 
 														 triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[0].w, // Vertex A
 														 triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w, // Vertex B
@@ -285,12 +291,22 @@ namespace Starlight {
 														 triangle.colour);
 			}
 
+			// Draw wireframe
 			if(g_window_state->render_buffer.render_mode & RENDERMODE_WIREFRAME) {
 				draw_triangle(&g_window_state->render_buffer, 
 											triangle.points[0].x, triangle.points[0].y,		 // Vertex A
 											triangle.points[1].x, triangle.points[1].y,    // Vertex B
 											triangle.points[2].x, triangle.points[2].y,    // Vertex C
 											0xFFFFFFF);
+			}
+
+			// Draw textured triangle
+			if (g_window_state->render_buffer.render_mode == RENDERMODE_DEFAULT || g_window_state->render_buffer.render_mode & RENDERMODE_TEXTURE) {
+				draw_textured_triangle(&g_window_state->render_buffer, 
+					triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[0].w, triangle.texture_coords[0].u, triangle.texture_coords[0].v, // Vertex A
+					triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w, triangle.texture_coords[1].u, triangle.texture_coords[1].v, // Vertex B
+					triangle.points[2].x, triangle.points[2].y, triangle.points[2].z, triangle.points[2].w, triangle.texture_coords[2].u, triangle.texture_coords[2].v, // Vertex C
+					g_mesh_info->texture_data, g_mesh_info->texture_width, g_mesh_info->texture_height);
 			}
 		}
 

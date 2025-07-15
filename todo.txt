@@ -1,11 +1,22 @@
 Absolute necessities before I can consider it done!
 
-- Enforce video frame rate (30 FPS) is good for a software renderer. [DONE]
-- Fix lighting calculation bug. [DONE]
-
-- Texture loading. Should be easy, the machinery is already in-place.
+- Camera system
 - Text rendering, it would be nice to show information about:
 	- Current FPS
-	- Information about the loaded texture.
-- Non-blocking keyboard input. Current inplementation blocks, want something like in actual video games  .
+	- Information about the loaded 3D model
+- Non-blocking keyboard input. Current inplementation blocks, want something like in actual video games.
 	- Maybe gamepad input, but not necessary.
+- Revise rendering at 60Hz, not sure if that's even possible with software rendering. 30Hz sounds like the
+	sweet spot.
+
+[DONE]
+- Texture loading. Should be easy, the machinery is already in-place.
+
+- Enforce video frame rate. Renderer runs at monitor referesh rate.
+	- This has potential downsides since rendering is CPU bound, combine that with a monitor > 60Hz and it would be dog slow.
+- Fix lighting calculation bug.
+
+
+
+
+

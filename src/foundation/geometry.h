@@ -3,13 +3,6 @@
 namespace Starlight {
 	namespace Foundation {
 
-		struct Face {
-			s32 vertex_idx[3];
-			s32 texture_idx[3];
-			s32 normal_idx[3];
-			u32 colour;
-		};
-
 		union TextureCoord {
 			struct {
 				f32 u;
@@ -19,9 +12,17 @@ namespace Starlight {
 			f32 uv[2];
 		};
 
+		struct Face {
+			s32 vertex_idx[3];
+			s32 texture_idx[3];
+			s32 normal_idx[3];
+			TextureCoord texture_coord[3];
+			u32 colour;
+		};
+
 		struct Triangle {
 			Vec4 points[3];
-			//TextureCoord texture_coords[3];
+			TextureCoord texture_coords[3];
 			u32 colour;
 		};
 

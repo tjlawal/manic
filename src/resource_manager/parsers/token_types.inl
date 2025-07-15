@@ -3,7 +3,7 @@
 namespace Starlight {
 	namespace ResourceManager {
 		namespace Parser {
-			
+
 			enum FormatTokenType : u32 {
 				FormatTokenType_Unknown,
 
@@ -28,9 +28,6 @@ namespace Starlight {
 				
 				FormatTokenType_EOF,
 			};
-
-
-
 		}
 	}
 }

@@ -19,7 +19,7 @@ namespace Starlight {
 	namespace ResourceManager {
 		namespace Parser {
 
-			internal MeshInfo*  rm_parse_data_from_file(Arena* arena, string8 data) {
+			internal MeshInfo*  load_mesh_data(Arena* arena, string8 data) {
 				ProfFunction(profDebug_coral);
 				Token token = {};
 				Lexer lexer(data);
@@ -170,6 +170,7 @@ namespace Starlight {
 
 				parse_float(lexer, &texture.u);
 				parse_float(lexer, &texture.v);
+				dst->texture_coords[dst->texture_coords_idx++] = texture;
 			}
 
 			internal void parse_faces(Arena* arena, Lexer* lexer, MeshInfo* dst) {

@@ -40,7 +40,7 @@ namespace Starlight {
 			};
 
 			// ResourceManager interface
-			internal MeshInfo* rm_parse_data_from_file(Arena* arena, string8 data);
+			internal MeshInfo* load_mesh_data(Arena* arena, string8 data);
 
 			// Main parsing functions
 			internal Token 	next_token(Lexer* lexer);
