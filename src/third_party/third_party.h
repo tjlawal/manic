@@ -4,7 +4,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_STATIC
 #define STBI_ONLY_PNG
-#define STBI_NO_STDIO
+//#define STBI_NO_STDIO
 #include "stb/stb_image.h"
 
 #define STB_SPRINTF_DECORATE(name) starlight_##name
@@ -18,7 +18,7 @@
 
 #define KB_TEXT_SHAPE_IMPLEMENTATION
 #define KB_TEXT_SHAPE_STATIC
-#include "kb/kb_text_shape.h"
+#include "kb_text_shape/kb_text_shape.h"
 
 #if BUILD_PROFILE 
 	#if PROFILER_SUPERLUMINAL && OS_WINDOWS
