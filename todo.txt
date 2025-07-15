@@ -11,7 +11,6 @@ Absolute necessities before I can consider it done!
 
 [DONE]
 - Texture loading. Should be easy, the machinery is already in-place.
-
 - Enforce video frame rate. Renderer runs at monitor referesh rate.
 	- This has potential downsides since rendering is CPU bound, combine that with a monitor > 60Hz and it would be dog slow.
 - Fix lighting calculation bug.
