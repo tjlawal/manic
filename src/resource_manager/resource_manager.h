@@ -24,16 +24,6 @@
 namespace Starlight {
 	namespace ResourceManager {
 		internal MeshInfo* load_model(Arena* arena, string8 file);
-		internal void load_font();
+		internal void load_font(Arena *arena, string8 file);
 	}
 }
-
-/*
-Some notes about this
-
-Currently this only caters about loading one 3d model at application startup. Ideally this would be done asynchronously in a background thread, i.e. Asset Streaming., with the ability to load different types of models, animation, etc.
-
-Another limitiation is that it loads one file for the application lifetime. Ideally, it would 
-
-*/
-//internal void resource_manager_init(void);

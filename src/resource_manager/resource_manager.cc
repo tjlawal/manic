@@ -18,5 +18,16 @@ namespace Starlight {
 			scratch_end(scratch);
 			return parsed_data;
 		}
+
+
+		internal void* load_font(Arena *arena, string8 file) {
+			Temp scratch = scratch_begin(0, 0);
+			string8 data = read_data_from_file(scratch.arena, file);
+			// parse font file
+
+			scratch_end(scratch);
+
+			// return parsed font data for rendering.
+		}
 	}
 }

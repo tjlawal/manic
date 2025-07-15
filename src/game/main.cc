@@ -150,9 +150,9 @@ namespace Starlight {
 		g_camera.projection = perspective(g_camera.fov, g_camera.aspect_ratio, g_camera.znear, g_camera.zfar);
 
 		// Initialize the resource manager.
-		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/f22.obj"));
+		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/sphere.obj"));
 		g_mesh_info->scale = { 1.0, 1.0, 1.0};
-		g_mesh_info->colour = 0xFFFFFFFF;
+		g_mesh_info->colour = 0xFFd80091;
 
 		#if BUILD_DEBUG_VERY_NOISY
 			dump_mesh_info(g_mesh_info); // @IMPROVEMENT: provide this information in with text overlays when text rendering is a thing!
