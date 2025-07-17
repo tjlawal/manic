@@ -4,7 +4,7 @@ cd /D "%~dp0"
 
 :: --- Unpack argument
 for %%a in (%*) do set "%%a=1"
-if not "%clang%"=="1" 	if not "%msvc%"=="1" set clang=1
+if not "%msvc%"=="1" 	if not "%clang%"=="1" set msvc=1
 if not "%release%"=="1" set debug=1
 if "%debug%"=="1" 			set release=0 && echo [debug mode]
 if "%release%"=="1" 		set debug=0 	&& echo [release mode]
@@ -74,7 +74,13 @@ for /f "tokens=2" %%i in ('call svn info ^| findstr "Revision"') do set compile=
 
 :: --- Build Things 
 pushd run_tree
-	%compile% ..\src\game\main.cc %compile_link% %link_resource% %out%manic.exe || exit /b 1
+	if "%manic%"=="1" 					 set aux_build=1 && %compile% ..\src\game\main.cc %compile_link% %link_resource% %out%manic.exe || exit /b 1
+	if "%scratch_wavefront_test%"=="1" set aux_build=1 && %compile% ..\src\scratch\scratch_wavefront_test.cc %compile_link% %out%scratch_wavefront_test.exe || exit /b 1
 popd
+
+if "%aux_build%"=="" (
+	echo "[WARNING] no build target specified; please specify the build target name as arguments like `build manic` or `build scratch_obj_test`."
+	exit /b 1
+)
 
 endlocal
