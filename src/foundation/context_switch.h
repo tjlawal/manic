@@ -78,6 +78,10 @@
 	#define BUILD_RELEASE 0
 #endif
 
+#if !defined(BUILD_CONSOLE_INTERFACE)
+	#define BUILD_CONSOLE_INTERFACE 0
+#endif
+
 #if !defined(BUILD_ENTRY_DEFINING_UNIT)
   #define BUILD_ENTRY_DEFINING_UNIT 1
 #endif

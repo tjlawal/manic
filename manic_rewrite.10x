@@ -17,6 +17,7 @@
 			<Configuration>Profile Tracy</Configuration>
 			<Configuration>Release</Configuration>
 			<Configuration>ASAN</Configuration>
+			<Configuration>scratch_wavefront_test</Configuration>
 		</Configurations>
 		<Platforms>
 			<Platform>x64</Platform>
@@ -46,7 +47,7 @@
 		<ConfigProperties>
 			<ConfigAndPlatform>
 				<Name>ASAN:x64</Name>
-				<BuildCommand>build clang asan</BuildCommand>
+				<BuildCommand>build manic clang asan</BuildCommand>
 				<RebuildCommand></RebuildCommand>
 				<BuildFileCommand></BuildFileCommand>
 				<CleanCommand></CleanCommand>
@@ -63,7 +64,7 @@
 			</ConfigAndPlatform>
 			<ConfigAndPlatform>
 				<Name>Debug:x64</Name>
-				<BuildCommand>build msvc</BuildCommand>
+				<BuildCommand>build manic msvc debug</BuildCommand>
 				<RebuildCommand></RebuildCommand>
 				<BuildFileCommand></BuildFileCommand>
 				<CleanCommand></CleanCommand>
@@ -80,7 +81,7 @@
 			</ConfigAndPlatform>
 			<ConfigAndPlatform>
 				<Name>Noisy:x64</Name>
-				<BuildCommand>build msvc debug noisy</BuildCommand>
+				<BuildCommand>build manic msvc debug noisy</BuildCommand>
 				<RebuildCommand></RebuildCommand>
 				<BuildFileCommand></BuildFileCommand>
 				<CleanCommand></CleanCommand>
@@ -97,7 +98,7 @@
 			</ConfigAndPlatform>
 			<ConfigAndPlatform>
 				<Name>Profile SP:x64</Name>
-				<BuildCommand>build msvc sp release</BuildCommand>
+				<BuildCommand>build manic msvc sp release</BuildCommand>
 				<RebuildCommand></RebuildCommand>
 				<BuildFileCommand></BuildFileCommand>
 				<CleanCommand></CleanCommand>
@@ -114,7 +115,7 @@
 			</ConfigAndPlatform>
 			<ConfigAndPlatform>
 				<Name>Profile Tracy:x64</Name>
-				<BuildCommand>build msvc tracy release</BuildCommand>
+				<BuildCommand>build manic msvc tracy release</BuildCommand>
 				<RebuildCommand></RebuildCommand>
 				<BuildFileCommand></BuildFileCommand>
 				<CleanCommand></CleanCommand>
@@ -131,13 +132,30 @@
 			</ConfigAndPlatform>
 			<ConfigAndPlatform>
 				<Name>Release:x64</Name>
-				<BuildCommand>build clang release</BuildCommand>
+				<BuildCommand>build manic clang release </BuildCommand>
 				<RebuildCommand></RebuildCommand>
 				<BuildFileCommand></BuildFileCommand>
 				<CleanCommand></CleanCommand>
 				<BuildWorkingDirectory>W:\manic\branches\rewrite</BuildWorkingDirectory>
 				<CancelBuild></CancelBuild>
 				<Exe>W:\manic\branches\rewrite\run_tree\manic.exe</Exe>
+				<Args></Args>
+				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
+				<DebugCommand></DebugCommand>
+				<DebuggerExe></DebuggerExe>
+				<DebugSln></DebugSln>
+				<Defines></Defines>
+				<ForceIncludes></ForceIncludes>
+			</ConfigAndPlatform>
+			<ConfigAndPlatform>
+				<Name>scratch_wavefront_test:x64</Name>
+				<BuildCommand>build scratch_wavefront_test msvc debug</BuildCommand>
+				<RebuildCommand></RebuildCommand>
+				<BuildFileCommand></BuildFileCommand>
+				<CleanCommand></CleanCommand>
+				<BuildWorkingDirectory>W:\manic\branches\rewrite</BuildWorkingDirectory>
+				<CancelBuild></CancelBuild>
+				<Exe>W:\manic\branches\rewrite\run_tree\scratch_wavefront_test.exe</Exe>
 				<Args></Args>
 				<WorkingDirectory>W:\manic\branches\rewrite\run_tree</WorkingDirectory>
 				<DebugCommand></DebugCommand>
@@ -168,6 +186,10 @@
 			</Config>
 			<Config>
 				<Name>Release</Name>
+				<Defines></Defines>
+			</Config>
+			<Config>
+				<Name>scratch_wavefront_test</Name>
 				<Defines></Defines>
 			</Config>
 			<Platform>

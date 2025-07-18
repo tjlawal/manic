@@ -378,7 +378,7 @@ namespace Starlight {
 
 			buflen += wnsprintfW(buffer + buflen, ArrayCount(buffer) - buflen, L"\nBuild Version: %S%S", BUILD_VERSION_STRING_LITERAL, BUILD_SVN_REVISION_STRING_LITERAL_APPEND);
 
-			// NOTE(tijani): Now show the exception dialog
+			// show the exception dialog
 			#if BUILD_CONSOLE_INTERFACE
 			fwprintf(stderr, L"\n--- Fatal Exception ---\n");
 			fwprintf(stderr, L"%s\n\n", buffer);
@@ -454,16 +454,11 @@ namespace Starlight {
 	}
 }
 
-#if BUILD_DEBUG
-	#	if OS_WINDOWS
-		int wmain(int argc, wchar_t** argv) {
-	#	else
-		int main(int argc, char** argv) {
-	#endif
+#if BUILD_DEBUG || BUILD_CONSOLE_INTERFACE
+	int wmain(int argc, wchar_t** argv) {
 		w32_entry_point_caller();
-		return 0;
 	}
-	#else
+#else
 	int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd) {
 		w32_entry_point_caller();
 		return 0;

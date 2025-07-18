@@ -43,6 +43,61 @@ namespace Starlight {
 	global b32 quit = 0;
 	
 
+	internal void initialize_system() {
+		ProfFunction(profDebug_hotpink);
+
+		ProfScope(init, "game memory alloc", profDebug_maroon);
+
+		// Initialize game memory
+		// @IMPROVEMENT: A pool would be good for assets and game_memory instead of the arena!
+		Arena* big_daddy_arena = arena_alloc();
+		g_window_state = arena_push<GameState>(big_daddy_arena, 1);
+		g_window_state->game_memory = arena_alloc(); 
+		g_window_state->per_frame_memory = arena_alloc();
+		g_window_state->asset_memory = arena_alloc();
+
+		// @IMPROVEMENT: It would be nice to seperate the speed which render() and update() runs.
+		// This would allow us to run at the speed of the monitor without having a correlating effect
+		// on the speed of update(), input(), physics(), etc.
+		s32 target_monitor_hz = get_gfx_info()->monitor_refresh_rate;
+		f32 game_hz = static_cast<f32>(target_monitor_hz);
+		g_window_state->frame_dt = 1.f/game_hz;
+
+		// Initialize window and paint into it
+		// 16:9 aspect ratio, 675,000 pixels to process each frame.
+		g_window_state->os_handle = window_open(Rng2f32(0, 0, 900, 750), str8_lit(BUILD_TITLE_STRING_LITERAL)); 
+		g_window_state->window_dim = client_rect_from_window(g_window_state->os_handle);
+		window_first_paint(g_window_state->os_handle);
+		allocate_buffer(g_window_state->game_memory, &g_window_state->render_buffer, 
+										g_window_state->window_dim.x1, g_window_state->window_dim.y1);
+
+		// Default rendering mode 
+		// @NOTE(Tijani): maybe too verbose
+		g_window_state->render_buffer.render_mode = (RENDERMODE_TEXTURE | RENDERMODE_CULL);
+
+		// Initialize lights
+		g_light.direction = { 0.0f, 0.0f, 1.0f };
+
+		// Initialize camera system
+		g_camera.fov = MATH_PI / 3.0;
+		g_camera.znear = 0.0f;
+		g_camera.zfar = 100.0f;
+		g_camera.aspect_ratio = g_window_state->window_dim.x1 / g_window_state->window_dim.y1;
+		g_camera.projection = perspective(g_camera.fov, g_camera.aspect_ratio, g_camera.znear, g_camera.zfar);
+
+		// Initialize the resource manager.
+		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/f22.obj"), str8_lit("data/textures/f22.png"));
+		g_mesh_info->scale = { 1.0, 1.0, 1.0};
+		g_mesh_info->colour = 0xFFd80091;
+
+		#if BUILD_DEBUG_VERY_NOISY
+			// @IMPROVEMENT: provide this information in with text overlays when text rendering is a thing!
+			dump_mesh_info(g_mesh_info);
+		#endif
+
+		g_triangles_to_render = arena_push<Triangle>(g_window_state->per_frame_memory, g_mesh_info->faces_count);
+	}
+
 	internal void process_input() {
 		ProfFunction(profDebug_lightgray);
 		Temp scratch = scratch_begin(0, 0);
@@ -102,61 +157,6 @@ namespace Starlight {
 		}
 
 		scratch_end(scratch);
-	}
-
-	internal void initialize_system() {
-		ProfFunction(profDebug_hotpink);
-
-		ProfScope(init, "game memory alloc", profDebug_maroon);
-
-		// Initialize game memory
-		// @IMPROVEMENT: A pool would be good for assets and game_memory instead of the arena!
-		Arena* big_daddy_arena = arena_alloc();
-		g_window_state = arena_push<GameState>(big_daddy_arena, 1);
-		g_window_state->game_memory = arena_alloc(); 
-		g_window_state->per_frame_memory = arena_alloc();
-		g_window_state->asset_memory = arena_alloc();
-
-		// @IMPROVEMENT: It would be nice to seperate the speed which render() and update() runs.
-		// This would allow us to run at the speed of the monitor without having a correlating effect
-		// on the speed of update(), input(), physics(), etc.
-		s32 target_monitor_hz = get_gfx_info()->monitor_refresh_rate;
-		f32 game_hz = static_cast<f32>(target_monitor_hz);
-		g_window_state->frame_dt = 1.f/game_hz;
-
-		// Initialize window and paint into it
-		// 16:9 aspect ratio, 675,000 pixels to process each frame.
-		g_window_state->os_handle = window_open(Rng2f32(0, 0, 900, 750), str8_lit(BUILD_TITLE_STRING_LITERAL)); 
-		g_window_state->window_dim = client_rect_from_window(g_window_state->os_handle);
-		window_first_paint(g_window_state->os_handle);
-		allocate_buffer(g_window_state->game_memory, &g_window_state->render_buffer, 
-										g_window_state->window_dim.x1, g_window_state->window_dim.y1);
-
-		// Default rendering mode 
-		// @NOTE(Tijani): maybe too verbose
-		g_window_state->render_buffer.render_mode = (RENDERMODE_TEXTURE | RENDERMODE_CULL);
-
-		// Initialize lights
-		g_light.direction = { 0.0f, 0.0f, 1.0f };
-
-		// Initialize camera system
-		g_camera.fov = MATH_PI / 3.0;
-		g_camera.znear = 0.0f;
-		g_camera.zfar = 100.0f;
-		g_camera.aspect_ratio = g_window_state->window_dim.x1 / g_window_state->window_dim.y1;
-		g_camera.projection = perspective(g_camera.fov, g_camera.aspect_ratio, g_camera.znear, g_camera.zfar);
-
-		// Initialize the resource manager.
-		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/f22.obj"), str8_lit("data/textures/f22.png"));
-		g_mesh_info->scale = { 1.0, 1.0, 1.0};
-		g_mesh_info->colour = 0xFFd80091;
-
-		#if BUILD_DEBUG_VERY_NOISY
-			// @IMPROVEMENT: provide this information in with text overlays when text rendering is a thing!
-			dump_mesh_info(g_mesh_info);
-		#endif
-
-		g_triangles_to_render = arena_push<Triangle>(g_window_state->per_frame_memory, g_mesh_info->faces_count);
 	}
 
 	internal void update() {
