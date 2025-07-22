@@ -38,7 +38,7 @@ the release section on github.
 ## How do I build it?
 
 >[!NOTE]
-> ONly x64 Windows 11 is supported.
+> ONly x64 Windows 10 and above is supported.
 
 1. Install Required Tools (Windows SDK & MSVC)
 You need the [Microsoft C/C++ Build Tools](https://visualstudio.microsoft.com/downloads/?q=build+tools) 
