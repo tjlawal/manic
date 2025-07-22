@@ -227,7 +227,7 @@ namespace Starlight {
 		internal LONG WINAPI win32_exception_filter(EXCEPTION_POINTERS *exception_ptrs) {
 			// @TODO: when this is multithreaded, make sure other threads
 			// do not popup the same message box. only show the exception message
-			// box on the first thread the proceed to crash and burn.
+			// box on the first thread then crash 'n burn.
 
 			WCHAR buffer[4096] = {0};
 			int buflen = 0;
@@ -417,24 +417,24 @@ namespace Starlight {
 			MemoryCopy(EXE_FOLDER, exe_path, (one_past_slash - 1 - exe_path) * sizeof(WCHAR));
 			GetCurrentDirectoryW(sizeof(CURRENT_FOLDER), CURRENT_FOLDER);
 
+			// Set windows scheduler granularity to 1ms, this makes Sleep() more granular.
+			// MSDN says as of Windows 10v2004, timeBeginPeriod no longer effects the system 
+			// global timer resolution, just the current process. Starting with Windows 11
+			// if a window-owning process becomes fully occludded, minimized or invisible or 
+			// inaudible to the user, windows does not guarantee a higher resolution timer.
+			// timeBeginPeriod() also has to be called before any high resolution timer 
+			// machinery is used on windows. timeEndPeriod should be called on the way out
+			// but it's not absolutely necessary since its called by windows kernel anyway.
+			// - Tijani 07/19/2025
+
+			UINT desired_scheduler_ms = 1;
+			b32 sleep_granular = (timeBeginPeriod(desired_scheduler_ms) == TIMERR_NOERROR );
+			w32_state.microsecond_resolution = 1;
+			LARGE_INTEGER large_int;
+			if(QueryPerformanceFrequency(&large_int)) w32_state.microsecond_resolution = large_int.QuadPart;
+
 			SYSTEM_INFO sys_info;
 			GetSystemInfo(&sys_info);
-
-			{
-				w32_state.microsecond_resolution = 1;
-				LARGE_INTEGER large_int;
-				if(QueryPerformanceFrequency(&large_int)) {
-					w32_state.microsecond_resolution = large_int.QuadPart;
-				}
-
-				// Set windows scheduler granularity to 1ms, this makes Sleep() more granular.
-				// @TODO: Verify this!
-				// @TODO: Should timeEndPeriod be called??
-				// @TODO: Would this be needed in scenario where software rendering is not the way 
-				// to get stuff on the screen?
-				UINT desired_scheduler_ms = 1;
-				b32 sleep_granular = (timeBeginPeriod(desired_scheduler_ms) == TIMERR_NOERROR );
-			}
 
 			{
 				SystemInfo *system_information = &w32_state.system_info;
@@ -450,6 +450,9 @@ namespace Starlight {
 
 			// Call into the game
 			main_thread_entry_point();
+
+			// We are good computer citizens.
+			timeEndPeriod(desired_scheduler_ms);
 		}
 	}
 }

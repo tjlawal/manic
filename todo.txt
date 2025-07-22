@@ -1,6 +1,10 @@
 Absolute necessities before I can consider it done!
 
-- Camera system
+- Camera system [in-progress]
+- Shaders
+	- Procedural shaders
+	- Others!
+- SIMD
 - Text rendering, it would be nice to show information about:
 	- Current FPS
 	- Information about the loaded 3D model
@@ -14,8 +18,3 @@ Absolute necessities before I can consider it done!
 - Enforce video frame rate. Renderer runs at monitor referesh rate.
 	- This has potential downsides since rendering is CPU bound, combine that with a monitor > 60Hz and it would be dog slow.
 - Fix lighting calculation bug.
-
-
-
-
-

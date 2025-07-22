@@ -2,7 +2,7 @@
 #define BUILD_VERSION_MAJOR                00
 #define BUILD_VERSION_MINOR                00
 #define BUILD_VERSION_PATCH                BUILD_SVN_REVISION
-#define BUILD_RELEASE_PHASE_STRING_LITERAL "Pre-Alpha"
+#define BUILD_RELEASE_PHASE_STRING_LITERAL "Alpha"
 #define RENDER_SW													 1
 
 // Includes, order is important here.
@@ -73,22 +73,24 @@ namespace Starlight {
 
 		// Default rendering mode 
 		// @NOTE(Tijani): maybe too verbose
-		g_window_state->render_buffer.render_mode = (RENDERMODE_TEXTURE | RENDERMODE_CULL);
+		g_window_state->render_buffer.render_mode = (RENDERMODE_DEFAULT | RENDERMODE_TEXTURE | RENDERMODE_CULL);
 
 		// Initialize lights
 		g_light.direction = { 0.0f, 0.0f, 1.0f };
 
 		// Initialize camera system
+		g_camera.position = { 0, 0, 0 };
+		g_camera.direction = { 0, 0, 1 };
 		g_camera.fov = MATH_PI / 3.0;
 		g_camera.znear = 0.0f;
 		g_camera.zfar = 100.0f;
-		g_camera.aspect_ratio = g_window_state->window_dim.x1 / g_window_state->window_dim.y1;
+		g_camera.aspect_ratio = (g_window_state->window_dim.x1 / g_window_state->window_dim.y1);
 		g_camera.projection = perspective(g_camera.fov, g_camera.aspect_ratio, g_camera.znear, g_camera.zfar);
 
 		// Initialize the resource manager.
-		g_mesh_info = load_model(g_window_state->asset_memory, str8_lit("data/meshes/f22.obj"), str8_lit("data/textures/f22.png"));
+		g_mesh_info = load_model_and_texture(g_window_state->asset_memory, str8_lit("data/meshes/crab.obj"), str8_lit("data/textures/crab.png"));
 		g_mesh_info->scale = { 1.0, 1.0, 1.0};
-		g_mesh_info->colour = 0xFFd80091;
+		g_mesh_info->colour = 0xFFFFFFFF;
 
 		#if BUILD_DEBUG_VERY_NOISY
 			// @IMPROVEMENT: provide this information in with text overlays when text rendering is a thing!
@@ -123,27 +125,27 @@ namespace Starlight {
 						case(Key_C): { g_window_state->render_buffer.render_mode ^= RENDERMODE_CULL; } break;
 
 						case(Key_Up): {
-							g_mesh_info->rotate.z += 0.5f;
+							g_mesh_info->rotate.x -= 0.5f;
 						} break;
 
 						case(Key_Down): {
-							g_mesh_info->rotate.z -= 0.5;
+							g_mesh_info->rotate.x += 0.5;
 						} break;
 
 						case(Key_Left): {
-							g_mesh_info->rotate.y -= 0.5;
-						} break;
-
-						case(Key_Right): {
 							g_mesh_info->rotate.y += 0.5;
 						} break;
 
+						case(Key_Right): {
+							g_mesh_info->rotate.y -= 0.5;
+						} break;
+
 						case(Key_A): {
-							g_mesh_info->rotate.x -= 0.5;
+							g_mesh_info->rotate.z -= 0.5;
 						} break;
 
 						case(Key_O): {
-							g_mesh_info->rotate.x += 0.5;
+							g_mesh_info->rotate.z += 0.5;
 						} break;
 
 						default:
@@ -163,16 +165,24 @@ namespace Starlight {
 		ProfFunction(profDebug_orangered);
 
 		g_face_count_idx = 0;
-		g_mesh_info->rotate.x += 0.05;
-     //g_mesh_info->rotate.y += 0.08;
-		//g_mesh_info->rotate.z += 0.004;
+		g_mesh_info->rotate.x += 0.000;
+    g_mesh_info->rotate.y += 0.000;
+		g_mesh_info->rotate.z += 0.000;
 		g_mesh_info->translate.z = 5.0;
 
-		Matrix scale     = matrix_scale(g_mesh_info->scale.x, g_mesh_info->scale.y, g_mesh_info->scale.z);
-		Matrix translate = matrix_translate(g_mesh_info->translate.x, g_mesh_info->translate.y, g_mesh_info->translate.z);
-		Matrix rotate_x = matrix_rotate_x(g_mesh_info->rotate.x);
-		Matrix rotate_y = matrix_rotate_y(g_mesh_info->rotate.y);
-		Matrix rotate_z = matrix_rotate_z(g_mesh_info->rotate.z);
+		// Change camera position per animation frame
+		g_camera.position.x += 0.007;
+		g_camera.position.y += 0.007;
+
+		Vec3 target = {0, 0, 4.0 }; // @TEMP
+		Vec3 up = { 0, 1, 0 }; // @TEMP??
+
+		Matrix view 			= matrix_lookat(g_camera.position, target, up);
+		Matrix scale     	= matrix_scale(g_mesh_info->scale.x, g_mesh_info->scale.y, g_mesh_info->scale.z);
+		Matrix translate 	= matrix_translate(g_mesh_info->translate.x, g_mesh_info->translate.y, g_mesh_info->translate.z);
+		Matrix rotate_x 	= matrix_rotate_x(g_mesh_info->rotate.x);
+		Matrix rotate_y 	= matrix_rotate_y(g_mesh_info->rotate.y);
+		Matrix rotate_z 	= matrix_rotate_z(g_mesh_info->rotate.z);
 
 		s32 fc = g_mesh_info->faces_count;
 		for(s32 i = 0; i < fc; i++) {
@@ -185,20 +195,24 @@ namespace Starlight {
 
 			Vec4 transformed_vertices[3];
 
-			// Loop through all vertices in teh current face and apply transformation
+			// Loop through all vertices in the current face and apply transformation
 			for(s32 j = 0; j < 3; j++) {
 				Vec4 transformed_vertex = vec4_from_vec3(face_vertices[j]);
 				Matrix world_matrix = matrix_identity();
 
 				// Order matters in how things are done, not respecting that means things are in weird places.
-				world_matrix = scale * world_matrix;
-				world_matrix = rotate_x * world_matrix;
-				world_matrix = rotate_y * world_matrix;
-				world_matrix = rotate_z * world_matrix;
+				world_matrix = scale     * world_matrix;
+				world_matrix = rotate_z  * world_matrix;
+				world_matrix = rotate_y  * world_matrix;
+				world_matrix = rotate_x  * world_matrix;
 				world_matrix = translate * world_matrix;
 
 				// Multiply world matrix by original vector
 				transformed_vertex = matrix_multiply_vec4(world_matrix, transformed_vertex);
+
+				// Multiply the view matrix by the vector to transform the scene to camera space
+				//transformed_vertex = matrix_multiply_vec4(view, transformed_vertex);
+
 				transformed_vertices[j] = transformed_vertex;
 			}
 
@@ -212,12 +226,14 @@ namespace Starlight {
 			ab = vec3_normalize(ab);
 			ac = vec3_normalize(ac);
 
+			// !! Culling !!
 			// Computer face normal using cross product to find perpendicular
 			Vec3 face_normal = vec3_cross_product(ac, ab);
 			face_normal = vec3_normalize(face_normal);
 
 			// Find the vector between points in the triangle and camera origin
-			Vec3 camera_ray = g_camera.position - a;
+			Vec3 origin = {0, 0, 0};
+			Vec3 camera_ray = origin - a;
 
 			// If face normal (dot product) is aligned with camera ray, draw, if not cull.
 			f32 dot_normal_camera = vec3_dot_product(face_normal, camera_ray);
@@ -270,26 +286,33 @@ namespace Starlight {
 		clear_colour_buffer(&g_window_state->render_buffer, 0xFF2C2C2C);
 		clear_z_buffer(&g_window_state->render_buffer);
 		
-		//s32 triangle_count = array_length(g_triangles_to_render);
+		// Batch process these
 		for(u32 i = 0; i < g_face_count_idx; i++) {
 			Triangle triangle = g_triangles_to_render[i];
-			
 			// Draw vertex points
 			if(g_window_state->render_buffer.render_mode & RENDERMODE_VERTEXPOINTS){
 				draw_rect(&g_window_state->render_buffer, triangle.points[0].x, triangle.points[0].y, 3, 3, 0xFFFE7104);
 				draw_rect(&g_window_state->render_buffer, triangle.points[1].x, triangle.points[1].y, 3, 3, 0xFFFE7104);
 				draw_rect(&g_window_state->render_buffer, triangle.points[2].x, triangle.points[2].y, 3, 3, 0xFFFE7104);
 			}
+		}
+
+		for(u32 i = 0; i < g_face_count_idx; i++) {
+			Triangle triangle = g_triangles_to_render[i];
 
 			// Draw filled triangles
-			//if(g_window_state->render_buffer.render_mode == RENDERMODE_DEFAULT || g_window_state->render_buffer.render_mode & RENDERMODE_FILL) {
-			if(g_window_state->render_buffer.render_mode & RENDERMODE_FILL) {
+			if(g_window_state->render_buffer.render_mode == RENDERMODE_DEFAULT || g_window_state->render_buffer.render_mode & RENDERMODE_FILL) {
+				//if(g_window_state->render_buffer.render_mode & RENDERMODE_FILL) {
 				draw_filled_triangle(&g_window_state->render_buffer, 
 														 triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[0].w, // Vertex A
 														 triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w, // Vertex B
 														 triangle.points[2].x, triangle.points[2].y, triangle.points[2].z, triangle.points[2].w, // Vertex C
 														 triangle.colour);
 			}
+		}
+
+		for(u32 i = 0; i < g_face_count_idx; i++) {
+			Triangle triangle = g_triangles_to_render[i];
 
 			// Draw wireframe
 			if(g_window_state->render_buffer.render_mode & RENDERMODE_WIREFRAME) {
@@ -299,9 +322,13 @@ namespace Starlight {
 											triangle.points[2].x, triangle.points[2].y,    // Vertex C
 											0xFFFFFFF);
 			}
+		}
+
+		for(u32 i = 0; i < g_face_count_idx; i++) {
+			Triangle triangle = g_triangles_to_render[i];
 
 			// Draw textured triangle
-			if (g_window_state->render_buffer.render_mode == RENDERMODE_DEFAULT || g_window_state->render_buffer.render_mode & RENDERMODE_TEXTURE) {
+			if (g_window_state->render_buffer.render_mode & RENDERMODE_TEXTURE) {
 				draw_textured_triangle(&g_window_state->render_buffer, 
 					triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[0].w, triangle.texture_coords[0].u, triangle.texture_coords[0].v, // Vertex A
 					triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[1].w, triangle.texture_coords[1].u, triangle.texture_coords[1].v, // Vertex B
@@ -309,7 +336,6 @@ namespace Starlight {
 					g_mesh_info->texture_data, g_mesh_info->texture_width, g_mesh_info->texture_height);
 			}
 		}
-
 
 		copy_buffer_to_window(g_window_state->os_handle, &g_window_state->render_buffer);
 	}
@@ -334,7 +360,6 @@ namespace Starlight {
 				// @IMPROVE/@INVESTIGATE: using timeBeginPeriod to set the scheduler timer lower,
 				// which in turn resolves the latency issue with Sleep().
 				// Need to do more research into if that actually works!
-				// 
 				Sleep((DWORD)(sleep_time / 1000));
 			}
 		}

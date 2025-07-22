@@ -23,7 +23,8 @@
 
 namespace Starlight {
 	namespace ResourceManager {
-		internal MeshInfo* load_model(Arena* arena, string8 mesh, string8 texture);
+		internal MeshInfo* load_model_and_texture(Arena* arena, string8 mesh, string8 texture);
+		internal MeshInfo* load_model(Arena* arena, string8 mesh);
 		internal void load_texture_data(MeshInfo* mesh, string8 data);
 		internal void load_font(Arena *arena, string8 file);
 	}

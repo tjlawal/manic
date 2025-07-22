@@ -542,6 +542,79 @@ namespace Starlight {
 			return result;
 		}
 
+		FORCE_INLINE internal Matrix matrix_lookat(Vec3 camera_pos, Vec3 target, Vec3 up) {
+			Matrix result = {};
+
+			f32 length = 0.0f;
+			f32 reciprocal = 0.0f;
+
+			// vec3_subtract(target, camera_pos) 
+			// @NOTE: subtraction is done this way cause this is a left-handed system. 
+			// Opposite is for right-handed system
+			Vec3 z = { target.x - camera_pos.x , target.y - camera_pos.y , target.z - camera_pos.z };
+
+			// vec3_normalize(z)
+			Vec3 norm_v = z;
+			length = sqrtf((norm_v.x * norm_v.x) + (norm_v.y * norm_v.y) + (norm_v.z * norm_v.z));
+			if(length == 0.0f) length = 1.0f;
+			reciprocal = 1.0f / length;
+			z.x *= reciprocal;
+			z.y *= reciprocal;
+			z.z *= reciprocal;
+
+			// vec3_cross_product(up, z)
+			Vec3 x = {
+				(up.z * z.y) - (up.y * z.z),
+				(up.x * z.z) - (up.z * z.x),
+				(up.y * z.x) - (up.x * z.y)
+			};
+
+			// vec3_normalize(x)
+			norm_v = x;
+			length = sqrtf((norm_v.x * norm_v.x) + (norm_v.y * norm_v.y) + (norm_v.z * norm_v.z));
+			if(length == 0.0f) length = 1.0f;
+			reciprocal = 1.0f / length;
+			x.x *= reciprocal;
+			x.y *= reciprocal;
+			x.z *= reciprocal;
+
+			//vec3_cross_product(z, x);
+			Vec3 y = {
+				(z.z * x.y) - (z.y * x.z),
+				(z.x * x.z) - (z.z * x.x),
+				(z.y * x.x) - (z.x * x.y)
+			};
+
+			// y doesn't need to be normalized further because it's cross product 
+			// is computed from the normal of x and z so by definition it's normalized.
+
+			// | x.x	x.y	x.z	-dot(x, camera_pos) |
+			// | y.x	y.y	y.z	-dot(y, camera_pos) |
+			// | z.x	z.y	z.z	-dot(z, camera_pos) |
+			// | 	 0    0   0  								  1 |
+			result.m0  = x.x;
+			result.m1  = x.y;
+			result.m2  = x.z;
+			result.m3  = 0.0f;
+
+			result.m4  = y.x;
+			result.m5  = y.y;
+			result.m6  = y.z;
+			result.m7  = 0.0f;
+			
+			result.m8  = z.x;
+			result.m9  = z.y;
+			result.m10 = z.z;
+			result.m11 = 0.0f;
+			
+			result.m12 = -((x.x * camera_pos.x) + (x.y * camera_pos.y) + (x.z * camera_pos.z));  // vec3_dot_product(x_norm, camera_pos)
+			result.m13 = -((y.x * camera_pos.x) + (y.y * camera_pos.y) + (y.z * camera_pos.z));  // vec3_dot_product(y, camera_pos)
+			result.m14 = -((z.x * camera_pos.x) + (z.y * camera_pos.y) + (z.z * camera_pos.z));  // vec3_dot_product(z, camera_pos)
+			result.m15 = 1.0f;
+
+			return result;
+		}
+
 		FORCE_INLINE internal Vec4 matrix_multiply_vec4(Matrix m, Vec4 v) {
 			Vec4 result;
 			
@@ -571,6 +644,7 @@ namespace Starlight {
 		// @REVISE!
 		FORCE_INLINE internal Vec4 mat4f32_mul_projection(Matrix m, Vec4 v) {
 			Vec4 result;
+
 			result.x = (m.m0 * v.x)  + (m.m1 * v.y)  + (m.m2 * v.z)  + (m.m3 * v.w);
 			result.y = (m.m4 * v.x)  + (m.m5 * v.y)  + (m.m6 * v.z)  + (m.m7 * v.w);
 			result.z = (m.m8 * v.x)  + (m.m9 * v.y)  + (m.m10 * v.z) + (m.m11 * v.w);

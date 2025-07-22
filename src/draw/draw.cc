@@ -1,3 +1,5 @@
+// @TODO(tijani): REWRITE!!
+
 using namespace Starlight::Foundation;
 using namespace Starlight::Render;
 
@@ -6,6 +8,8 @@ namespace Starlight {
 
 		// @TODO: Review all the code in here to make sure they are going as fast as possible, 
 		// not doing unnecessary work, etc.
+		// @BUG: When certain models are loaded (i.e. dragon.obj, head.obj) they either render
+		// weird or don't render at all. Investigate and fix
 
 		internal void draw_grid(Renderer *buffer, s32 width, s32 height, u32 colour) {
 			ProfFunction(profDebug_cyan);
@@ -69,6 +73,8 @@ namespace Starlight {
 		}
 
 		void draw_triangle_pixel(Renderer *buffer, s32 x, s32 y, Vec4 point_a, Vec4 point_b, Vec4 point_c, u32 colour){
+			// @HACK(tijani): Fix this, its messy!
+			if(x < 0 || x >= buffer->sw.width || y < 0 || y >= buffer->sw.height) { return; }
 			Vec2f point_p = {static_cast<f32>(x), static_cast<f32>(y)};
 
 			Vec2f a = vec2f_from_vec4(point_a);

@@ -5,6 +5,21 @@ using namespace Starlight::Platform;
 using namespace Starlight::Render;
 
 namespace Starlight {
+
+	// @NOTE: This is temporary, pending when I can think of a better way to architect this.
+	struct Camera {
+		Matrix projection;
+		Vec3 position;
+		Vec3 direction;
+		f32 fov;
+		f32 znear;
+		f32 zfar;
+		f32 aspect_ratio;
+	};
+
+	struct Light {
+		Vec3 direction;
+	};
 	
 	struct GameState {
 		Arena* game_memory; 			// Persistent data goes here
@@ -22,19 +37,7 @@ namespace Starlight {
 		u64 num_frames_requested;
 	};
 
-	// @NOTE: This is temporary, pending when I can think of a better way to architect this.
-	struct Camera {
-		Matrix projection;
-		Vec3 position;
-		f32 fov;
-		f32 znear;
-		f32 zfar;
-		f32 aspect_ratio;
-	};
-
-	struct Light {
-		Vec3 direction;
-	};
+	
 
 	internal u32 light_intensity(u32 colour, f32 percentage) {
 		percentage = clamp(percentage, 0.0f, 1.0f);

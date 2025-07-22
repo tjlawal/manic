@@ -9,7 +9,7 @@ namespace Starlight {
 
 		internal void draw_grid(Renderer *buffer, s32 width, s32 height);
 		internal void draw_rect(Renderer *buffer, s32 x, s32 y, s32 width, s32 height, u32 colour);
-		internal void draw_pixel(Renderer *buffer, s32 x, s32 y, u32 colour);
+		FORCE_INLINE internal void draw_pixel(Renderer *buffer, s32 x, s32 y, u32 colour);
 		internal void draw_line_dda(Renderer *buffer, s32 x0, s32 y0, s32 x1, s32 y1, u32 colour);
 		internal void draw_triangle(Renderer *buffer, s32 x0, s32 y0, s32 x1, s32 y1, s32 x2, s32 y2, u32 colour);
 		internal void draw_triangle_pixel(Renderer *buffer, s32 x, s32 y, Vec4 point_a, Vec4 point_b, Vec4 point_c,  u32 colour);

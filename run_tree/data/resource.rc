@@ -34,7 +34,7 @@ BEGIN
             VALUE "LegalCopyright", "Copyright (C) Starlight Interactive. 2025"
             VALUE "OriginalFilename", "Manic.exe"
             VALUE "ProductName", "Manic Engine"
-            VALUE "ProductVersion", "0.0.REVISION-alpha"
+            VALUE "ProductVersion", "0.0.261-alpha"
         END
     END
     BLOCK "VarFileInfo"
