@@ -13,27 +13,16 @@ the CPU.
 This is an exploratory project to understand at a much deeper level how GPUs do what they do,
 and simulate it on the CPU. In the days before GPUs even existed, video games and other graphics
 related stuff where done completely on the CPU. Although they werent as fast given the limited 
-processing power of the time period, but in 2025, CPUs are very capable computers that can do 
-*billions* of computations per seconds, so I thought it'd be disgrace to harness that power to 
-see what the state of rendering on the CPU is and how capable it is.
-
-## Are GPUs a waste then?
-
-Absolutely not, although I was able to render a couple hundred vertices consistently at 
-60 frames-per-second on the CPU, but this compares in no way to the share amount of highly 
-detailed 3D models you can render on the screen at 4x the frames-per-second on even a low powered 
-GPU! In addition, GPUs are now everywhere, making a software rasterization completely useless other
-than as a learning tool. Although, you could still make a game of the same quality using a software
-rasterizer, but that would come with downsides such as running at 30FPS, lesser detailed 3D models, 
-increased development time, etc., when compared to using a GPU, but trade-offs would have to be made
-when it comes to what your target audience expects.
+processing power of the time period, but in 2025, CPUs are able to do *billions* of computations per seconds.
+It'd be tragic not to harness these alien like powers to see how capable rendering on the CPU can be in the 
+modern age of computing.
 
 ## How can I run this on my own computer?
 
 This project is created in a way that isolates the core rendering code from the platform, meaning 
 it is not platform dependent. Although only Windows 10 and above is supported, writing the platform layer 
-for other platforms shouldn't be as much of a hassle. There's a downloadable version of the application in 
-the release section on github.
+for other platforms shouldn't be much of a hassle. There's a downloadable version of the application in 
+the release section on github that would work on Windows 10 and above.
 
 ## How do I build it?
 
